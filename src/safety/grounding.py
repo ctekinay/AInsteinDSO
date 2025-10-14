@@ -18,6 +18,7 @@ from typing import Dict, List, Set, Optional, TYPE_CHECKING
 
 from src.exceptions.exceptions import UngroundedReplyError
 from src.utils.trace import get_tracer
+from src.config.constants import REQUIRED_CITATION_PREFIXES
 
 # TYPE_CHECKING import to avoid circular dependencies
 if TYPE_CHECKING:
@@ -26,19 +27,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 tracer = get_tracer()
 
-# REQUIRED citation prefixes - NO RESPONSE without at least one of these
-REQUIRED_CITATION_PREFIXES = [
-    "archi:id-",
-    "skos:",
-    "iec:",
-    "togaf:adm:",
-    "togaf:concepts:",
-    "archimate:research:",
-    "entsoe:",
-    "lido:",
-    "doc:",
-    "external:"
-]
+# REQUIRED citation prefixes imported from config/constants.py
 
 # Comprehensive regex patterns for citation detection
 CITATION_PATTERNS = {

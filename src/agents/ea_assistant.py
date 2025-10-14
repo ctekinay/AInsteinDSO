@@ -49,6 +49,19 @@ from src.exceptions.exceptions import UngroundedReplyError, LowConfidenceError, 
 from src.utils.trace import get_tracer
 from src.agents.session_manager import SessionManager, ConversationTurn
 
+# Configuration constants - replace all hardcoded values
+from src.config.constants import (
+    CONFIDENCE,
+    SEMANTIC_CONFIG,
+    RANKING_CONFIG,
+    CONTEXT_CONFIG,
+    LANG_CONFIG,
+    PERFORMANCE_CONFIG,
+    COMPARISON_TERM_STOP_WORDS,
+    QUERY_TERM_STOP_WORDS,
+    COMPARISON_PATTERNS,
+)
+
 
 logger = logging.getLogger(__name__)
 tracer = get_tracer()
@@ -406,8 +419,8 @@ class ProductionEAAgent:
                 response = await self.llm_council.primary_llm.generate(
                     prompt=prompt,
                     system_prompt="You are a language detection assistant. Respond with only one word: english, dutch, or unknown.",
-                    temperature=0.1,
-                    max_tokens=10
+                    temperature=LANG_CONFIG.LLM_TEMPERATURE,
+                    max_tokens=LANG_CONFIG.LLM_MAX_TOKENS
                 )
                 
                 language = response.content.strip().lower()
@@ -432,10 +445,10 @@ class ProductionEAAgent:
         
         # Check for Dutch compound words (lots of long words)
         words = text_lower.split()
-        long_words = sum(1 for w in words if len(w) > 12)
+        long_words = sum(1 for w in words if len(w) > LANG_CONFIG.LONG_WORD_MIN_LENGTH)
         
         # Simple heuristic
-        if dutch_chars > 2 or (long_words > len(words) * 0.2 and len(words) > 3):
+        if dutch_chars > LANG_CONFIG.DUTCH_CHAR_THRESHOLD or (long_words > len(words) * LANG_CONFIG.LONG_WORD_PERCENTAGE and len(words) > 3):
             return "nl"
         elif any(word in text_lower for word in ['the ', ' and ', ' for ', ' power', ' grid']):
             return "en"
@@ -1182,9 +1195,9 @@ class ProductionEAAgent:
                     f"Average of {len(assessment.top_suggestions)} top suggestions: {assessment.confidence:.2f}"
                 )
 
-                if assessment.confidence >= 0.75:
+                if assessment.confidence >= CONFIDENCE.HIGH_CONFIDENCE_THRESHOLD:
                     critic_phase.add_substep("✓ High confidence", f"{assessment.confidence:.2f}")
-                elif assessment.confidence >= 0.50:
+                elif assessment.confidence >= CONFIDENCE.MEDIUM_CONFIDENCE_THRESHOLD:
                     critic_phase.add_substep("⚠ Medium confidence", f"{assessment.confidence:.2f}")
                 else:
                     critic_phase.add_substep("⚠ Low confidence - flagging for review", f"{assessment.confidence:.2f}")
@@ -1423,7 +1436,7 @@ class ProductionEAAgent:
                 "element": f"TOGAF ADM {phase_context['phase']}",
                 "type": "Methodology",
                 "citation_id": f"togaf:adm:{phase_context['phase_letter']}",
-                "confidence": 0.85,
+                "confidence": CONFIDENCE.TOGAF_DOCUMENTATION,
                 "definition": phase_context["description"],
                 "source": "TOGAF 9.2 Standard",
                 "priority": "togaf"
@@ -1462,7 +1475,7 @@ class ProductionEAAgent:
 
         # PHASE 3: Context expansion for follow-ups
         session_id = trace_id or 'default'
-        if hasattr(self, 'session_manager') and self.session_manager.has_conversation_history(session_id):
+        if hasattr(self, 'session_manager') and len(self.session_manager.get_history(session_id)) > 0:
             context_start = time.time()
             try:
                 context_candidates = await self._context_expansion(query, session_id)
@@ -1508,10 +1521,7 @@ class ProductionEAAgent:
         query_lower = query.lower()
         
         # Stop words to filter out
-        stop_words = {
-            'what', 'is', 'the', 'a', 'an', 'of', 'for', 'in', 'on', 'at', 
-            'to', 'how', 'why', 'when', 'where', 'are', 'do', 'does'
-        }
+        stop_words = QUERY_TERM_STOP_WORDS
         
         words = query_lower.split()
         terms = []
@@ -1624,7 +1634,7 @@ class ProductionEAAgent:
                 
                 # Calculate confidence based on match quality and definition presence
                 has_definition = bool(kg_result.get("definition"))
-                base_confidence = 0.95 if has_definition else 0.75
+                base_confidence = CONFIDENCE.KG_WITH_DEFINITION if has_definition else CONFIDENCE.KG_WITHOUT_DEFINITION
                 relevance = kg_result.get("score", 75) / 100.0
 
                 candidate = {
@@ -1704,7 +1714,7 @@ class ProductionEAAgent:
                         "doc_id": chunk.doc_id,
                         "citation": citation_id,
                         "citation_id": citation_id,
-                        "confidence": 0.70,
+                        "confidence": CONFIDENCE.DOCUMENT_CHUNKS,
                         "definition": chunk.content[:200] + "...",
                         "source": "PDF Documents",
                         "priority": "document"
@@ -1718,21 +1728,21 @@ class ProductionEAAgent:
 
     def _calculate_element_confidence(self, element: ArchiMateElement, query_terms: List[str]) -> float:
         """Calculate confidence score for an ArchiMate element based on query relevance."""
-        base_confidence = 0.75
+        base_confidence = CONFIDENCE.ARCHIMATE_ELEMENTS
         element_name_lower = element.name.lower()
 
         # Boost for exact matches
         for term in query_terms:
             if term in element_name_lower:
-                base_confidence += 0.10
+                base_confidence += CONFIDENCE.EXACT_TERM_MATCH_BONUS
 
         # Boost for energy domain terms
         energy_terms = ["congestion", "grid", "scada", "monitoring", "management", "power", "reactive", "capability"]
         for term in energy_terms:
             if term in element_name_lower:
-                base_confidence += 0.05
+                base_confidence += CONFIDENCE.PARTIAL_TERM_MATCH_BONUS
 
-        return min(base_confidence, 0.95)
+        return min(base_confidence, CONFIDENCE.KG_WITH_DEFINITION)
 
     def _get_togaf_phase_for_layer(self, layer: str) -> str:
         """Get appropriate TOGAF phase for ArchiMate layer."""
@@ -1998,17 +2008,17 @@ class ProductionEAAgent:
 
             # Assign priority scores
             if priority == "knowledge_graph" and has_definition:
-                priority_score = 1000
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_DEFINITION * 10  # Scale up for this function
             elif priority == "knowledge_graph":
-                priority_score = 800
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_NORMAL * 10
             elif priority == "archimate":
-                priority_score = 600
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_CONTEXT * 10
             elif priority == "togaf":
-                priority_score = 700
+                priority_score = (RANKING_CONFIG.PRIORITY_SCORE_NORMAL + RANKING_CONFIG.PRIORITY_SCORE_CONTEXT) * 5  # 700 equivalent
             elif priority == "document":
-                priority_score = 400
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_CONTEXT * 7  # 420 equivalent
             else:
-                priority_score = 200
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_FALLBACK * 4  # 200 equivalent
 
             # Return Tuple for sorting (higher priority first, then higher confidence)
             return (priority_score + confidence, confidence)
@@ -2485,16 +2495,7 @@ class ProductionEAAgent:
             return []
 
         # Common comparison patterns - fixed to be non-greedy and more specific
-        comparison_patterns = [
-            # "difference between X and Y"
-            r'(?:difference|differences)\s+between\s+(.+?)\s+and\s+(.+?)(?:\?|$)',
-            # "X vs Y" or "X versus Y"
-            r'(.+?)\s+(?:vs|versus|compared\s+to|vs\.)\s+(.+?)(?:\s+in\s+|\?|$)',
-            # "compare X with/and/to Y"
-            r'(?:compare|comparison)\s+(?:of\s+)?(?:the\s+)?(.+?)\s+(?:with|and|to)\s+(.+?)(?:\?|$)',
-            # "X or Y"
-            r'(.+?)\s+or\s+(.+?)(?:\s+-\s+|\?|$)',
-        ]
+        comparison_patterns = COMPARISON_PATTERNS
 
         terms = []
         query_lower = query.lower().strip()
@@ -2529,7 +2530,7 @@ class ProductionEAAgent:
             return ""
 
         # Remove common stop words
-        stop_words = ['the', 'a', 'an', 'is', 'are', 'what', 'which', 'difference', 'in', 'of', 'to', 'from', 'with']
+        stop_words = COMPARISON_TERM_STOP_WORDS
         words = term.split()
         cleaned_words = [w for w in words if w.lower() not in stop_words]
         cleaned = ' '.join(cleaned_words)
@@ -2597,13 +2598,13 @@ class ProductionEAAgent:
         try:
             concept1_results = self.embedding_agent.semantic_search(
                 comparison_terms[0],
-                top_k=3,
-                min_score=0.45  # Higher threshold for comparisons
+                top_k=SEMANTIC_CONFIG.TOP_K_COMPARISON,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON
             )
             concept2_results = self.embedding_agent.semantic_search(
                 comparison_terms[1],
-                top_k=3,
-                min_score=0.45
+                top_k=SEMANTIC_CONFIG.TOP_K_COMPARISON,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON
             )
 
             # Convert to candidate format
@@ -2641,8 +2642,8 @@ class ProductionEAAgent:
         # Get semantic matches with quality threshold
         semantic_results = self.embedding_agent.semantic_search(
             query,
-            top_k=5,
-            min_score=0.40  # Increase threshold for quality
+            top_k=SEMANTIC_CONFIG.TOP_K_PRIMARY,
+            min_score=SEMANTIC_CONFIG.MIN_SCORE_PRIMARY
         )
 
         # Track seen concepts to avoid duplicates
@@ -2656,7 +2657,7 @@ class ProductionEAAgent:
 
             # Only add high-quality semantic results
             result_score = getattr(result, 'score', 0.0)
-            if result_score >= 0.40:
+            if result_score >= SEMANTIC_CONFIG.MIN_SCORE_PRIMARY:
                 candidate = {
                     "element": getattr(result, 'text', '')[:100],
                     "type": "Semantic Enhancement",
@@ -2670,7 +2671,7 @@ class ProductionEAAgent:
                 semantic_candidates.append(candidate)
 
         # Limit to top 3 semantic enhancements to avoid overwhelming
-        return semantic_candidates[:3]
+        return semantic_candidates[:SEMANTIC_CONFIG.MAX_SEMANTIC_CANDIDATES]
 
     async def _context_expansion(self, query: str, session_id: str) -> List[Dict]:
         """Expand context using conversation history."""
@@ -2698,8 +2699,8 @@ class ProductionEAAgent:
 
             related_results = self.embedding_agent.semantic_search(
                 enhanced_query,
-                top_k=2,  # Reduce from 3 to avoid noise
-                min_score=0.45  # Higher threshold for context
+                top_k=SEMANTIC_CONFIG.TOP_K_CONTEXT,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_CONTEXT
             )
 
             for result in related_results:
@@ -2740,14 +2741,14 @@ class ProductionEAAgent:
 
             # Priority scoring
             priority_map = {
-                'definition': 100,
-                'normal': 80,
-                'context': 60
+                'definition': RANKING_CONFIG.PRIORITY_SCORE_DEFINITION,
+                'normal': RANKING_CONFIG.PRIORITY_SCORE_NORMAL,
+                'context': RANKING_CONFIG.PRIORITY_SCORE_CONTEXT
             }
-            base_score = priority_map.get(priority, 50)
+            base_score = priority_map.get(priority, RANKING_CONFIG.PRIORITY_SCORE_FALLBACK)
 
             # Add confidence/semantic bonus
-            bonus = (confidence * 20) if confidence > 0.5 else (semantic_score * 20)
+            bonus = (confidence * RANKING_CONFIG.CONFIDENCE_BONUS_MULTIPLIER) if confidence > RANKING_CONFIG.CONFIDENCE_BONUS_THRESHOLD else (semantic_score * RANKING_CONFIG.CONFIDENCE_BONUS_MULTIPLIER)
 
             return base_score + bonus
 
@@ -2755,7 +2756,7 @@ class ProductionEAAgent:
         ranked = sorted(unique_candidates, key=get_priority_score, reverse=True)
 
         # Limit total candidates to prevent overwhelming LLM
-        return ranked[:10]  # Top 10 candidates max
+        return ranked[:RANKING_CONFIG.MAX_TOTAL_CANDIDATES]
 
     async def cleanup(self):
         """Cleanup async resources."""
