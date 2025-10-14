@@ -54,6 +54,14 @@ CITATION_PATTERNS = {
     "external:": r"external:[a-zA-Z0-9\-_]+:[a-zA-Z0-9\-_]+"
 }
 
+# Enhanced patterns for comparison responses and edge cases
+ENHANCED_CITATION_PATTERNS = [
+    r'\[([a-zA-Z0-9\-:]+)\]',  # Square bracket format: [archi:id-cap-001]
+    r'\*\*.*?\*\*\s*\[([a-zA-Z0-9\-:]+)\]',  # Bold text with citation: **Concept** [citation]
+    r'`([a-zA-Z0-9\-:]+)`',  # Backtick format: `archi:id-cap-001`
+    r'(?:citation|ref|source):\s*([a-zA-Z0-9\-:]+)',  # Labeled citations: citation: archi:id-cap-001
+]
+
 
 class GroundingCheck:
     """
@@ -298,6 +306,14 @@ class GroundingCheck:
         for prefix, pattern in self.citation_patterns.items():
             matches = re.findall(pattern, text, re.IGNORECASE)
             citations.extend(matches)
+
+        # Apply enhanced patterns for comparison responses and edge cases
+        for pattern in ENHANCED_CITATION_PATTERNS:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            # Filter matches to only include valid citation prefixes
+            for match in matches:
+                if any(match.lower().startswith(prefix) for prefix in REQUIRED_CITATION_PREFIXES):
+                    citations.append(match)
 
         # Remove duplicates while preserving order
         seen = set()

@@ -1441,38 +1441,49 @@ class ProductionEAAgent:
                 retrieval_context["document_chunks"] = doc_candidates
                 logger.info(f"Documents returned {len(doc_candidates)} candidates")
         
-        # SEMANTIC ENHANCEMENT: Add embeddings when structured results are insufficient
-        if self.embedding_agent:
-            total_structured = len(retrieval_context.get("candidates", []))
-            if total_structured < 3:  # Threshold for adding semantic search
-                logger.info(f"Only {total_structured} structured results, adding semantic search...")
-                
-                try:
-                    semantic_results = self.embedding_agent.semantic_search(
-                        query,
-                        top_k=5,
-                        min_score=0.4
-                    )
-                    
-                    # Convert to candidates format
-                    for result in semantic_results:
-                        candidate = {
-                            "element": result.text[:100],  # Truncate for display
-                            "type": "Semantic Match",
-                            "citation": result.citation or "semantic:context",
-                            "citation_id": result.citation or "semantic:context",
-                            "confidence": result.score,
-                            "definition": result.text,
-                            "source": f"Embedding Search ({result.source})",
-                            "priority": "semantic"
-                        }
-                        retrieval_context["candidates"].append(candidate)
-                    
-                    logger.info(f"Added {len(semantic_results)} semantic results to candidates")
-                    retrieval_context["semantic_enhanced"] = True
-                except Exception as e:
-                    logger.warning(f"Semantic search failed: {e}")
-                    # Continue without semantic results
+        # PHASE 2: SEMANTIC ENHANCEMENT (NEW - always run when available)
+        enable_semantic = os.getenv("ENABLE_SEMANTIC_ENHANCEMENT", "true").lower() == "true"
+        if self.embedding_agent and enable_semantic:
+            semantic_start = time.time()
+            try:
+                semantic_candidates = await self._semantic_enhancement(
+                    query,
+                    retrieval_context["candidates"]
+                )
+                retrieval_context["candidates"].extend(semantic_candidates)
+                retrieval_context["semantic_enhanced"] = True
+
+                semantic_duration = (time.time() - semantic_start) * 1000
+                logger.info(f"Added {len(semantic_candidates)} semantic candidates")
+                logger.info(f"Semantic enhancement took {semantic_duration:.2f}ms")
+            except Exception as e:
+                logger.warning(f"Semantic enhancement failed: {e}")
+                retrieval_context["semantic_enhanced"] = False
+
+        # PHASE 3: Context expansion for follow-ups
+        session_id = trace_id or 'default'
+        if hasattr(self, 'session_manager') and self.session_manager.has_conversation_history(session_id):
+            context_start = time.time()
+            try:
+                context_candidates = await self._context_expansion(query, session_id)
+                retrieval_context["candidates"].extend(context_candidates)
+
+                context_duration = (time.time() - context_start) * 1000
+                logger.info(f"Added {len(context_candidates)} context candidates")
+                logger.info(f"Context expansion took {context_duration:.2f}ms")
+            except Exception as e:
+                logger.warning(f"Context expansion failed: {e}")
+
+        # PHASE 4: Ranking and deduplication (NEW - needed!)
+        rank_start = time.time()
+        original_count = len(retrieval_context["candidates"])
+        retrieval_context["candidates"] = self._rank_and_deduplicate(
+            retrieval_context["candidates"],
+            query
+        )
+        final_count = len(retrieval_context["candidates"])
+        rank_duration = (time.time() - rank_start) * 1000
+        logger.info(f"Ranking and deduplication: {original_count} → {final_count} candidates in {rank_duration:.2f}ms")
         
         # Log final candidate count - MOVED OUTSIDE of semantic block
         total_candidates = len(retrieval_context.get("candidates", []))
@@ -1886,9 +1897,10 @@ class ProductionEAAgent:
         # Build structured comparison at all times
         if len(candidates) >= 2:
             logger.info("🎯 Building comparison for 2+ candidates")
-            
-            c1 = candidates[0]
-            c2 = candidates[1]
+
+            # Validate and select distinct candidates for comparison
+            c1, c2 = await self._validate_comparison_candidates(candidates, original_query)
+            logger.info(f"🎯 Selected candidates after validation: {c1.get('element', 'N/A')} vs {c2.get('element', 'N/A')}")
             
             label1 = c1.get('element', 'Concept 1')
             label2 = c2.get('element', 'Concept 2')
@@ -2466,6 +2478,280 @@ class ProductionEAAgent:
             }
 
         return stats
+
+    def _extract_comparison_terms(self, query: str) -> List[str]:
+        """Extract comparison terms from a query."""
+        if not query:
+            return []
+
+        # Common comparison patterns
+        comparison_patterns = [
+            r'(?:difference|differences)\s+between\s+([^?]+?)(?:\s+and\s+([^?]+))?',
+            r'([^?]+?)\s+(?:vs|versus|compared\s+to|vs\.)\s+([^?]+)',
+            r'(?:compare|comparison)\s+(?:of\s+)?([^?]+?)(?:\s+(?:with|and|to)\s+([^?]+))?',
+            r'([^?]+?)\s+or\s+([^?]+)',
+        ]
+
+        terms = []
+        query_lower = query.lower().strip()
+
+        for pattern in comparison_patterns:
+            matches = re.findall(pattern, query_lower, re.IGNORECASE)
+            for match in matches:
+                if isinstance(match, tuple):
+                    for term in match:
+                        if term and term.strip():
+                            cleaned_term = self._clean_comparison_term(term.strip())
+                            if cleaned_term:
+                                terms.append(cleaned_term)
+                elif match and match.strip():
+                    cleaned_term = self._clean_comparison_term(match.strip())
+                    if cleaned_term:
+                        terms.append(cleaned_term)
+
+        # Remove duplicates while preserving order
+        unique_terms = []
+        seen = set()
+        for term in terms:
+            if term.lower() not in seen:
+                seen.add(term.lower())
+                unique_terms.append(term)
+
+        return unique_terms
+
+    def _clean_comparison_term(self, term: str) -> str:
+        """Clean up extracted comparison term."""
+        if not term:
+            return ""
+
+        # Remove common stop words
+        stop_words = ['the', 'a', 'an', 'is', 'are', 'what', 'which', 'difference']
+        words = term.split()
+        cleaned_words = [w for w in words if w.lower() not in stop_words]
+        cleaned = ' '.join(cleaned_words)
+
+        # Remove extra whitespace and punctuation
+        cleaned = re.sub(r'\s+', ' ', cleaned)
+        cleaned = re.sub(r'[^\w\s\-]', '', cleaned)
+
+        return cleaned.strip()
+
+    async def _validate_comparison_candidates(self, candidates: List[Dict], query: str) -> Tuple[Dict, Dict]:
+        """Ensure we have two distinct concepts for comparison."""
+        if len(candidates) < 2:
+            # Not enough candidates for comparison
+            return candidates[0] if candidates else {}, {}
+
+        comparison_terms = self._extract_comparison_terms(query)
+
+        if len(comparison_terms) != 2:
+            # Fallback to first two candidates
+            return candidates[0], candidates[1]
+
+        term1_candidates = []
+        term2_candidates = []
+
+        for candidate in candidates:
+            element_lower = candidate.get('element', '').lower()
+            definition_lower = candidate.get('definition', '').lower()
+
+            # Check which term this candidate matches
+            term1_match = (comparison_terms[0].lower() in element_lower or
+                          comparison_terms[0].lower() in definition_lower)
+            term2_match = (comparison_terms[1].lower() in element_lower or
+                          comparison_terms[1].lower() in definition_lower)
+
+            # Only add to one list, prioritizing exact match in element name
+            if term1_match and not term2_match:
+                term1_candidates.append(candidate)
+            elif term2_match and not term1_match:
+                term2_candidates.append(candidate)
+            elif term1_match and term2_match:
+                # If both match, skip ambiguous candidates
+                continue
+
+        # Return best matches or fallback to semantic search
+        if term1_candidates and term2_candidates:
+            return term1_candidates[0], term2_candidates[0]
+        else:
+            # Use semantic fallback if available
+            if self.embedding_agent:
+                return await self._semantic_comparison_fallback(query, candidates)
+            else:
+                # Final fallback to first two distinct candidates
+                return candidates[0], candidates[1] if len(candidates) > 1 else candidates[0]
+
+    async def _semantic_comparison_fallback(self, query: str, existing_candidates: List[Dict]) -> Tuple[Dict, Dict]:
+        """Use semantic search to find distinct concepts for comparison."""
+
+        comparison_terms = self._extract_comparison_terms(query)
+
+        if len(comparison_terms) != 2:
+            return existing_candidates[0], existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0]
+
+        # Search for each term separately using embedding agent
+        try:
+            concept1_results = self.embedding_agent.semantic_search(
+                comparison_terms[0],
+                top_k=3,
+                min_score=0.45  # Higher threshold for comparisons
+            )
+            concept2_results = self.embedding_agent.semantic_search(
+                comparison_terms[1],
+                top_k=3,
+                min_score=0.45
+            )
+
+            # Convert to candidate format
+            candidate1 = self._semantic_result_to_candidate(concept1_results[0]) if concept1_results else existing_candidates[0]
+            candidate2 = self._semantic_result_to_candidate(concept2_results[0]) if concept2_results else (existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0])
+
+            return candidate1, candidate2
+
+        except Exception as e:
+            logger.warning(f"Semantic comparison fallback failed: {e}")
+            # Final fallback to existing candidates
+            return existing_candidates[0], existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0]
+
+    def _semantic_result_to_candidate(self, result) -> Dict:
+        """Convert EmbeddingResult to candidate format."""
+        if not result:
+            return {}
+
+        return {
+            "element": result.text[:100] if hasattr(result, 'text') else "Semantic Match",
+            "type": "Semantic Match",
+            "citation": getattr(result, 'citation', None) or f"semantic:{getattr(result, 'source', 'unknown')}",
+            "confidence": getattr(result, 'score', 0.5),
+            "definition": getattr(result, 'text', ''),
+            "source": f"Semantic Search ({getattr(result, 'source', 'unknown')})",
+            "priority": "normal",
+            "semantic_score": getattr(result, 'score', 0.5)
+        }
+
+    async def _semantic_enhancement(self, query: str, structured_results: List[Dict]) -> List[Dict]:
+        """Use embeddings to find semantically related concepts."""
+
+        semantic_candidates = []
+
+        # Get semantic matches with quality threshold
+        semantic_results = self.embedding_agent.semantic_search(
+            query,
+            top_k=5,
+            min_score=0.40  # Increase threshold for quality
+        )
+
+        # Track seen concepts to avoid duplicates
+        seen_citations = {c.get('citation') for c in structured_results if c.get('citation')}
+
+        for result in semantic_results:
+            # Skip if duplicate of structured result
+            result_citation = getattr(result, 'citation', None) or f"semantic:{getattr(result, 'source', 'unknown')}"
+            if result_citation in seen_citations:
+                continue
+
+            # Only add high-quality semantic results
+            result_score = getattr(result, 'score', 0.0)
+            if result_score >= 0.40:
+                candidate = {
+                    "element": getattr(result, 'text', '')[:100],
+                    "type": "Semantic Enhancement",
+                    "citation": result_citation,
+                    "confidence": result_score,
+                    "definition": getattr(result, 'text', ''),
+                    "source": f"Semantic ({result_score:.2f})",
+                    "priority": "context",  # Lower priority than structured
+                    "semantic_score": result_score
+                }
+                semantic_candidates.append(candidate)
+
+        # Limit to top 3 semantic enhancements to avoid overwhelming
+        return semantic_candidates[:3]
+
+    async def _context_expansion(self, query: str, session_id: str) -> List[Dict]:
+        """Expand context using conversation history."""
+
+        context_candidates = []
+
+        # Get recent conversation history
+        session_data = self.session_manager.get_session_data(session_id)
+        if not session_data or len(session_data.get("messages", [])) < 2:
+            return context_candidates
+
+        # Extract concepts from last 3 turns (not 4 - reduce noise)
+        previous_concepts = []
+        for message in session_data["messages"][-3:]:
+            if message["type"] == "user":
+                concepts = self._extract_query_terms(message["content"])
+                previous_concepts.extend(concepts)
+
+        # Deduplicate and limit
+        previous_concepts = list(set(previous_concepts))[:5]
+
+        if previous_concepts and self.embedding_agent:
+            # Create context-enhanced query
+            enhanced_query = f"{query} {' '.join(previous_concepts[:3])}"
+
+            related_results = self.embedding_agent.semantic_search(
+                enhanced_query,
+                top_k=2,  # Reduce from 3 to avoid noise
+                min_score=0.45  # Higher threshold for context
+            )
+
+            for result in related_results:
+                candidate = {
+                    "element": getattr(result, 'text', '')[:100],
+                    "type": "Context Enhancement",
+                    "citation": getattr(result, 'citation', None) or "context:history",
+                    "confidence": getattr(result, 'score', 0.5),
+                    "definition": getattr(result, 'text', ''),
+                    "source": f"History ({getattr(result, 'source', 'unknown')})",
+                    "priority": "context"
+                }
+                context_candidates.append(candidate)
+
+        return context_candidates
+
+    def _rank_and_deduplicate(self, candidates: List[Dict], query: str) -> List[Dict]:
+        """Rank and deduplicate candidates by relevance and source priority."""
+
+        # Remove exact duplicates by citation
+        seen_citations = set()
+        unique_candidates = []
+
+        for candidate in candidates:
+            citation = candidate.get('citation')
+            if citation and citation not in seen_citations:
+                seen_citations.add(citation)
+                unique_candidates.append(candidate)
+            elif not citation:
+                unique_candidates.append(candidate)
+
+        # Assign priority scores
+        def get_priority_score(candidate):
+            priority = candidate.get('priority', 'normal')
+            type_name = candidate.get('type', '')
+            confidence = candidate.get('confidence', 0.5)
+            semantic_score = candidate.get('semantic_score', 0)
+
+            # Priority scoring
+            priority_map = {
+                'definition': 100,
+                'normal': 80,
+                'context': 60
+            }
+            base_score = priority_map.get(priority, 50)
+
+            # Add confidence/semantic bonus
+            bonus = (confidence * 20) if confidence > 0.5 else (semantic_score * 20)
+
+            return base_score + bonus
+
+        # Sort by priority score
+        ranked = sorted(unique_candidates, key=get_priority_score, reverse=True)
+
+        # Limit total candidates to prevent overwhelming LLM
+        return ranked[:10]  # Top 10 candidates max
 
     async def cleanup(self):
         """Cleanup async resources."""
