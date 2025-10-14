@@ -2484,12 +2484,16 @@ class ProductionEAAgent:
         if not query:
             return []
 
-        # Common comparison patterns
+        # Common comparison patterns - fixed to be non-greedy and more specific
         comparison_patterns = [
-            r'(?:difference|differences)\s+between\s+([^?]+?)(?:\s+and\s+([^?]+))?',
-            r'([^?]+?)\s+(?:vs|versus|compared\s+to|vs\.)\s+([^?]+)',
-            r'(?:compare|comparison)\s+(?:of\s+)?([^?]+?)(?:\s+(?:with|and|to)\s+([^?]+))?',
-            r'([^?]+?)\s+or\s+([^?]+)',
+            # "difference between X and Y"
+            r'(?:difference|differences)\s+between\s+(.+?)\s+and\s+(.+?)(?:\?|$)',
+            # "X vs Y" or "X versus Y"
+            r'(.+?)\s+(?:vs|versus|compared\s+to|vs\.)\s+(.+?)(?:\s+in\s+|\?|$)',
+            # "compare X with/and/to Y"
+            r'(?:compare|comparison)\s+(?:of\s+)?(?:the\s+)?(.+?)\s+(?:with|and|to)\s+(.+?)(?:\?|$)',
+            # "X or Y"
+            r'(.+?)\s+or\s+(.+?)(?:\s+-\s+|\?|$)',
         ]
 
         terms = []
@@ -2525,7 +2529,7 @@ class ProductionEAAgent:
             return ""
 
         # Remove common stop words
-        stop_words = ['the', 'a', 'an', 'is', 'are', 'what', 'which', 'difference']
+        stop_words = ['the', 'a', 'an', 'is', 'are', 'what', 'which', 'difference', 'in', 'of', 'to', 'from', 'with']
         words = term.split()
         cleaned_words = [w for w in words if w.lower() not in stop_words]
         cleaned = ' '.join(cleaned_words)
