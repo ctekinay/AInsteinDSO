@@ -1592,6 +1592,7 @@ class ProductionEAAgent:
         Format includes citation_id for citation pool extraction.
         """
         kg_candidates = []
+        seen_citations = set()  # Track duplicates
 
         if not self.kg_loader or not self.kg_loader.is_full_graph_loaded():
             logger.warning("Knowledge graph not loaded, skipping KG query")
@@ -1601,6 +1602,15 @@ class ProductionEAAgent:
             kg_results = self.kg_loader.query_definitions(query_terms, trace_id=trace_id)
 
             for kg_result in kg_results:
+                citation_id = kg_result["citation_id"]
+                
+                # Skip duplicates
+                if citation_id in seen_citations:
+                    logger.debug(f"Skipping duplicate citation: {citation_id}")
+                    continue
+                
+                seen_citations.add(citation_id)  # Track this citation
+                
                 # Calculate confidence based on match quality and definition presence
                 has_definition = bool(kg_result.get("definition"))
                 base_confidence = 0.95 if has_definition else 0.75
@@ -1609,8 +1619,8 @@ class ProductionEAAgent:
                 candidate = {
                     "element": kg_result["label"],
                     "type": "Knowledge Graph Concept",
-                    "citation": kg_result["citation_id"],
-                    "citation_id": kg_result["citation_id"],  # Keep both for backwards compatibility
+                    "citation": citation_id,
+                    "citation_id": citation_id,  # Keep both for backwards compatibility
                     "confidence": base_confidence * relevance,
                     "definition": kg_result.get("definition", ""),
                     "source": "SKOS/IEC/ENTSOE",
@@ -2114,20 +2124,43 @@ class ProductionEAAgent:
 
             lines.append("")
 
-        # Show other results from the same query (if any)
+        # ✅ FIXED: Proper filtering and deduplication
+        primary_term = primary.get("element", "").lower()
+        main_words = primary_term.split()[:2]  # Get first 2 words, e.g., ["reactive", "power"]
+        
+        seen_citations = {citation}  # ✅ Don't duplicate primary
         other_results = []
+        
         for c in candidates[1:10]:
             if not c.get("definition"):
                 continue
-
-            # Check language match
+            
+            candidate_citation = self._extract_citation(c, fallback="unknown")
+            
+            # ✅ Skip duplicates by citation
+            if candidate_citation in seen_citations:
+                continue
+            
+            candidate_term = c.get("element", "").lower()
+            
+            # ✅ Check if related to main query term
+            is_related = any(word in candidate_term for word in main_words if len(word) > 3)
+            
+            if not is_related:
+                continue
+            
+            # ✅ Check language match
             candidate_text = c.get("element", "") + " " + c.get("definition", "")
             candidate_lang = await self._detect_language_with_llm(candidate_text)
-
-            if candidate_lang == query_language or candidate_lang == "unknown":
-                other_results.append(c)
-
-            if len(other_results) >= 3:
+            
+            if candidate_lang != query_language and candidate_lang != "unknown":
+                continue
+            
+            # ✅ Add to results
+            other_results.append(c)
+            seen_citations.add(candidate_citation)
+            
+            if len(other_results) >= 2:  # ✅ Limit to 2
                 break
 
         if other_results:
