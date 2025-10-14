@@ -10,8 +10,8 @@ An intelligent AI assistant designed for enterprise architecture consulting in t
 - **Knowledge Graph Integration** - 39,000+ energy domain triples with IEC standards
 - **Citation Validation** - Grounded responses with authentic source verification
 - **Real-time Web Interface** - Interactive chat with trace visualization
-- **TOGAF Methodology** - Enterprise architecture framework integration
-- **Multilingual Support** - English and Dutch language detection
+- **TOGAF Methodology** - Enterprise architecture framework integration (tbc)
+- **Multilingual Support** - English and Dutch language detection (tbc)
 
 ## 🚀 Installation on Your Computer
 
@@ -67,8 +67,8 @@ OPENAI_MODEL=gpt-5
 **For Groq (Recommended):**
 1. Go to [https://console.groq.com](https://console.groq.com)
 2. Sign up for free
-3. Go to API Keys section
-4. Create new API key
+3. Go to the API Keys section
+4. Create a new API key
 5. Copy it to your `.env` file
 
 **For OpenAI (Optional):**
@@ -87,19 +87,17 @@ That's it! Open your browser to [http://localhost:8000](http://localhost:8000)
 ## 💬 How to Use
 
 1. **Open your web browser** to http://localhost:8000
-2. **Ask questions** about energy systems, enterprise architecture, or electrical engineering
-3. **Get cited responses** with authentic sources
+2. **Ask questions** about definitions that exist in the current vocab.alliander (more to come)
+3. **Get cited responses** with references from the corresponding section from vocab.alliander
 4. **View processing trace** to see how the AI works
 
 **Example questions:**
-- "What is reactive power in electrical systems?"
-- "How do I model a transformer in ArchiMate?"
-- "Explain the IEC 61968 standard"
-- "What are the TOGAF phases for energy architecture?"
+- "What is reactive power?"
+- "What is an asset in Alliander context?
 
 ## 🔧 Configuration Options
 
-Edit your `.env` file to customize:
+Edit your `.env` file to customise:
 
 ```env
 # Choose your AI provider
@@ -171,13 +169,10 @@ AInsteinDSO/
 
 ## 🤝 Need Help?
 
-- **Check the logs** - Look at the terminal output for error messages
+- **Check the logs** - Look at the terminal output for error messages and debug functionality in split screen
 - **Verify your setup** - Make sure Python 3.11+, API keys are correct
-- **Try simple test** - Run `python cli.py` first to test basic functionality
-- **Open an issue** - Report problems on GitHub
+- **Try simple test** - Run `python cli.py` first to create/test basic functionality
 
 ---
 
 **Built for Enterprise Architecture in Energy Systems**
-
-*Simple Python installation - no Docker needed!*
