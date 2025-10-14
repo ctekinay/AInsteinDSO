@@ -152,7 +152,7 @@ python run_web_demo.py --port 8001
 
 Run this to test everything works:
 ```bash
-python test_integration.py
+python test_conversation.py
 ```
 
 ## 📁 Project Structure
