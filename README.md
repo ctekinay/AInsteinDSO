@@ -2,62 +2,33 @@
 
 **Advanced Enterprise Architecture AI Assistant for Energy Systems**
 
-An intelligent AI assistant designed specifically for enterprise architecture consulting in the energy sector, featuring multi-LLM architecture, comprehensive knowledge graphs, and real-time web interface.
+An intelligent AI assistant designed for enterprise architecture consulting in the energy sector, featuring multi-LLM architecture, comprehensive knowledge graphs, and real-time web interface.
 
 ## 🌟 Features
 
-### Core Capabilities
 - **Multi-LLM Architecture** - Groq integration with Llama 3.3, Qwen 3, Kimi K2 models
 - **Knowledge Graph Integration** - 39,000+ energy domain triples with IEC standards
 - **Citation Validation** - Grounded responses with authentic source verification
 - **Real-time Web Interface** - Interactive chat with trace visualization
-- **Session Management** - Conversation tracking and context maintenance
 - **TOGAF Methodology** - Enterprise architecture framework integration
 - **Multilingual Support** - English and Dutch language detection
 
-### Technical Features
-- **LLM Council Architecture** - Dual validation for enhanced accuracy
-- **ArchiMate Model Support** - IEC 61968 and enterprise architecture models
-- **Comprehensive Testing** - Unit, integration, and performance testing
-- **Production-Ready** - Security-compliant configuration and deployment
-- **Async Architecture** - High-performance async/await patterns
-- **Monitoring & Tracing** - Complete pipeline observability
-
-## 🏗️ Architecture
-
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Web Interface │────│  EA Assistant    │────│  Knowledge Graph│
-│   (FastAPI)     │    │  (Multi-LLM)     │    │  (39K+ triples) │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-         │                       │                       │
-         │              ┌────────┴────────┐             │
-         │              │   LLM Council   │             │
-         │              │ (Dual Validation)│            │
-         │              └─────────────────┘             │
-         │                       │                       │
-    ┌────┴─────┐        ┌───────┴────────┐       ┌─────┴──────┐
-    │ Session  │        │ Citation       │       │ ArchiMate  │
-    │ Manager  │        │ Validator      │       │ Models     │
-    └──────────┘        └────────────────┘       └────────────┘
-```
-
-## 🚀 Quick Start
+## 🚀 Installation on Your Computer
 
 ### Prerequisites
 
-- **Python 3.11+** (recommended 3.11 or 3.12)
-- **Git** for repository management
-- **API Keys** for LLM providers (Groq recommended)
+- **Python 3.11+** (Python 3.11 or 3.12 recommended)
+- **Git**
+- **API Keys** (Groq and/or OpenAI)
 
-### 1. Clone the Repository
+### Step 1: Download the Project
 
 ```bash
 git clone https://github.com/ctekinay/AInsteinDSO.git
 cd AInsteinDSO
 ```
 
-### 2. Set Up Python Environment
+### Step 2: Set Up Python Environment
 
 ```bash
 # Create virtual environment
@@ -69,408 +40,144 @@ venv\Scripts\activate
 # On macOS/Linux:
 source venv/bin/activate
 
-# Install dependencies
+# Install required packages
 pip install -r requirements.txt
 ```
 
-**Alternative with Poetry (recommended):**
+### Step 3: Configure API Keys
 
+Copy the example configuration file:
 ```bash
-# Install Poetry if not already installed
-curl -sSL https://install.python-poetry.org | python3 -
-
-# Install dependencies
-poetry install
-
-# Activate virtual environment
-poetry shell
-```
-
-### 3. Configure Environment
-
-```bash
-# Copy example environment file
 cp .env.example .env
-
-# Edit .env file with your configuration
-nano .env  # or your preferred editor
 ```
 
-**Required Configuration (.env file):**
-
+Edit the `.env` file with your API keys:
 ```env
-# LLM Provider Configuration
+# Primary provider - Groq (recommended, fast and free tier available)
 LLM_PROVIDER=groq
-
-# Groq Configuration (Recommended)
 GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-GROQ_MODEL_PRIMARY=llama-3.3-70b-versatile
-GROQ_MODEL_VALIDATOR=qwen/qwen3-32b
-GROQ_MAX_TOKENS=4096
-GROQ_TEMPERATURE=0.3
-GROQ_TIMEOUT=30
-GROQ_RETRIES=3
 
-# Optional: OpenAI Fallback
+# Optional - OpenAI (backup)
 OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4
-
-# Performance Settings
-LLM_FALLBACK_ENABLED=true
-EA_LOG_LEVEL=INFO
+OPENAI_MODEL=gpt-5
 ```
 
-### 4. Get API Keys
+### Step 4: Get Your API Keys
 
-#### Groq (Recommended - Fast & Cost-effective)
-1. Visit [https://console.groq.com](https://console.groq.com)
-2. Sign up for a free account
-3. Navigate to API Keys section
-4. Generate a new API key
-5. Copy the key to your `.env` file
+**For Groq (Recommended):**
+1. Go to [https://console.groq.com](https://console.groq.com)
+2. Sign up for free
+3. Go to API Keys section
+4. Create new API key
+5. Copy it to your `.env` file
 
-#### OpenAI (Optional Fallback)
-1. Visit [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. Create an API key
-3. Add to `.env` file for fallback support
+**For OpenAI (Optional):**
+1. Go to [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+2. Create API key
+3. Copy it to your `.env` file
 
-### 5. Launch the Application
+### Step 5: Start the Application
 
 ```bash
-# Start the web interface
 python run_web_demo.py
-
-# Or using the CLI
-python cli.py
 ```
 
-The web interface will be available at:
-- **Main Interface:** http://localhost:8000
-- **API Documentation:** http://localhost:8000/api/docs
-- **Health Check:** http://localhost:8000/health
+That's it! Open your browser to [http://localhost:8000](http://localhost:8000)
 
-## 📖 Usage Guide
+## 💬 How to Use
 
-### Web Interface
+1. **Open your web browser** to http://localhost:8000
+2. **Ask questions** about energy systems, enterprise architecture, or electrical engineering
+3. **Get cited responses** with authentic sources
+4. **View processing trace** to see how the AI works
 
-1. **Open Browser** - Navigate to http://localhost:8000
-2. **Start Chatting** - Ask energy architecture questions
-3. **View Citations** - See authentic source references
-4. **Trace Pipeline** - Monitor processing steps in real-time
-
-**Example Queries:**
-```
-"What is reactive power in electrical systems?"
-"How do I model a transformer in ArchiMate?"
-"Explain the IEC 61968 standard for grid management"
-"What are the TOGAF phases for energy architecture?"
-```
-
-### Command Line Interface
-
-```bash
-# Interactive CLI mode
-python cli.py
-
-# Single query
-python cli.py --query "What is active power?"
-
-# Specify model
-python cli.py --model llama-3.3-70b-versatile --query "Explain grid topology"
-```
-
-### Integration Testing
-
-```bash
-# Run comprehensive tests
-python test_integration.py
-
-# Test conversation flow
-python test_conversation.py
-
-# Performance testing
-pytest tests/integration/ -v
-```
+**Example questions:**
+- "What is reactive power in electrical systems?"
+- "How do I model a transformer in ArchiMate?"
+- "Explain the IEC 61968 standard"
+- "What are the TOGAF phases for energy architecture?"
 
 ## 🔧 Configuration Options
 
-### LLM Providers
-
-**Groq (Recommended)**
-- Fast inference with open-source models
-- Cost-effective for production use
-- Supports Llama 3.3, Qwen 3, Mixtral models
-
-**OpenAI**
-- High-quality responses with GPT models
-- Good fallback option
-- Higher cost per token
-
-**Ollama (Local)**
-- Run models locally for privacy
-- No API costs
-- Requires powerful hardware
-
-### Model Selection
-
-| Model | Provider | Best For | Context Window |
-|-------|----------|----------|----------------|
-| `llama-3.3-70b-versatile` | Groq | General EA consulting | 131K |
-| `qwen/qwen3-32b` | Groq | Technical validation | 131K |
-| `moonshotai/kimi-k2-instruct` | Groq | Complex reasoning | 131K |
-| `gpt-4` | OpenAI | High-quality responses | 128K |
-| `mistral` | Ollama | Local deployment | 32K |
-
-### Performance Tuning
+Edit your `.env` file to customize:
 
 ```env
-# Adjust these settings in .env for optimal performance
+# Choose your AI provider
+LLM_PROVIDER=groq              # or: openai, ollama
 
-# Response quality vs speed
-GROQ_TEMPERATURE=0.3      # Lower = more focused
-GROQ_MAX_TOKENS=4096      # Longer responses
+# Groq settings (fast, cost-effective)
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_TEMPERATURE=0.3           # 0.0 = focused, 1.0 = creative
 
-# Reliability
-GROQ_RETRIES=3            # Auto-retry on failures
-GROQ_TIMEOUT=30           # Request timeout (seconds)
+# OpenAI settings (high quality)
+OPENAI_MODEL=gpt-5
+OPENAI_TEMPERATURE=0.3
 
-# Features
-LLM_FALLBACK_ENABLED=true # Auto-fallback to backup provider
-EA_LOG_LEVEL=INFO         # Logging detail (DEBUG/INFO/WARNING)
+# Performance
+EA_LOG_LEVEL=INFO              # DEBUG for detailed logs
 ```
 
-## 🧪 Testing
+## 🐛 Common Issues & Solutions
 
-### Run All Tests
-
+**"Module not found" errors:**
 ```bash
-# Unit tests
-pytest tests/unit/ -v
+# Make sure you activated the virtual environment
+source venv/bin/activate  # macOS/Linux
+# or
+venv\Scripts\activate     # Windows
 
-# Integration tests
-pytest tests/integration/ -v
-
-# Full test suite
-pytest -v
-
-# With coverage
-pytest --cov=src tests/ --cov-report=html
+# Then reinstall
+pip install -r requirements.txt
 ```
 
-### Test Specific Components
+**"API key invalid" errors:**
+- Check your `.env` file has the correct API keys
+- Make sure there are no extra spaces or quotes
+- Verify the API key is active on the provider's website
 
+**"Port 8000 already in use":**
 ```bash
-# Test knowledge graph integration
-python -m pytest tests/unit/test_kg_loader.py
-
-# Test grounding and citations
-python -m pytest tests/integration/test_grounding.py
-
-# Test LLM providers
-python -m pytest tests/unit/test_llm_providers.py
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**1. API Key Errors**
-```
-Error: Invalid API key
-```
-**Solution:** Verify your API keys in `.env` file and ensure they're active.
-
-**2. Knowledge Graph Loading**
-```
-Error: Failed to load knowledge graph
-```
-**Solution:** Check that `data/energy_knowledge_graph.ttl` exists and is readable.
-
-**3. Port Already in Use**
-```
-Error: Port 8000 is already in use
-```
-**Solution:**
-```bash
-# Use different port
+# Kill existing process
+lsof -ti:8000 | xargs kill -9  # macOS/Linux
+# or use a different port
 python run_web_demo.py --port 8001
-
-# Or kill existing process
-lsof -ti:8000 | xargs kill -9
 ```
 
-**4. Memory Issues with Large Models**
-```
-Error: Out of memory
-```
-**Solution:** Switch to smaller models or increase system memory.
+**Slow responses:**
+- Switch to `llama-3.1-8b-instant` in your `.env` for faster responses
+- Check your internet connection
+- Try lowering `GROQ_MAX_TOKENS` to 512
 
-### Debug Mode
+## 🧪 Testing the Installation
 
+Run this to test everything works:
 ```bash
-# Enable debug logging
-export EA_LOG_LEVEL=DEBUG
-python run_web_demo.py
-
-# Run diagnostics
-python tests/integration/archive/diagnose.py
+python test_integration.py
 ```
 
-### Performance Issues
+## 📁 Project Structure
 
-**Slow Responses:**
-- Switch to `llama-3.1-8b-instant` for faster responses
-- Reduce `GROQ_MAX_TOKENS` in `.env`
-- Check internet connection for API calls
-
-**High Memory Usage:**
-- Restart the application periodically
-- Use smaller knowledge graph subsets for testing
-- Monitor with `htop` or Task Manager
-
-## 🚀 Production Deployment
-
-### Docker Deployment
-
-```bash
-# Build Docker image
-docker build -t ainstein-assistant .
-
-# Run container
-docker run -p 8000:8000 --env-file .env ainstein-assistant
+```
+AInsteinDSO/
+├── src/                    # Main application code
+├── data/                   # Knowledge graphs and models
+├── config/                 # Configuration files
+├── tests/                  # Test files
+├── run_web_demo.py         # Start the web interface
+├── cli.py                  # Command line interface
+├── .env                    # Your API keys (create this)
+└── requirements.txt        # Python packages needed
 ```
 
-### Cloud Deployment
+## 🤝 Need Help?
 
-**Recommended Platforms:**
-- **AWS EC2** - Full control, cost-effective
-- **Google Cloud Run** - Serverless, auto-scaling
-- **Heroku** - Simple deployment
-- **DigitalOcean App Platform** - Managed hosting
-
-**Resource Requirements:**
-- **CPU:** 2+ cores recommended
-- **RAM:** 4GB minimum, 8GB recommended
-- **Storage:** 2GB for application + models
-- **Network:** Stable internet for API calls
-
-### Environment Variables for Production
-
-```env
-# Production settings
-EA_LOG_LEVEL=WARNING
-LLM_FALLBACK_ENABLED=true
-GROQ_TIMEOUT=60
-GROQ_RETRIES=5
-
-# Security
-ALLOWED_HOSTS=your-domain.com,www.your-domain.com
-SECRET_KEY=your-secret-key-here
-
-# Database (if using persistent sessions)
-DATABASE_URL=postgresql://user:pass@host:5432/dbname
-```
-
-## 📚 API Documentation
-
-### REST API Endpoints
-
-**Health Check**
-```http
-GET /health
-```
-
-**Get Statistics**
-```http
-GET /api/stats
-```
-
-**Export Conversation**
-```http
-POST /api/export/{session_id}?format=markdown
-```
-
-### WebSocket API
-
-**Connect to Chat**
-```javascript
-const ws = new WebSocket('ws://localhost:8000/ws/session-123');
-ws.send(JSON.stringify({
-    "message": "What is reactive power?"
-}));
-```
-
-**Response Format**
-```json
-{
-    "type": "assistant",
-    "content": "Response text...",
-    "confidence": 0.85,
-    "citations": ["eurlex:631-28"],
-    "requires_human_review": false,
-    "processing_time_ms": 1250
-}
-```
-
-## 🤝 Contributing
-
-### Development Setup
-
-```bash
-# Clone repository
-git clone https://github.com/ctekinay/AInsteinDSO.git
-cd AInsteinDSO
-
-# Install development dependencies
-poetry install --with dev
-
-# Install pre-commit hooks
-pre-commit install
-
-# Run tests
-pytest tests/
-```
-
-### Code Standards
-
-- **Python 3.11+** with type hints
-- **Black** for code formatting
-- **pytest** for testing
-- **Comprehensive docstrings**
-- **Async/await patterns** for I/O operations
-
-### Adding New Features
-
-1. **Create feature branch** - `git checkout -b feature/new-feature`
-2. **Add tests** - Write tests first (TDD approach)
-3. **Implement feature** - Follow existing patterns
-4. **Update documentation** - Include usage examples
-5. **Submit PR** - Include test results and documentation
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Alliander** - Energy sector domain expertise
-- **Groq** - Fast LLM inference platform
-- **Meta** - Llama model family
-- **IEC Standards** - International energy standards
-- **TOGAF** - Enterprise architecture methodology
-- **ArchiMate** - Architecture modeling language
-
-## 📧 Support
-
-For issues, questions, or contributions:
-
-- **GitHub Issues:** [Report bugs or request features](https://github.com/ctekinay/AInsteinDSO/issues)
-- **Documentation:** This README and inline code documentation
-- **Community:** Check existing issues and discussions
+- **Check the logs** - Look at the terminal output for error messages
+- **Verify your setup** - Make sure Python 3.11+, API keys are correct
+- **Try simple test** - Run `python cli.py` first to test basic functionality
+- **Open an issue** - Report problems on GitHub
 
 ---
 
-**Built with ❤️ for Enterprise Architecture in Energy Systems**
+**Built for Enterprise Architecture in Energy Systems**
 
-*AInstein AI Assistant - Intelligent, Grounded, Production-Ready*
+*Simple Python installation - no Docker needed!*
