@@ -1,0 +1,72 @@
+{
+  "routing_terms": {
+    "iec_energy": [
+      "ActivePower",
+      "ReactivePower",
+      "Equipment",
+      "Conductor",
+      "Breaker",
+      "Transformer",
+      "IEC 61968",
+      "IEC 61970",
+      "CIM",
+      "GridCongestion",
+      "DistributionSystem",
+      "EnergyMeter",
+      "PowerFlow",
+      "LoadProfile",
+      "VoltageLevel",
+      "Substation",
+      "reactive",
+      "active",
+      "power",
+      "grid",
+      "congestion",
+      "substation",
+      "transformer",
+      "equipment",
+      "distribution",
+      "energy",
+      "electrical",
+      "voltage",
+      "current",
+      "asset",
+      "assets"
+    ],
+    "togaf_archimate": [
+      "Actor",
+      "Role",
+      "Process",
+      "Service",
+      "Capability",
+      "Component",
+      "Interface",
+      "Node",
+      "Device",
+      "SystemSoftware",
+      "BusinessArchitecture",
+      "ApplicationArchitecture",
+      "TechnologyArchitecture",
+      "PhaseA",
+      "PhaseB",
+      "PhaseC",
+      "PhaseD",
+      "ADM"
+    ]
+  },
+  "citation_prefixes": [
+    "archi:id-",
+    "skos:",
+    "iec:",
+    "togaf:adm:",
+    "entsoe:",
+    "lido:"
+  ],
+  "quality_gates": {
+    "grounding_failures": 0,
+    "top1_accuracy_min": 0.8,
+    "abstention_rate_min": 0.15,
+    "confidence_threshold": 0.75,
+    "irrelevant_items_max": 0.18
+  }
+}

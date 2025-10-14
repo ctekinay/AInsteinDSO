@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AInstein - AI Architecture Assistant</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🤖%3C/text%3E%3C/svg%3E">
+
+    <style>
+        :root {
+            --alliander-green: #6DB33F;
+            --alliander-orange: #FF6B35;
+            --alliander-dark-green: #5A9A34;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            --primary-blue: #3b82f6;
+            --hover-bg: #f8fafc;
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --error-red: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 1.4rem;
+            border-bottom: 1px solid var(--border-light);
+            background: var(--bg-primary);
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alliander-logo {
+            width: 85px;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        .app-title {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .app-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .app-subtitle {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.7rem;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            font-size: 0.6rem;
+            color: var(--success-green);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success-green);
+            border-radius: 50%;
+        }
+
+        .status-dot.offline {
+            background: var(--error-red);
+        }
+
+        /* UPDATED: Main content layout */
+        .main-content {
+            flex: 1;
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* UPDATED: Chat area takes full width */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0 2rem;
+            padding-bottom: 140px;
+        }
+
+        /* UPDATED: Debug panel as sidebar overlay */
+        .debug-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border-light);
+            box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .debug-sidebar.visible {
+            right: 0;
+        }
+
+        .debug-sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+        }
+
+        .debug-sidebar-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        .debug-close-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .debug-close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .debug-sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .welcome-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 2rem;
+        }
+
+        .welcome-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-description {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.4;
+            margin-bottom: 1.2rem;
+        }
+
+        .sample-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 0.7rem;
+        }
+
+        .question-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            padding: 0.6rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .question-item:hover {
+            background: var(--bg-secondary);
+            border-color: var(--primary-blue);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-complexity {
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            margin-bottom: 0.15rem;
+            font-weight: 500;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.7rem 0;
+            display: none;
+        }
+
+        .messages-container.visible {
+            display: block;
+        }
+
+        .message-wrapper {
+            position: relative;
+            display: flex;
+            gap: 0.7rem;
+            margin-bottom: 1.2rem;
+            align-items: flex-start;
+            max-width: 900px;
+            padding-right: 40px;
+        }
+
+        .message-wrapper.user {
+            flex-direction: row-reverse;
+            padding-right: 0;
+            padding-left: 40px;
+            margin-left: auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .message-avatar svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .message.user .message-avatar {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .message.assistant .message-avatar {
+            background: var(--alliander-green);
+            color: white;
+        }
+
+        .message-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 11px;
+            padding: 0.8rem 1rem;
+            flex: 1;
+            font-size: 0.7rem;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .message-content strong {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .message-content ul,
+        .message-content ol {
+            margin: 0.6rem 0;
+            padding-left: 1.8rem;
+        }
+
+        .message-content li {
+            margin: 0.4rem 0;
+            line-height: 1.6;
+        }
+
+        .message-content hr {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: 1rem 0;
+        }
+
+        .message-content code {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.65rem;
+            color: var(--primary-blue);
+        }
+
+        .message-content p {
+            margin: 0.6rem 0;
+        }
+
+        .message-content p:first-child {
+            margin-top: 0;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message.user .message-content {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .copy-message-btn {
+            position: absolute;
+            top: 0.7rem;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            cursor: pointer;
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .message-wrapper.user .copy-message-btn {
+            right: auto;
+            left: 0;
+        }
+
+        .copy-message-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .copy-message-btn.copied {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+
+        .message-wrapper:hover .copy-message-btn {
+            opacity: 1;
+        }
+
+        .copy-message-btn svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+            font-size: 0.55rem;
+            color: var(--text-muted);
+        }
+
+        .confidence-badge {
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-size: 0.55rem;
+            font-weight: 500;
+        }
+
+        .confidence-high { background: rgba(16, 185, 129, 0.1); color: var(--success-green); }
+        .confidence-medium { background: rgba(245, 158, 11, 0.1); color: var(--warning-amber); }
+        .confidence-low { background: rgba(239, 68, 68, 0.1); color: var(--error-red); }
+
+        .citations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.4rem;
+        }
+
+        .citation {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.55rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .citation:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* ========== DEBUG PANEL STYLES ========== */
+        .debug-toggle-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border-medium);
+            background: var(--bg-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .debug-toggle-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .debug-toggle-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .debug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .debug-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.7rem;
+        }
+
+        .debug-timing {
+            color: var(--text-muted);
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.6rem;
+        }
+
+        .phase-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .phase-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            padding: 0.6rem;
+            transition: all 0.2s ease;
+        }
+
+        .phase-item:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 1px 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .phase-item.expandable {
+            cursor: pointer;
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .phase-name {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex: 1;
+        }
+
+        .phase-icon {
+            font-size: 0.8rem;
+        }
+
+        .phase-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.65rem;
+        }
+
+        .phase-status {
+            padding: 0.15rem 0.35rem;
+            border-radius: 6px;
+            font-size: 0.55rem;
+            font-weight: 500;
+        }
+
+        .phase-status.completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .phase-status.failed {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-red);
+        }
+
+        .phase-duration {
+            font-family: 'Monaco', 'Consolas', monospace;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+        }
+
+        .phase-details {
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid var(--border-light);
+            display: none;
+        }
+
+        .phase-item.expanded .phase-details {
+            display: block;
+        }
+
+        .phase-expand-icon {
+            transition: transform 0.2s ease;
+            color: var(--text-muted);
+        }
+
+        .phase-item.expanded .phase-expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+            font-size: 0.6rem;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Consolas', monospace;
+            max-width: 60%;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .substeps-list {
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border-light);
+        }
+
+        .substep-item {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: start;
+            gap: 0.3rem;
+        }
+
+        .substep-icon {
+            color: var(--alliander-green);
+            margin-top: 0.1rem;
+        }
+
+        .citation-pool-preview {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            padding: 0.4rem;
+            margin-top: 0.4rem;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .citation-pool-item {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.55rem;
+            color: var(--primary-blue);
+            margin-bottom: 0.2rem;
+        }
+
+        /* ========== UPDATED: Input section with more height ========== */
+        .input-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-primary);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-end;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        /* UPDATED: Taller textarea */
+        .message-input {
+            width: 100%;
+            min-height: 80px;
+            max-height: 200px;
+            padding: 0.7rem 0.9rem;
+            border: 1px solid var(--border-medium);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+            font-family: inherit;
+            overflow-y: auto;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .message-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: #2563eb;
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.35rem;
+            align-items: center;
+        }
+
+        .control-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border-medium);
+            background: var(--bg-primary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .control-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .control-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--border-medium);
+        }
+
+        .chat-background {
+            background: #fafbfc;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.15rem;
+            padding: 0.7rem;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .header { padding: 0.7rem; }
+            .chat-area { padding: 0 1rem; padding-bottom: 140px; }
+            .input-section { padding: 1rem; }
+            .welcome-section { padding: 1.4rem 0.7rem; }
+            .message-content { max-width: 85%; }
+            .debug-sidebar { width: 100%; right: -100%; }
+        }
+    </style>
+</head>
+<body>
+    <div style="border-bottom: 1px solid var(--border-light); background: var(--bg-primary);">
+        <header class="header">
+            <div class="logo-section">
+                <img src="/static/alliander_logo.jpeg" alt="Alliander" class="alliander-logo">
+                <div class="app-title">
+                    <h1 class="app-name">AInstein</h1>
+                    <p class="app-subtitle">AI Architecture Assistant</p>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="connection-status">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Connected</span>
+                </div>
+                <button class="debug-toggle-btn" id="debugToggle" title="Toggle Debug Panel">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20,8H17.19C16.74,7.2 16.12,6.5 15.37,6L17,4.41L15.59,3L13.42,5.17C12.96,5.06 12.49,5 12,5C11.51,5 11.04,5.06 10.59,5.17L8.41,3L7,4.41L8.62,6C7.87,6.5 7.26,7.21 6.81,8H4V10H6.09C6.03,10.33 6,10.66 6,11V12H4V14H6V15C6,15.34 6.03,15.67 6.09,16H4V18H6.81C8.47,20.87 12.14,21.84 15,20.18C15.91,19.66 16.67,18.9 17.19,18H20V16H17.91C17.97,15.67 18,15.34 18,15V14H20V12H18V11C18,10.66 17.97,10.33 17.91,10H20V8M16,15A4,4 0 0,1 12,19A4,4 0 0,1 8,15V11A4,4 0 0,1 12,7A4,4 0 0,1 16,11V15M14,10V12H10V10H14M10,14H14V16H10V14Z"/>
+                    </svg>
+                </button>
+                <button class="control-btn" id="exportBtn" title="Export Chat">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+    </div>
+
+    <div class="main-content">
+        <div class="chat-area">
+            <div class="welcome-section" id="welcomeSection">
+                <h2 class="welcome-title">Welcome to AInstein</h2>
+                <p class="welcome-description">
+                    Your AI-powered architecture assistant that streamlines ESA workflows.
+                    I evaluate initiatives, analyze cross-layer impact, identify stakeholders,
+                    update ArchiMate models, and generate ADRs to maintain organizational
+                    alignment and transparency.
+                </p>
+
+                <div class="sample-questions">
+                    <div class="question-item" onclick="fillPrompt('What is an asset in Alliander terms?')">
+                        <div class="question-complexity">BASIC</div>
+                        What is an asset in Alliander terms?
+                    </div>
+                    <div class="question-item" onclick="fillPrompt('What capability should I use for grid congestion management?')">
+                        <div class="question-complexity">INTERMEDIATE</div>
+                        What capability should I use for grid congestion management?
+                    </div>
+                    <div class="question-item" onclick="fillPrompt('How do I model SCADA systems in ArchiMate with proper layer alignment?')">
+                        <div class="question-complexity">ADVANCED</div>
+                        How do I model SCADA systems in ArchiMate with proper layer alignment?
+                    </div>
+                    <div class="question-item" onclick="fillPrompt('Generate a comprehensive ADR for implementing microservices architecture in energy management systems, including cross-layer impact analysis and stakeholder alignment strategies.')">
+                        <div class="question-complexity">EXPERT</div>
+                        Generate a comprehensive ADR for implementing microservices architecture in energy management systems, including cross-layer impact analysis and stakeholder alignment strategies.
+                    </div>
+                </div>
+            </div>
+
+            <div class="messages-container chat-background" id="messagesContainer">
+                <div id="messages"></div>
+            </div>
+        </div>
+
+        <!-- Debug Sidebar (slides in from right) -->
+        <div class="debug-sidebar" id="debugSidebar">
+            <div class="debug-sidebar-header">
+                <span class="debug-sidebar-title">🔍 Pipeline Debug Trace</span>
+                <button class="debug-close-btn" id="debugClose">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="debug-sidebar-content" id="debugContent">
+                <p style="color: var(--text-muted); font-size: 0.7rem; text-align: center; padding: 2rem;">
+                    Send a query to see pipeline trace...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <section class="input-section">
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea
+                    id="messageInput"
+                    class="message-input"
+                    placeholder="Ask me about ArchiMate models, architectural decisions, or energy systems..."
+                    rows="3"
+                ></textarea>
+            </div>
+            <button id="sendButton" class="send-button">➤</button>
+        </div>
+    </section>
+
+    <script>
+        let websocket = null;
+        let sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+        let isConnected = false;
+        let chatStarted = false;
+        let debugMode = false;
+        let messageTraces = new Map();
+        let currentTraceIndex = 0;
+
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messagesDiv = document.getElementById('messages');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const welcomeSection = document.getElementById('welcomeSection');
+        const exportBtn = document.getElementById('exportBtn');
+        const debugToggle = document.getElementById('debugToggle');
+        const debugSidebar = document.getElementById('debugSidebar');
+        const debugClose = document.getElementById('debugClose');
+        const debugContent = document.getElementById('debugContent');
+
+        init();
+
+        function init() {
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            exportBtn.addEventListener('click', () => console.log('Export'));
+            
+            debugToggle.addEventListener('click', () => {
+                debugMode = !debugMode;
+                debugToggle.classList.toggle('active', debugMode);
+                debugSidebar.classList.toggle('visible', debugMode);
+                
+                // Show latest trace if available
+                if (debugMode && messageTraces.size > 0) {
+                    const latestTrace = Array.from(messageTraces.values()).pop();
+                    updateDebugSidebar(latestTrace);
+                }
+            });
+
+            debugClose.addEventListener('click', () => {
+                debugMode = false;
+                debugToggle.classList.remove('active');
+                debugSidebar.classList.remove('visible');
+            });
+            
+            connectWebSocket();
+        }
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws/${sessionId}`;
+            websocket = new WebSocket(wsUrl);
+
+            websocket.onopen = () => {
+                isConnected = true;
+                statusDot.classList.remove('offline');
+                statusText.textContent = 'Connected';
+                sendButton.disabled = false;
+            };
+
+            websocket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                
+                if (message.type === 'trace') {
+                    handleTraceMessage(message);
+                } else if (message.type === 'typing') {
+                    showTypingIndicator();
+                } else {
+                    hideTypingIndicator();
+                    addMessage(message);
+                }
+            };
+
+            websocket.onclose = () => {
+                isConnected = false;
+                statusDot.classList.add('offline');
+                statusText.textContent = 'Disconnected';
+                sendButton.disabled = true;
+                setTimeout(connectWebSocket, 3000);
+            };
+
+            websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        function fillPrompt(text) {
+            messageInput.value = text;
+            messageInput.focus();
+        }
+
+        function startChat() {
+            if (!chatStarted) {
+                chatStarted = true;
+                welcomeSection.style.display = 'none';
+                messagesContainer.classList.add('visible');
+            }
+        }
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message || !isConnected) return;
+
+            startChat();
+            addMessage({
+                type: 'user',
+                content: message,
+                timestamp: new Date().toISOString()
+            });
+
+            websocket.send(JSON.stringify({
+                message: message,
+                session_id: sessionId
+            }));
+
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+        }
+
+        function handleTraceMessage(message) {
+            const trace = message.trace;
+            if (!trace) return;
+            
+            messageTraces.set(currentTraceIndex++, trace);
+            
+            // Update sidebar if debug mode is on
+            if (debugMode) {
+                updateDebugSidebar(trace);
+            }
+        }
+
+        function updateDebugSidebar(trace) {
+            debugContent.innerHTML = createDebugPanelContent(trace);
+            
+            // Attach expand handlers
+            debugContent.querySelectorAll('.phase-item.expandable').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (e.target.closest('.phase-header')) {
+                        item.classList.toggle('expanded');
+                    }
+                });
+            });
+        }
+
+        function createDebugPanelContent(trace) {
+            const phases = trace.phases || [];
+            
+            let html = `
+                <div class="debug-header">
+                    <span class="debug-title">Pipeline Execution</span>
+                    <span class="debug-timing">Total: ${Math.round(trace.total_duration_ms || 0)}ms</span>
+                </div>
+                <div class="phase-timeline">
+            `;
+            
+            phases.forEach((phase, index) => {
+                const hasDetails = phase.details && Object.keys(phase.details).length > 0;
+                const hasSubsteps = phase.sub_steps && phase.sub_steps.length > 0;
+                const isExpandable = hasDetails || hasSubsteps;
+                
+                html += `
+                    <div class="phase-item ${isExpandable ? 'expandable' : ''}">
+                        <div class="phase-header">
+                            <div class="phase-name">
+                                <span class="phase-icon">${getPhaseIcon(phase.name)}</span>
+                                <span class="phase-label">${phase.name}</span>
+                                ${isExpandable ? '<span class="phase-expand-icon">▶</span>' : ''}
+                            </div>
+                            <span class="phase-status ${phase.status}">${phase.status}</span>
+                            <span class="phase-duration">${Math.round(phase.duration_ms || 0)}ms</span>
+                        </div>
+                `;
+                
+                if (isExpandable) {
+                    html += '<div class="phase-details">';
+                    
+                    if (hasDetails) {
+                        html += formatPhaseDetails(phase.name, phase.details);
+                    }
+                    
+                    if (hasSubsteps) {
+                        html += '<div class="substeps-list">';
+                        phase.sub_steps.forEach(substep => {
+                            const result = substep.result !== null && substep.result !== undefined 
+                                ? `: ${formatSubstepResult(substep.result)}` 
+                                : '';
+                            html += `
+                                <div class="substep-item">
+                                    <span class="substep-icon">✓</span>
+                                    <span>${substep.description}${result}</span>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        function getPhaseIcon(phaseName) {
+            const icons = {
+                'INITIALIZATION': '🚀',
+                'REFLECT': '🤔',
+                'ROUTE': '🧭',
+                'RETRIEVE': '📚',
+                'BUILD_CITATION_POOL': '🎯',
+                'REFINE': '✨',
+                'GROUND': '🔒',
+                'CRITIC': '🎓',
+                'VALIDATE_TOGAF': '✅',
+                'RESPONSE_ASSEMBLY': '📦'
+            };
+            return icons[phaseName] || '⚡';
+        }
+
+        function formatPhaseDetails(phaseName, details) {
+            let html = '';
+            
+            if (phaseName === 'BUILD_CITATION_POOL' && details.sample_citations) {
+                html += `
+                    <div class="detail-row">
+                        <span class="detail-label">Pool Size:</span>
+                        <span class="detail-value">${details.citation_pool_size || 0}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sources:</span>
+                        <span class="detail-value">${(details.citation_sources || []).join(', ')}</span>
+                    </div>
+                `;
+                
+                if (details.sample_citations && details.sample_citations.length > 0) {
+                    html += '<div class="citation-pool-preview">';
+                    details.sample_citations.slice(0, 5).forEach(cit => {
+                        html += `<div class="citation-pool-item">${cit}</div>`;
+                    });
+                    html += '</div>';
+                }
+            } else if (phaseName === 'RETRIEVE') {
+                html += `
+                    <div class="detail-row">
+                        <span class="detail-label">Total Candidates:</span>
+                        <span class="detail-value">${details.total_candidates || 0}</span>
+                    </div>
+                `;
+                if (details.kg_results_count !== undefined) {
+                    html += `
+                        <div class="detail-row">
+                            <span class="detail-label">KG Results:</span>
+                            <span class="detail-value">${details.kg_results_count}</span>
+                        </div>
+                    `;
+                }
+                if (details.archimate_results_count !== undefined) {
+                    html += `
+                        <div class="detail-row">
+                            <span class="detail-label">ArchiMate Results:</span>
+                            <span class="detail-value">${details.archimate_results_count}</span>
+                        </div>
+                    `;
+                }
+            } else if (phaseName === 'REFLECT') {
+                if (details.query_intent) {
+                    html += `
+                        <div class="detail-row">
+                            <span class="detail-label">Query Intent:</span>
+                            <span class="detail-value">${details.query_intent}</span>
+                        </div>
+                    `;
+                }
+                if (details.key_terms) {
+                    html += `
+                        <div class="detail-row">
+                            <span class="detail-label">Key Terms:</span>
+                            <span class="detail-value">${details.key_terms.slice(0, 3).join(', ')}</span>
+                        </div>
+                    `;
+                }
+            } else {
+                Object.entries(details).forEach(([key, value]) => {
+                    if (typeof value !== 'object' && key !== 'sample_citations') {
+                        html += `
+                            <div class="detail-row">
+                                <span class="detail-label">${formatDetailLabel(key)}:</span>
+                                <span class="detail-value">${formatDetailValue(value)}</span>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            return html;
+        }
+
+        function formatDetailLabel(key) {
+            return key.split('_').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        function formatDetailValue(value) {
+            if (typeof value === 'boolean') {
+                return value ? '✓ Yes' : '✗ No';
+            }
+            if (typeof value === 'number') {
+                return value.toFixed(2);
+            }
+            if (Array.isArray(value)) {
+                return value.length > 0 ? value.slice(0, 3).join(', ') : 'None';
+            }
+            return String(value);
+        }
+
+        function formatSubstepResult(result) {
+            if (typeof result === 'number') {
+                return result;
+            }
+            if (Array.isArray(result)) {
+                return result.length > 0 ? `[${result.slice(0, 3).join(', ')}]` : '[]';
+            }
+            if (typeof result === 'string' && result.length > 50) {
+                return result.substring(0, 50) + '...';
+            }
+            return result;
+        }
+
+        function parseMarkdownFormatting(text) {
+            text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/^---$/gm, '<hr>');
+            text = text.replace(/^[•\*]\s+(.+)$/gm, '<li>$1</li>');
+            text = text.replace(/(<li>.*?<\/li>\n?)+/g, match => '<ul>' + match + '</ul>');
+            text = text.replace(/\[([a-z]+:[^\]]+)\]/gi, '<code>[$1]</code>');
+            text = text.replace(/\n\n/g, '</p><p>');
+            text = text.replace(/\n/g, '<br>');
+            return '<p>' + text + '</p>';
+        }
+
+        function addMessage(message) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message-wrapper ${message.type}`;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.type}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = message.type === 'user' 
+                ? '<svg viewBox="0 0 24 24"><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/></svg>'
+                : '<svg viewBox="0 0 24 24"><path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7A1,1 0 0,0 14,8H16A1,1 0 0,1 17,9V16A1,1 0 0,1 16,17H8A1,1 0 0,1 7,16V9A1,1 0 0,1 8,8H10A1,1 0 0,0 11,7V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M8.5,11A0.5,0.5 0 0,0 8,11.5A0.5,0.5 0 0,0 8.5,12A0.5,0.5 0 0,0 9,11.5A0.5,0.5 0 0,0 8.5,11M15.5,11A0.5,0.5 0 0,0 15,11.5A0.5,0.5 0 0,0 15.5,12A0.5,0.5 0 0,0 16,11.5A0.5,0.5 0 0,0 15.5,11M12,14C11.5,14 11,14.2 11,15C11,15.8 11.5,16 12,16C12.5,16 13,15.8 13,15C13,14.2 12.5,14 12,14Z"/></svg>';
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+
+            if (message.type === 'assistant') {
+                content.innerHTML = parseMarkdownFormatting(message.content);
+            } else {
+                content.textContent = message.content;
+            }
+
+            if (message.type === 'assistant' && (message.confidence || message.citations)) {
+                const meta = document.createElement('div');
+                meta.className = 'message-meta';
+
+                if (message.confidence) {
+                    const confidence = document.createElement('span');
+                    const confValue = Math.round(message.confidence * 100);
+                    confidence.className = `confidence-badge confidence-${confValue >= 75 ? 'high' : confValue >= 50 ? 'medium' : 'low'}`;
+                    confidence.textContent = `${confValue}% confidence`;
+                    meta.appendChild(confidence);
+                }
+
+                if (message.citations && message.citations.length > 0) {
+                    const citations = document.createElement('div');
+                    citations.className = 'citations';
+                    message.citations.forEach(citation => {
+                        const citationSpan = document.createElement('span');
+                        citationSpan.className = 'citation';
+                        citationSpan.textContent = citation;
+                        citationSpan.title = `Click to copy: ${citation}`;
+                        citationSpan.onclick = () => {
+                            navigator.clipboard.writeText(citation);
+                            citationSpan.style.background = 'rgba(16, 185, 129, 0.2)';
+                            setTimeout(() => citationSpan.style.background = '', 300);
+                        };
+                        citations.appendChild(citationSpan);
+                    });
+                    meta.appendChild(citations);
+                }
+
+                content.appendChild(meta);
+            }
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-message-btn';
+            copyBtn.title = 'Copy message';
+            copyBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+            
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(message.content).then(() => {
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+                    }, 1500);
+                });
+            };
+
+            messageWrapper.appendChild(messageDiv);
+            messageWrapper.appendChild(copyBtn);
+            messagesDiv.appendChild(messageWrapper);
+            
+            // FIXED: Auto-scroll to newest message
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function showTypingIndicator() {
+            hideTypingIndicator();
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typingIndicator';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7A1,1 0 0,0 14,8H16A1,1 0 0,1 17,9V16A1,1 0 0,1 16,17H8A1,1 0 0,1 7,16V9A1,1 0 0,1 8,8H10A1,1 0 0,0 11,7V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M8.5,11A0.5,0.5 0 0,0 8,11.5A0.5,0.5 0 0,0 8.5,12A0.5,0.5 0 0,0 9,11.5A0.5,0.5 0 0,0 8.5,11M15.5,11A0.5,0.5 0 0,0 15,11.5A0.5,0.5 0 0,0 15.5,12A0.5,0.5 0 0,0 16,11.5A0.5,0.5 0 0,0 15.5,11M12,14C11.5,14 11,14.2 11,15C11,15.8 11.5,16 12,16C12.5,16 13,15.8 13,15C13,14.2 12.5,14 12,14Z"/></svg>';
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+
+            content.appendChild(indicator);
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(content);
+            messagesDiv.appendChild(typingDiv);
+            
+            // Auto-scroll when typing indicator appears
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function hideTypingIndicator() {
+            const existing = document.getElementById('typingIndicator');
+            if (existing) existing.remove();
+        }
+    </script>
+</body>
+</html>

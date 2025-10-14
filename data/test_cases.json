@@ -1,0 +1,55 @@
+{
+  "test_cases": [
+    {
+      "id": "electronic_court_filing",
+      "description": "Electronic Court Filing → Capability mapping",
+      "query": "How should I model electronic court filing in ArchiMate?",
+      "expected_element_type": "BusinessCapability",
+      "expected_citations": ["archi:id-cap-001", "togaf:adm:B"],
+      "confidence_threshold": 0.8,
+      "source": "research_paper"
+    },
+    {
+      "id": "grid_congestion_management",
+      "description": "Grid congestion management (energy domain specific)",
+      "query": "What ArchiMate elements should I use for modeling grid congestion management?",
+      "expected_element_type": "BusinessProcess",
+      "expected_citations": ["iec:GridCongestion", "archi:id-proc-001"],
+      "confidence_threshold": 0.85,
+      "source": "energy_domain"
+    },
+    {
+      "id": "ungroundable_query",
+      "description": "Query without possible grounding (should abstain)",
+      "query": "What is the weather like today?",
+      "expected_response": "abstain",
+      "expected_error": "UngroundedReplyError",
+      "source": "negative_test"
+    },
+    {
+      "id": "iec_equipment_modeling",
+      "description": "IEC equipment modeling with proper citations",
+      "query": "How do I model electrical transformers according to IEC standards?",
+      "expected_element_type": "TechnologyDevice",
+      "expected_citations": ["iec:Transformer", "archi:id-dev-001"],
+      "confidence_threshold": 0.9,
+      "source": "iec_standards"
+    },
+    {
+      "id": "togaf_phase_b_mapping",
+      "description": "TOGAF Phase B business architecture mapping",
+      "query": "What business capabilities are needed for energy distribution?",
+      "expected_element_type": "BusinessCapability",
+      "expected_citations": ["togaf:adm:B", "archi:id-cap-002"],
+      "confidence_threshold": 0.8,
+      "source": "togaf_methodology"
+    }
+  ],
+  "evaluation_metrics": {
+    "grounding_rate": "Percentage of responses with valid citations",
+    "top1_accuracy": "Percentage where top suggestion is correct",
+    "abstention_rate": "Percentage of queries where system abstains",
+    "response_time_p50": "Median response time in milliseconds",
+    "response_time_p95": "95th percentile response time in milliseconds"
+  }
+}

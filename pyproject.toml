@@ -1,0 +1,77 @@
+[tool.poetry]
+name = "alliander-ea-assistant"
+version = "0.2.0"
+description = "Energy Systems Enterprise Architecture AI Assistant for Alliander DSO"
+authors = ["Enterprise Architecture Team <ea@alliander.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.0"
+uvicorn = {extras = ["standard"], version = "^0.32.0"}
+rdflib = "^7.0.0"
+SPARQLWrapper = "^2.0.0"
+pydantic = "^2.9.0"
+aiofiles = "^24.1.0"
+httpx = "^0.27.0"
+lxml = "^5.3.0"
+numpy = "^2.1.0"
+sentence-transformers = "^3.1.0"
+openai = "^1.50.0"
+groq = "^0.11.0"
+ollama = "^0.3.3"
+python-multipart = "^0.0.12"
+python-dotenv = "^1.0.1"
+tiktoken = "^0.8.0"
+scikit-learn = "^1.5.2"
+torch = "^2.4.0"
+transformers = "^4.45.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.0"
+pytest-asyncio = "^0.24.0"
+pytest-cov = "^5.0.0"
+black = "^24.8.0"
+isort = "^5.13.0"
+flake8 = "^7.1.0"
+mypy = "^1.11.0"
+pre-commit = "^3.8.0"
+ipython = "^8.27.0"
+jupyter = "^1.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]

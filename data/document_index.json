@@ -1,0 +1,1160 @@
+{
+  "chunks": [
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_000",
+      "title": "TOGAF Architecture Development Method",
+      "content": "The TOGAF ADM provides a tested and repeatable process for developing architectures. The ADM includes establishing an architecture framework, developing architecture content, transitioning, and governing the realization of architectures.",
+      "page_number": 1,
+      "chunk_index": 0,
+      "keywords": [
+        "includes",
+        "architectures",
+        "governing",
+        "transitioning",
+        "developing",
+        "adm",
+        "togaf",
+        "realization",
+        "establishing",
+        "development",
+        "repeatable",
+        "framework",
+        "method",
+        "provides",
+        "tested",
+        "content",
+        "architecture",
+        "process"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_001",
+      "title": "Phase A: Architecture Vision",
+      "content": "Phase A defines scope, identifies stakeholders, creates Architecture Vision, and obtains approvals to proceed with the architecture development.",
+      "page_number": 2,
+      "chunk_index": 1,
+      "keywords": [
+        "proceed",
+        "stakeholders",
+        "phase",
+        "scope",
+        "defines",
+        "approvals",
+        "obtains",
+        "development",
+        "identifies",
+        "vision",
+        "architecture",
+        "creates"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_002",
+      "title": "Phase B: Business Architecture",
+      "content": "Phase B develops the Business Architecture to support the agreed Architecture Vision, including business strategy, governance, organization, and key business processes.",
+      "page_number": 3,
+      "chunk_index": 2,
+      "keywords": [
+        "including",
+        "phase",
+        "processes",
+        "support",
+        "governance",
+        "develops",
+        "business",
+        "agreed",
+        "organization",
+        "strategy",
+        "vision",
+        "architecture",
+        "key"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_003",
+      "title": "Phase C: Information Systems Architectures",
+      "content": "Phase C develops the Information Systems Architectures, including both data and application architectures that will enable the Business Architecture.",
+      "page_number": 4,
+      "chunk_index": 3,
+      "keywords": [
+        "architectures",
+        "phase",
+        "information",
+        "enable",
+        "systems",
+        "develops",
+        "business",
+        "application",
+        "data",
+        "both",
+        "architecture",
+        "including"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_004",
+      "title": "Phase D: Technology Architecture",
+      "content": "Phase D develops the Technology Architecture to support the Information Systems Architectures, including hardware, software, and communications technology.",
+      "page_number": 5,
+      "chunk_index": 4,
+      "keywords": [
+        "including",
+        "architectures",
+        "phase",
+        "technology",
+        "information",
+        "systems",
+        "support",
+        "develops",
+        "hardware",
+        "software",
+        "communications",
+        "architecture"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_005",
+      "title": "Architecture Capability Framework",
+      "content": "The Architecture Capability Framework provides guidance for establishing and operating an architecture function within an enterprise.",
+      "page_number": 6,
+      "chunk_index": 5,
+      "keywords": [
+        "within",
+        "capability",
+        "framework",
+        "establishing",
+        "operating",
+        "guidance",
+        "provides",
+        "enterprise",
+        "architecture",
+        "function"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_006",
+      "title": "Enterprise Continuum",
+      "content": "The Enterprise Continuum provides methods for classifying architecture and solution artifacts as they evolve from generic Foundation Architectures to Organization-Specific Architectures.",
+      "page_number": 7,
+      "chunk_index": 6,
+      "keywords": [
+        "architectures",
+        "continuum",
+        "methods",
+        "solution",
+        "generic",
+        "specific",
+        "evolve",
+        "artifacts",
+        "foundation",
+        "classifying",
+        "provides",
+        "organization",
+        "enterprise",
+        "architecture"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_007",
+      "title": "TOGAF Reference Models",
+      "content": "TOGAF provides two reference models: the Technical Reference Model (TRM) and the Integrated Information Infrastructure Reference Model (III-RM).",
+      "page_number": 8,
+      "chunk_index": 7,
+      "keywords": [
+        "technical",
+        "integrated",
+        "model",
+        "information",
+        "infrastructure",
+        "togaf",
+        "models",
+        "reference",
+        "provides",
+        "iii",
+        "trm"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_008",
+      "title": "Architecture Governance",
+      "content": "Architecture governance ensures that architecture development and implementation is properly controlled and managed, and that it complies with the enterprise's stated direction.",
+      "page_number": 9,
+      "chunk_index": 8,
+      "keywords": [
+        "ensures",
+        "controlled",
+        "stated",
+        "governance",
+        "complies",
+        "direction",
+        "development",
+        "managed",
+        "implementation",
+        "properly",
+        "enterprise",
+        "architecture"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "togaf_concepts",
+      "chunk_id": "togaf_concepts_009",
+      "title": "Architecture Content Framework",
+      "content": "The Architecture Content Framework provides a structural model for architectural work products, including deliverables, artifacts, and building blocks.",
+      "page_number": 10,
+      "chunk_index": 9,
+      "keywords": [
+        "including",
+        "model",
+        "structural",
+        "architectural",
+        "blocks",
+        "products",
+        "building",
+        "work",
+        "framework",
+        "artifacts",
+        "deliverables",
+        "provides",
+        "content",
+        "architecture"
+      ],
+      "doc_type": "togaf_concepts"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_000",
+      "title": "ArchiMate Model Inference Introduction",
+      "content": "This paper presents methods for automated inference and analysis of ArchiMate enterprise architecture models using graph-based techniques and semantic reasoning.",
+      "page_number": 1,
+      "chunk_index": 0,
+      "keywords": [
+        "archimate",
+        "graph",
+        "inference",
+        "model",
+        "using",
+        "methods",
+        "paper",
+        "techniques",
+        "presents",
+        "models",
+        "semantic",
+        "introduction",
+        "analysis",
+        "automated",
+        "enterprise",
+        "reasoning",
+        "architecture",
+        "based"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_001",
+      "title": "ArchiMate Metamodel Analysis",
+      "content": "The ArchiMate metamodel defines concepts for modeling enterprise architectures across business, application, and technology layers with well-defined relationships and viewpoints.",
+      "page_number": 2,
+      "chunk_index": 1,
+      "keywords": [
+        "archimate",
+        "architectures",
+        "technology",
+        "well",
+        "viewpoints",
+        "defined",
+        "layers",
+        "defines",
+        "business",
+        "metamodel",
+        "analysis",
+        "application",
+        "across",
+        "enterprise",
+        "modeling",
+        "relationships",
+        "concepts"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_002",
+      "title": "Graph-Based Model Analysis",
+      "content": "Enterprise architecture models can be represented as directed graphs where nodes represent architecture elements and edges represent relationships, enabling graph analysis algorithms.",
+      "page_number": 3,
+      "chunk_index": 2,
+      "keywords": [
+        "graph",
+        "model",
+        "where",
+        "enabling",
+        "elements",
+        "represent",
+        "directed",
+        "algorithms",
+        "nodes",
+        "relationships",
+        "models",
+        "graphs",
+        "analysis",
+        "enterprise",
+        "edges",
+        "architecture",
+        "based",
+        "represented"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_003",
+      "title": "Semantic Reasoning Techniques",
+      "content": "Semantic reasoning over ArchiMate models enables inference of implicit relationships, consistency checking, and automated model validation using ontological approaches.",
+      "page_number": 4,
+      "chunk_index": 3,
+      "keywords": [
+        "archimate",
+        "checking",
+        "inference",
+        "model",
+        "using",
+        "approaches",
+        "implicit",
+        "consistency",
+        "techniques",
+        "ontological",
+        "validation",
+        "reasoning",
+        "models",
+        "semantic",
+        "enables",
+        "automated",
+        "relationships",
+        "over"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_004",
+      "title": "Model Transformation Patterns",
+      "content": "Common transformation patterns in ArchiMate models include layered abstractions, service compositions, and capability realizations that can be automatically detected.",
+      "page_number": 5,
+      "chunk_index": 4,
+      "keywords": [
+        "archimate",
+        "realizations",
+        "model",
+        "service",
+        "layered",
+        "patterns",
+        "include",
+        "detected",
+        "capability",
+        "common",
+        "models",
+        "automatically",
+        "compositions",
+        "abstractions",
+        "transformation"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_005",
+      "title": "Automated Model Validation",
+      "content": "Automated validation techniques can detect inconsistencies in ArchiMate models, including missing relationships, circular dependencies, and constraint violations.",
+      "page_number": 6,
+      "chunk_index": 5,
+      "keywords": [
+        "including",
+        "archimate",
+        "model",
+        "constraint",
+        "circular",
+        "missing",
+        "techniques",
+        "violations",
+        "inconsistencies",
+        "validation",
+        "relationships",
+        "models",
+        "dependencies",
+        "automated",
+        "detect"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_006",
+      "title": "Enterprise Architecture Analytics",
+      "content": "Analytics over ArchiMate models provide insights into architecture complexity, coupling metrics, and impact analysis for architecture decisions.",
+      "page_number": 7,
+      "chunk_index": 6,
+      "keywords": [
+        "impact",
+        "archimate",
+        "decisions",
+        "provide",
+        "into",
+        "complexity",
+        "models",
+        "analytics",
+        "coupling",
+        "metrics",
+        "insights",
+        "analysis",
+        "enterprise",
+        "architecture",
+        "over"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_007",
+      "title": "Tool Integration Approaches",
+      "content": "Integration with ArchiMate modeling tools enables automated model analysis, report generation, and architecture governance workflows.",
+      "page_number": 8,
+      "chunk_index": 7,
+      "keywords": [
+        "archimate",
+        "model",
+        "approaches",
+        "tools",
+        "report",
+        "integration",
+        "generation",
+        "governance",
+        "tool",
+        "enables",
+        "analysis",
+        "automated",
+        "modeling",
+        "workflows",
+        "architecture"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_008",
+      "title": "Case Study Results",
+      "content": "Empirical evaluation on enterprise ArchiMate models demonstrates the effectiveness of automated inference techniques for improving model quality and consistency.",
+      "page_number": 9,
+      "chunk_index": 8,
+      "keywords": [
+        "empirical",
+        "archimate",
+        "automated",
+        "inference",
+        "study",
+        "results",
+        "case",
+        "improving",
+        "model",
+        "consistency",
+        "techniques",
+        "quality",
+        "models",
+        "effectiveness",
+        "demonstrates",
+        "enterprise",
+        "evaluation"
+      ],
+      "doc_type": "archimate_research"
+    },
+    {
+      "doc_id": "archimate_research",
+      "chunk_id": "archimate_research_009",
+      "title": "Implementation Considerations",
+      "content": "Practical implementation requires consideration of model size, computational complexity, and integration with existing enterprise architecture tools and processes.",
+      "page_number": 10,
+      "chunk_index": 9,
+      "keywords": [
+        "model",
+        "tools",
+        "processes",
+        "integration",
+        "existing",
+        "complexity",
+        "practical",
+        "size",
+        "computational",
+        "implementation",
+        "consideration",
+        "requires",
+        "enterprise",
+        "considerations",
+        "architecture"
+      ],
+      "doc_type": "archimate_research"
+    }
+  ],
+  "keyword_index": {
+    "includes": [
+      "togaf_concepts_000"
+    ],
+    "architectures": [
+      "togaf_concepts_000",
+      "togaf_concepts_003",
+      "togaf_concepts_004",
+      "togaf_concepts_006",
+      "archimate_research_001"
+    ],
+    "governing": [
+      "togaf_concepts_000"
+    ],
+    "transitioning": [
+      "togaf_concepts_000"
+    ],
+    "developing": [
+      "togaf_concepts_000"
+    ],
+    "adm": [
+      "togaf_concepts_000"
+    ],
+    "togaf": [
+      "togaf_concepts_000",
+      "togaf_concepts_007"
+    ],
+    "realization": [
+      "togaf_concepts_000"
+    ],
+    "establishing": [
+      "togaf_concepts_000",
+      "togaf_concepts_005"
+    ],
+    "development": [
+      "togaf_concepts_000",
+      "togaf_concepts_001",
+      "togaf_concepts_008"
+    ],
+    "repeatable": [
+      "togaf_concepts_000"
+    ],
+    "framework": [
+      "togaf_concepts_000",
+      "togaf_concepts_005",
+      "togaf_concepts_009"
+    ],
+    "method": [
+      "togaf_concepts_000"
+    ],
+    "provides": [
+      "togaf_concepts_000",
+      "togaf_concepts_005",
+      "togaf_concepts_006",
+      "togaf_concepts_007",
+      "togaf_concepts_009"
+    ],
+    "tested": [
+      "togaf_concepts_000"
+    ],
+    "content": [
+      "togaf_concepts_000",
+      "togaf_concepts_009"
+    ],
+    "architecture": [
+      "togaf_concepts_000",
+      "togaf_concepts_001",
+      "togaf_concepts_002",
+      "togaf_concepts_003",
+      "togaf_concepts_004",
+      "togaf_concepts_005",
+      "togaf_concepts_006",
+      "togaf_concepts_008",
+      "togaf_concepts_009",
+      "archimate_research_000",
+      "archimate_research_002",
+      "archimate_research_006",
+      "archimate_research_007",
+      "archimate_research_009"
+    ],
+    "process": [
+      "togaf_concepts_000"
+    ],
+    "proceed": [
+      "togaf_concepts_001"
+    ],
+    "stakeholders": [
+      "togaf_concepts_001"
+    ],
+    "phase": [
+      "togaf_concepts_001",
+      "togaf_concepts_002",
+      "togaf_concepts_003",
+      "togaf_concepts_004"
+    ],
+    "scope": [
+      "togaf_concepts_001"
+    ],
+    "defines": [
+      "togaf_concepts_001",
+      "archimate_research_001"
+    ],
+    "approvals": [
+      "togaf_concepts_001"
+    ],
+    "obtains": [
+      "togaf_concepts_001"
+    ],
+    "identifies": [
+      "togaf_concepts_001"
+    ],
+    "vision": [
+      "togaf_concepts_001",
+      "togaf_concepts_002"
+    ],
+    "creates": [
+      "togaf_concepts_001"
+    ],
+    "including": [
+      "togaf_concepts_002",
+      "togaf_concepts_003",
+      "togaf_concepts_004",
+      "togaf_concepts_009",
+      "archimate_research_005"
+    ],
+    "processes": [
+      "togaf_concepts_002",
+      "archimate_research_009"
+    ],
+    "support": [
+      "togaf_concepts_002",
+      "togaf_concepts_004"
+    ],
+    "governance": [
+      "togaf_concepts_002",
+      "togaf_concepts_008",
+      "archimate_research_007"
+    ],
+    "develops": [
+      "togaf_concepts_002",
+      "togaf_concepts_003",
+      "togaf_concepts_004"
+    ],
+    "business": [
+      "togaf_concepts_002",
+      "togaf_concepts_003",
+      "archimate_research_001"
+    ],
+    "agreed": [
+      "togaf_concepts_002"
+    ],
+    "organization": [
+      "togaf_concepts_002",
+      "togaf_concepts_006"
+    ],
+    "strategy": [
+      "togaf_concepts_002"
+    ],
+    "key": [
+      "togaf_concepts_002"
+    ],
+    "information": [
+      "togaf_concepts_003",
+      "togaf_concepts_004",
+      "togaf_concepts_007"
+    ],
+    "enable": [
+      "togaf_concepts_003"
+    ],
+    "systems": [
+      "togaf_concepts_003",
+      "togaf_concepts_004"
+    ],
+    "application": [
+      "togaf_concepts_003",
+      "archimate_research_001"
+    ],
+    "data": [
+      "togaf_concepts_003"
+    ],
+    "both": [
+      "togaf_concepts_003"
+    ],
+    "technology": [
+      "togaf_concepts_004",
+      "archimate_research_001"
+    ],
+    "hardware": [
+      "togaf_concepts_004"
+    ],
+    "software": [
+      "togaf_concepts_004"
+    ],
+    "communications": [
+      "togaf_concepts_004"
+    ],
+    "within": [
+      "togaf_concepts_005"
+    ],
+    "capability": [
+      "togaf_concepts_005",
+      "archimate_research_004"
+    ],
+    "operating": [
+      "togaf_concepts_005"
+    ],
+    "guidance": [
+      "togaf_concepts_005"
+    ],
+    "enterprise": [
+      "togaf_concepts_005",
+      "togaf_concepts_006",
+      "togaf_concepts_008",
+      "archimate_research_000",
+      "archimate_research_001",
+      "archimate_research_002",
+      "archimate_research_006",
+      "archimate_research_008",
+      "archimate_research_009"
+    ],
+    "function": [
+      "togaf_concepts_005"
+    ],
+    "continuum": [
+      "togaf_concepts_006"
+    ],
+    "methods": [
+      "togaf_concepts_006",
+      "archimate_research_000"
+    ],
+    "solution": [
+      "togaf_concepts_006"
+    ],
+    "generic": [
+      "togaf_concepts_006"
+    ],
+    "specific": [
+      "togaf_concepts_006"
+    ],
+    "evolve": [
+      "togaf_concepts_006"
+    ],
+    "artifacts": [
+      "togaf_concepts_006",
+      "togaf_concepts_009"
+    ],
+    "foundation": [
+      "togaf_concepts_006"
+    ],
+    "classifying": [
+      "togaf_concepts_006"
+    ],
+    "technical": [
+      "togaf_concepts_007"
+    ],
+    "integrated": [
+      "togaf_concepts_007"
+    ],
+    "model": [
+      "togaf_concepts_007",
+      "togaf_concepts_009",
+      "archimate_research_000",
+      "archimate_research_002",
+      "archimate_research_003",
+      "archimate_research_004",
+      "archimate_research_005",
+      "archimate_research_007",
+      "archimate_research_008",
+      "archimate_research_009"
+    ],
+    "infrastructure": [
+      "togaf_concepts_007"
+    ],
+    "models": [
+      "togaf_concepts_007",
+      "archimate_research_000",
+      "archimate_research_002",
+      "archimate_research_003",
+      "archimate_research_004",
+      "archimate_research_005",
+      "archimate_research_006",
+      "archimate_research_008"
+    ],
+    "reference": [
+      "togaf_concepts_007"
+    ],
+    "iii": [
+      "togaf_concepts_007"
+    ],
+    "trm": [
+      "togaf_concepts_007"
+    ],
+    "ensures": [
+      "togaf_concepts_008"
+    ],
+    "controlled": [
+      "togaf_concepts_008"
+    ],
+    "stated": [
+      "togaf_concepts_008"
+    ],
+    "complies": [
+      "togaf_concepts_008"
+    ],
+    "direction": [
+      "togaf_concepts_008"
+    ],
+    "managed": [
+      "togaf_concepts_008"
+    ],
+    "implementation": [
+      "togaf_concepts_008",
+      "archimate_research_009"
+    ],
+    "properly": [
+      "togaf_concepts_008"
+    ],
+    "structural": [
+      "togaf_concepts_009"
+    ],
+    "architectural": [
+      "togaf_concepts_009"
+    ],
+    "blocks": [
+      "togaf_concepts_009"
+    ],
+    "products": [
+      "togaf_concepts_009"
+    ],
+    "building": [
+      "togaf_concepts_009"
+    ],
+    "work": [
+      "togaf_concepts_009"
+    ],
+    "deliverables": [
+      "togaf_concepts_009"
+    ],
+    "archimate": [
+      "archimate_research_000",
+      "archimate_research_001",
+      "archimate_research_003",
+      "archimate_research_004",
+      "archimate_research_005",
+      "archimate_research_006",
+      "archimate_research_007",
+      "archimate_research_008"
+    ],
+    "graph": [
+      "archimate_research_000",
+      "archimate_research_002"
+    ],
+    "inference": [
+      "archimate_research_000",
+      "archimate_research_003",
+      "archimate_research_008"
+    ],
+    "using": [
+      "archimate_research_000",
+      "archimate_research_003"
+    ],
+    "paper": [
+      "archimate_research_000"
+    ],
+    "techniques": [
+      "archimate_research_000",
+      "archimate_research_003",
+      "archimate_research_005",
+      "archimate_research_008"
+    ],
+    "presents": [
+      "archimate_research_000"
+    ],
+    "semantic": [
+      "archimate_research_000",
+      "archimate_research_003"
+    ],
+    "introduction": [
+      "archimate_research_000"
+    ],
+    "analysis": [
+      "archimate_research_000",
+      "archimate_research_001",
+      "archimate_research_002",
+      "archimate_research_006",
+      "archimate_research_007"
+    ],
+    "automated": [
+      "archimate_research_000",
+      "archimate_research_003",
+      "archimate_research_005",
+      "archimate_research_007",
+      "archimate_research_008"
+    ],
+    "reasoning": [
+      "archimate_research_000",
+      "archimate_research_003"
+    ],
+    "based": [
+      "archimate_research_000",
+      "archimate_research_002"
+    ],
+    "well": [
+      "archimate_research_001"
+    ],
+    "viewpoints": [
+      "archimate_research_001"
+    ],
+    "defined": [
+      "archimate_research_001"
+    ],
+    "layers": [
+      "archimate_research_001"
+    ],
+    "metamodel": [
+      "archimate_research_001"
+    ],
+    "across": [
+      "archimate_research_001"
+    ],
+    "modeling": [
+      "archimate_research_001",
+      "archimate_research_007"
+    ],
+    "relationships": [
+      "archimate_research_001",
+      "archimate_research_002",
+      "archimate_research_003",
+      "archimate_research_005"
+    ],
+    "concepts": [
+      "archimate_research_001"
+    ],
+    "where": [
+      "archimate_research_002"
+    ],
+    "enabling": [
+      "archimate_research_002"
+    ],
+    "elements": [
+      "archimate_research_002"
+    ],
+    "represent": [
+      "archimate_research_002"
+    ],
+    "directed": [
+      "archimate_research_002"
+    ],
+    "algorithms": [
+      "archimate_research_002"
+    ],
+    "nodes": [
+      "archimate_research_002"
+    ],
+    "graphs": [
+      "archimate_research_002"
+    ],
+    "edges": [
+      "archimate_research_002"
+    ],
+    "represented": [
+      "archimate_research_002"
+    ],
+    "checking": [
+      "archimate_research_003"
+    ],
+    "approaches": [
+      "archimate_research_003",
+      "archimate_research_007"
+    ],
+    "implicit": [
+      "archimate_research_003"
+    ],
+    "consistency": [
+      "archimate_research_003",
+      "archimate_research_008"
+    ],
+    "ontological": [
+      "archimate_research_003"
+    ],
+    "validation": [
+      "archimate_research_003",
+      "archimate_research_005"
+    ],
+    "enables": [
+      "archimate_research_003",
+      "archimate_research_007"
+    ],
+    "over": [
+      "archimate_research_003",
+      "archimate_research_006"
+    ],
+    "realizations": [
+      "archimate_research_004"
+    ],
+    "service": [
+      "archimate_research_004"
+    ],
+    "layered": [
+      "archimate_research_004"
+    ],
+    "patterns": [
+      "archimate_research_004"
+    ],
+    "include": [
+      "archimate_research_004"
+    ],
+    "detected": [
+      "archimate_research_004"
+    ],
+    "common": [
+      "archimate_research_004"
+    ],
+    "automatically": [
+      "archimate_research_004"
+    ],
+    "compositions": [
+      "archimate_research_004"
+    ],
+    "abstractions": [
+      "archimate_research_004"
+    ],
+    "transformation": [
+      "archimate_research_004"
+    ],
+    "constraint": [
+      "archimate_research_005"
+    ],
+    "circular": [
+      "archimate_research_005"
+    ],
+    "missing": [
+      "archimate_research_005"
+    ],
+    "violations": [
+      "archimate_research_005"
+    ],
+    "inconsistencies": [
+      "archimate_research_005"
+    ],
+    "dependencies": [
+      "archimate_research_005"
+    ],
+    "detect": [
+      "archimate_research_005"
+    ],
+    "impact": [
+      "archimate_research_006"
+    ],
+    "decisions": [
+      "archimate_research_006"
+    ],
+    "provide": [
+      "archimate_research_006"
+    ],
+    "into": [
+      "archimate_research_006"
+    ],
+    "complexity": [
+      "archimate_research_006",
+      "archimate_research_009"
+    ],
+    "analytics": [
+      "archimate_research_006"
+    ],
+    "coupling": [
+      "archimate_research_006"
+    ],
+    "metrics": [
+      "archimate_research_006"
+    ],
+    "insights": [
+      "archimate_research_006"
+    ],
+    "tools": [
+      "archimate_research_007",
+      "archimate_research_009"
+    ],
+    "report": [
+      "archimate_research_007"
+    ],
+    "integration": [
+      "archimate_research_007",
+      "archimate_research_009"
+    ],
+    "generation": [
+      "archimate_research_007"
+    ],
+    "tool": [
+      "archimate_research_007"
+    ],
+    "workflows": [
+      "archimate_research_007"
+    ],
+    "empirical": [
+      "archimate_research_008"
+    ],
+    "study": [
+      "archimate_research_008"
+    ],
+    "results": [
+      "archimate_research_008"
+    ],
+    "case": [
+      "archimate_research_008"
+    ],
+    "improving": [
+      "archimate_research_008"
+    ],
+    "quality": [
+      "archimate_research_008"
+    ],
+    "effectiveness": [
+      "archimate_research_008"
+    ],
+    "demonstrates": [
+      "archimate_research_008"
+    ],
+    "evaluation": [
+      "archimate_research_008"
+    ],
+    "existing": [
+      "archimate_research_009"
+    ],
+    "practical": [
+      "archimate_research_009"
+    ],
+    "size": [
+      "archimate_research_009"
+    ],
+    "computational": [
+      "archimate_research_009"
+    ],
+    "consideration": [
+      "archimate_research_009"
+    ],
+    "requires": [
+      "archimate_research_009"
+    ],
+    "considerations": [
+      "archimate_research_009"
+    ]
+  },
+  "version": "1.0",
+  "created_at": "/Users/chuck/Dropbox/OWLVIEW/Products/AInsteinAlliander"
+}

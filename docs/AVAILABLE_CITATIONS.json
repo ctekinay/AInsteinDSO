@@ -1,0 +1,1941 @@
+{
+  "generated_at": "2025-10-09 00:14:12",
+  "summary": {
+    "total_citations": 5347,
+    "knowledge_graph_citations": 4596,
+    "archimate_citations": 751
+  },
+  "knowledge_graph": {
+    "total_triples": 39122,
+    "load_time_ms": 2664.6740436553955,
+    "namespaces": {
+      "skos": {
+        "count": 3231,
+        "description": "Alliander Dutch energy vocabulary",
+        "examples": [
+          {
+            "citation": "skos:1548",
+            "label": "Kwelscherm",
+            "definition": "Hulpstuk toegepast bij leidingen en kabels in dijkdoorvoeringen om de kwel (het lekken van water) la..."
+          },
+          {
+            "citation": "skos:2482",
+            "label": "Schakeltijd",
+            "definition": "De tijd tussen het uitzenden van het commando bij de vermogenschakelaar en het binnenkomen van de te..."
+          },
+          {
+            "citation": "skos:1748",
+            "label": "Meetbedrijven",
+            "definition": "Gecertificeerde meetbedrijven plaatsen en beheren sinds de geliberaliseerde energiemarkt de energiem..."
+          },
+          {
+            "citation": "skos:969",
+            "label": "Feedback aansluitingen",
+            "definition": "Op basis van een digitale vragenlijst vastgelegde terugkoppeling van de klant aan Alliander na aanle..."
+          },
+          {
+            "citation": "skos:2652",
+            "label": "Subnet (= 2e streng)",
+            "definition": "MS-distributienet dat beveiligd wordt afgetakt van hoofdnet...."
+          },
+          {
+            "citation": "skos:3036",
+            "label": "Website bezoek",
+            "definition": "Contact van klant met Liander via de website van Liander..."
+          },
+          {
+            "citation": "skos:1315",
+            "label": "Informatie Security Management Systeem",
+            "definition": "Dat deel van het overal managementsysteem, gebaseerd op een bedrijfsrisico benadering, dat informati..."
+          },
+          {
+            "citation": "skos:2850",
+            "label": "Uithuizing",
+            "definition": "Een verhuizing waarbij een (rechts)persoon een onroerende zaak verlaat en de beschikkingsbevoegdheid..."
+          },
+          {
+            "citation": "skos:733",
+            "label": "Document Eigenaar",
+            "definition": "Een Document Eigenaar is de eindverantwoordelijke persoon voor een of meer documenten...."
+          },
+          {
+            "citation": "skos:2486",
+            "label": "Schema",
+            "definition": null
+          },
+          {
+            "citation": "skos:1032",
+            "label": "Gascomponent",
+            "definition": "alle onderdelen waaruit het gasvoorzieningssysteem is opgebouwd, zoals buizen, hulpstukken, isolatie..."
+          },
+          {
+            "citation": "skos:1793",
+            "label": "Melding start bouw",
+            "definition": "Door de aanvrager van een verleende omgevingsvergunning wordt aangegeven dat is begonnen met het bou..."
+          },
+          {
+            "citation": "skos:63",
+            "label": "Mof",
+            "definition": "Een mof is een verbindingsgreep die rondom afsluit. Een veelgebruikte mof is een bescherming van de ..."
+          },
+          {
+            "citation": "skos:2967",
+            "label": "Verremeting",
+            "definition": "Een meting die afleesbaar is in het bedrijfsvoeringcentrum...."
+          },
+          {
+            "citation": "skos:853",
+            "label": "Elektriciteit station",
+            "definition": "Punt in Elektriciteit net met minstens 1 van volgende functies:\n1) transformatie (overgang van spann..."
+          },
+          {
+            "citation": "skos:15",
+            "label": "Kwelscherm",
+            "definition": "Hulpstuk toegepast bij leidingen en kabels in dijkdoorvoeringen om de kwel (het lekken van water) la..."
+          },
+          {
+            "citation": "skos:1842",
+            "label": "Middenspanningsruimte",
+            "definition": "In dit station wordt het laagspanningsnet gevoed vanuit het middenspanningsnet.\nDeze stations bestaa..."
+          },
+          {
+            "citation": "skos:2625",
+            "label": "Straat",
+            "definition": "Een straat (bij de BAG heet dit openbare ruimte) is een door de gemeenteraad als zodanig aangewezen ..."
+          },
+          {
+            "citation": "skos:2035",
+            "label": "Onbalans",
+            "definition": "De per programmatijdseenheid vastgestelde afwijking: -van het saldo van de verkoop, export, inkoop e..."
+          },
+          {
+            "citation": "skos:1732",
+            "label": "Medewerker",
+            "definition": "Natuurlijke persoon die een directe of indirecte arbeidsrelatie heeft of heeft gehad met Alliander o..."
+          },
+          {
+            "citation": "skos:3072",
+            "label": "X-blad",
+            "definition": "Liander Uitvoering stelt op basis van werkzaamheden aan (componenten in) elektro-, gastechnische en ..."
+          },
+          {
+            "citation": "skos:1167",
+            "label": "Gereguleerd domein",
+            "definition": "Alle gereguleerde producten die de netbeheerder aanbiedt. De productprijs is goedgekeurd door de ACM..."
+          },
+          {
+            "citation": "skos:2066",
+            "label": "Ongelijktijdigheid",
+            "definition": "Het verschijnsel dat de maximale belasting in een bepaald punt van het net kleiner zal zijn dan de s..."
+          },
+          {
+            "citation": "skos:1280",
+            "label": "Identificatie",
+            "definition": "Een identificatiecode van een pand is de unieke code waarmee het gebouw is vastgelegd..."
+          },
+          {
+            "citation": "skos:2709",
+            "label": "Telecom glasvezel",
+            "definition": "Dunne draad van zeer doorzichtig glas of soms plastic waar licht doorheen geleid wordt.\n\nEen of meer..."
+          },
+          {
+            "citation": "skos:665",
+            "label": "Data vaardigheid",
+            "definition": null
+          },
+          {
+            "citation": "skos:1914",
+            "label": "Netbeheerdersregister",
+            "definition": "Administratie van bedrijfsgegevens en operationele contactgegevens van de netbeheerders in Nederland..."
+          },
+          {
+            "citation": "skos:1515",
+            "label": "Koker",
+            "definition": "Een koker is een grootschalige beschermingsconstructie waarbij lengte en breedte gegevens essentieel..."
+          },
+          {
+            "citation": "skos:2226",
+            "label": "Preventief onderhoud",
+            "definition": "Activiteiten gericht op het voorkomen van storingen en het in conditie houden van netobjecten gedure..."
+          },
+          {
+            "citation": "skos:1838",
+            "label": "Middeldruknet",
+            "definition": "Een deelnet met een bedrijfsdruk tussen de 4 bar en 0,2 bar...."
+          },
+          {
+            "citation": "skos:28",
+            "label": "Prijsopgaaf",
+            "definition": null
+          },
+          {
+            "citation": "skos:2699",
+            "label": "Technische levensduur",
+            "definition": "De technische levensduur is de periode waarin het productiemiddel de prestaties kan leveren waarvoor..."
+          },
+          {
+            "citation": "skos:349",
+            "label": "Besturen",
+            "definition": "functie waarmee een component of systeem (op een automatische manier) in een bepaalde toestand wordt..."
+          },
+          {
+            "citation": "skos:479",
+            "label": "Schakelstation",
+            "definition": "Op een schakelstation kunnen hoogspanningsverbindingen van gelijke spanning met elkaar verbonden wor..."
+          },
+          {
+            "citation": "skos:396",
+            "label": "BordType",
+            "definition": "Een paneel waarop informatie wordt afgebeeld...."
+          },
+          {
+            "citation": "skos:535",
+            "label": "Constructie-elementen",
+            "definition": "Algemene benaming voor de afzonderlijke delen van gastransportsystemen zoals buizen, hulpstukken, af..."
+          },
+          {
+            "citation": "skos:114",
+            "label": "Geleiden",
+            "definition": "Electriciteit doorlaten of doorgeven...."
+          },
+          {
+            "citation": "skos:2331",
+            "label": "Quality",
+            "definition": "quality is the amount of......"
+          },
+          {
+            "citation": "skos:201",
+            "label": "Object Identification System-code",
+            "definition": "Een code volgens het in IEC 62056-61 vastgelegde Object Identification System, waarmee elementen van..."
+          },
+          {
+            "citation": "skos:438",
+            "label": "Calamiteit",
+            "definition": "Gebeurtenis, waardoor een ernstige verstoring van de algemene veiligheid mogelijk is, of is ontstaan..."
+          },
+          {
+            "citation": "skos:223",
+            "label": "Asset",
+            "definition": "Zie bedrijfsmiddel...."
+          },
+          {
+            "citation": "skos:2135",
+            "label": "Oude (leverancier/programmaverantwoordelijke/meetverantwoordelijke)",
+            "definition": "De leverancier/programmaverantwoordelijke/meetverantwoordelijke die voor een\nbepaalde aansluiting de..."
+          },
+          {
+            "citation": "skos:705",
+            "label": "Directe geolocatie",
+            "definition": "Indicatie van een fysieke locatie door middel van coördinaten in een aan de aarde verbonden referent..."
+          },
+          {
+            "citation": "skos:2695",
+            "label": "Technisch data eigenaar",
+            "definition": "De TDE is technisch operationeel verantwoordelijk voor één of meerdere dataobjecten. De TDE vertaalt..."
+          },
+          {
+            "citation": "skos:1079",
+            "label": "Gasproductie",
+            "definition": "Nederlands grootste gasvoorraad bevindt zich in het Groningenveld bij Slochteren. Gas afkomstig van ..."
+          },
+          {
+            "citation": "skos:1972",
+            "label": "Nieuwe aansluiting",
+            "definition": "Het aansluiten van een installatie/woning/pand op het energienet..."
+          },
+          {
+            "citation": "skos:2398",
+            "label": "Repairable",
+            "definition": "Vervangbare onderdeel dat in een toestel kan ingebouwd worden. Na de vervanging kan de defecte repai..."
+          },
+          {
+            "citation": "skos:1158",
+            "label": "(Gepantserde) Papierloodkabel",
+            "definition": "Kabel met papieren hoofdisolatie en met loodmantel, b.v. GPLK, GPLK-oliedruk. Deze categorisering wo..."
+          },
+          {
+            "citation": "skos:2775",
+            "label": "Toezichthouder",
+            "definition": "Een toezichthouder is een door de overheid aangesteld, onafhankelijk en onpartijdig instituut dat to..."
+          },
+          {
+            "citation": "skos:663",
+            "label": "Datastore",
+            "definition": "Een data store is een weergave van een permanente opslag van data. Het is niet per definitie een dat..."
+          }
+        ]
+      },
+      "iec": {
+        "count": 523,
+        "description": "IEC International energy standards",
+        "examples": [
+          {
+            "citation": "iec:Resistance",
+            "label": "Resistance",
+            "definition": "Resistance (real part of impedance)...."
+          },
+          {
+            "citation": "iec:HydroEnergyConversionKind",
+            "label": "HydroEnergyConversionKind",
+            "definition": "Specifies the capability of the hydro generating unit to convert energy as a generator or pump...."
+          },
+          {
+            "citation": "iec:String",
+            "label": "String",
+            "definition": "A string consisting of a sequence of characters. The character encoding is UTF-8. The string length ..."
+          },
+          {
+            "citation": "iec:TapChanger",
+            "label": "RatioTapChanger",
+            "definition": "A tap changer that changes the voltage ratio impacting the voltage magnitude but not the phase angle..."
+          },
+          {
+            "citation": "iec:GroundDisconnector",
+            "label": "GroundDisconnector",
+            "definition": "A manually operated or motor operated mechanical switching device used for isolating a circuit or eq..."
+          },
+          {
+            "citation": "iec:ReportingGroup",
+            "label": "ReportingGroup",
+            "definition": "A reporting group is used for various ad-hoc groupings used for reporting...."
+          },
+          {
+            "citation": "iec:DCGround",
+            "label": "DCGround",
+            "definition": "A ground within a DC system...."
+          },
+          {
+            "citation": "iec:ConductingEquipment",
+            "label": "ConductingEquipment",
+            "definition": "The parts of the AC power system that are designed to carry current or that are conductively connect..."
+          },
+          {
+            "citation": "iec:String",
+            "label": "String",
+            "definition": "A string consisting of a sequence of characters. The character encoding is UTF-8. The string length ..."
+          },
+          {
+            "citation": "iec:AnalogLimitSet",
+            "label": "AnalogLimitSet",
+            "definition": "An AnalogLimitSet specifies a set of Limits that are associated with an Analog measurement...."
+          },
+          {
+            "citation": "iec:CurrentFlow",
+            "label": "CurrentFlow",
+            "definition": "Electrical current with sign convention: positive flow is out of the conducting equipment into the c..."
+          },
+          {
+            "citation": "iec:RatioTapChangerTable",
+            "label": "RatioTapChangerTable",
+            "definition": "Describes a curve for how the voltage magnitude and impedance varies with the tap step. ..."
+          },
+          {
+            "citation": "iec:IOPoint",
+            "label": "IOPoint",
+            "definition": "The class describe a measurement or control value. The purpose is to enable having attributes and as..."
+          },
+          {
+            "citation": "iec:VoltageLevel",
+            "label": "VoltageLevel",
+            "definition": "A collection of equipment at one common system voltage forming a switchgear. The equipment typically..."
+          },
+          {
+            "citation": "iec:Equipment",
+            "label": "BasicIntervalSchedule",
+            "definition": "Schedule of values at points in time...."
+          },
+          {
+            "citation": "iec:HydroTurbineKind",
+            "label": "HydroTurbineKind",
+            "definition": "Type of turbine...."
+          },
+          {
+            "citation": "iec:SvVoltage",
+            "label": "SvVoltage",
+            "definition": "State variable for voltage...."
+          },
+          {
+            "citation": "iec:ShuntCompensator",
+            "label": "NonlinearShuntCompensatorPoint",
+            "definition": "A non linear shunt compensator bank or section admittance value. The number of NonlinearShuntCompens..."
+          },
+          {
+            "citation": "iec:LinearShuntCompensator",
+            "label": "NonlinearShuntCompensatorPoint",
+            "definition": "A non linear shunt compensator bank or section admittance value. The number of NonlinearShuntCompens..."
+          },
+          {
+            "citation": "iec:UnitSymbol",
+            "label": "UnitSymbol",
+            "definition": "The derived units defined for usage in the CIM. In some cases, the derived unit is equal to an SI un..."
+          },
+          {
+            "citation": "iec:CurrentLimit",
+            "label": "CurrentLimit",
+            "definition": "Operational limit on current. ..."
+          },
+          {
+            "citation": "iec:ACLineSegment",
+            "label": "ACLineSegment",
+            "definition": "A wire or combination of wires, with consistent electrical characteristics, building a single electr..."
+          },
+          {
+            "citation": "iec:RegulatingCondEq",
+            "label": "RegulatingCondEq",
+            "definition": "A type of conducting equipment that can regulate a quantity (i.e. voltage or flow) at a specific poi..."
+          },
+          {
+            "citation": "iec:EnergyConsumer",
+            "label": "EnergyConsumer",
+            "definition": "Generic user of energy - a  point of consumption on the power system model.\nEnergyConsumer.pfixed, ...."
+          },
+          {
+            "citation": "iec:AsynchronousMachine",
+            "label": "AsynchronousMachine",
+            "definition": "A rotating machine whose shaft rotates asynchronously with the electrical field.  Also known as an i..."
+          },
+          {
+            "citation": "iec:DateTime",
+            "label": "DateTime",
+            "definition": "Date and time as \"yyyy-mm-ddThh:mm:ss.sss\", which conforms with ISO 8601. UTC time zone is specified..."
+          },
+          {
+            "citation": "iec:OrientationKind",
+            "label": "OrientationKind",
+            "definition": "The orientation of the coordinate system with respect to top, left, and the coordinate number system..."
+          },
+          {
+            "citation": "iec:RegulationSchedule",
+            "label": "RegulationSchedule",
+            "definition": "A pre-established pattern over time for a controlled variable, e.g., busbar voltage...."
+          },
+          {
+            "citation": "iec:FossilFuel",
+            "label": "FossilFuel",
+            "definition": "The fossil fuel consumed by the non-nuclear thermal generating unit.   For example, coal, oil, gas, ..."
+          },
+          {
+            "citation": "iec:Conductance",
+            "label": "Conductance",
+            "definition": "Factor by which voltage must be multiplied to give corresponding power lost from a circuit. Real par..."
+          },
+          {
+            "citation": "iec:Agreement",
+            "label": "Agreement",
+            "definition": "\n  Formal agreement between two parties defining the terms and conditions for a set of services. The..."
+          },
+          {
+            "citation": "iec:NonlinearShuntCompensatorPoint",
+            "label": "NonlinearShuntCompensatorPoint",
+            "definition": "A non linear shunt compensator bank or section admittance value. The number of NonlinearShuntCompens..."
+          },
+          {
+            "citation": "iec:BatteryUnit",
+            "label": "BatteryUnit",
+            "definition": "An electrochemical energy storage device...."
+          },
+          {
+            "citation": "iec:CsPpccControlKind",
+            "label": "CsPpccControlKind",
+            "definition": "Active power control modes for HVDC line operating as Current Source Converter...."
+          },
+          {
+            "citation": "iec:SVCControlMode",
+            "label": "SVCControlMode",
+            "definition": "Static VAr Compensator control mode...."
+          },
+          {
+            "citation": "iec:GeneratorControlSource",
+            "label": "GeneratorControlSource",
+            "definition": "The source of controls for a generating unit...."
+          },
+          {
+            "citation": "iec:StationSupply",
+            "label": "StationSupply",
+            "definition": "Station supply with load derived from the station output...."
+          },
+          {
+            "citation": "iec:UnitSymbol",
+            "label": "UnitSymbol",
+            "definition": "The derived units defined for usage in the CIM. In some cases, the derived unit is equal to an SI un..."
+          },
+          {
+            "citation": "iec:Date",
+            "label": "Date",
+            "definition": "Date as \"yyyy-mm-dd\", which conforms with ISO 8601. UTC time zone is specified as \"yyyy-mm-ddZ\". A l..."
+          },
+          {
+            "citation": "iec:CoordinateSystem",
+            "label": "CoordinateSystem",
+            "definition": "Coordinate reference system...."
+          },
+          {
+            "citation": "iec:ContingencyElement",
+            "label": "Contingency Element",
+            "definition": "An element of a system event to be studied by contingency analysis, representing a change in status ..."
+          },
+          {
+            "citation": "iec:PhaseTapChangerSymmetrical",
+            "label": "PhaseTapChangerSymmetrical",
+            "definition": "Describes a symmetrical phase shifting transformer tap model in which the voltage magnitude of both ..."
+          },
+          {
+            "citation": "iec:Conductor",
+            "label": "Conductor",
+            "definition": "Combination of conducting material with consistent electrical characteristics, building a single ele..."
+          },
+          {
+            "citation": "iec:Temperature",
+            "label": "Temperature",
+            "definition": "Value of temperature in degrees Celsius...."
+          },
+          {
+            "citation": "iec:String",
+            "label": "String",
+            "definition": "A string consisting of a sequence of characters. The character encoding is UTF-8. The string length ..."
+          },
+          {
+            "citation": "iec:PhaseTapChangerTablePoint",
+            "label": "PhaseTapChangerTablePoint",
+            "definition": "Describes each tap step in the phase tap changer tabular curve...."
+          },
+          {
+            "citation": "iec:Boolean",
+            "label": "Boolean",
+            "definition": "A type with the value space \"true\" and \"false\"...."
+          },
+          {
+            "citation": "iec:BatteryUnit",
+            "label": "BatteryUnit",
+            "definition": "An electrochemical energy storage device...."
+          },
+          {
+            "citation": "iec:PetersenCoilModeKind",
+            "label": "PetersenCoilModeKind",
+            "definition": "The mode of operation for a Petersen coil...."
+          },
+          {
+            "citation": "iec:EnergySchedulingType",
+            "label": "EnergySchedulingType",
+            "definition": "Used to define the type of generation for scheduling purposes...."
+          }
+        ]
+      },
+      "entsoe": {
+        "count": 58,
+        "description": "ENTSOE European grid operator standards",
+        "examples": [
+          {
+            "citation": "entsoe:BillingAgent",
+            "label": "Billing Agent",
+            "definition": "The party responsible for invoicing a concerned party...."
+          },
+          {
+            "citation": "entsoe:ControlBlockOperator",
+            "label": "Control Block Operator",
+            "definition": "Responsible for:\nThe coordination of exchanges between its associated Control Blocks and the organis..."
+          },
+          {
+            "citation": "entsoe:MarketInformationAggregator",
+            "label": "Market Information Aggregator",
+            "definition": "A party that provides market related information that has been compiled from the figures supplied by..."
+          },
+          {
+            "citation": "entsoe:ImbalanceSettlementResponsible",
+            "label": "Imbalance Settlement Responsible",
+            "definition": "A party responsible for determination of the difference between the nominated energy quantities and ..."
+          },
+          {
+            "citation": "entsoe:FlexibilityServiceProvider",
+            "label": "Flexibility Service Provider",
+            "definition": "A party that offers flexibility services based on acquired (aggregated) Resources.\n**\nAdditional inf..."
+          },
+          {
+            "citation": "entsoe:SchedulingAgent",
+            "label": "Scheduling Agent",
+            "definition": "The entity or entities with the task of providing schedules.\n**\nSource:\n**\n[_Consolidated text: Comm..."
+          },
+          {
+            "citation": "entsoe:CoordinatedCapacityCalculator",
+            "label": "Coordinated Capacity Calculator",
+            "definition": "Coordinated Capacity Calculator is the entity or entities with the task of calculating transmission ..."
+          },
+          {
+            "citation": "entsoe:ModelMergingAgent",
+            "label": "Model Merging Agent",
+            "definition": "A party responsible for establishing a merged grid model and ensuring its completeness, consistency ..."
+          },
+          {
+            "citation": "entsoe:SchedulingAreaResponsible",
+            "label": "Scheduling Area Responsible",
+            "definition": "A party responsible for the coordination of nominated volumes within a Scheduling Area.\n**\nAdditiona..."
+          },
+          {
+            "citation": "entsoe:SystemOperator",
+            "label": "System Operator",
+            "definition": "A party responsible for operating, ensuring the maintenance of and, if necessary, developing the sys..."
+          },
+          {
+            "citation": "entsoe:EnergyServiceCompany",
+            "label": "Energy Service Company",
+            "definition": "A party offering energy-related services to the Party Connected to Grid, but not directly active in ..."
+          },
+          {
+            "citation": "entsoe:TradeResponsibleParty",
+            "label": "Trade Responsible Party",
+            "definition": "A party who can be brought to rights, legally and financially, for any imbalance between energy nomi..."
+          },
+          {
+            "citation": "entsoe:DataAccessProvider",
+            "label": "Data Access Provider",
+            "definition": "A party responsible for facilitating access to data by the party connected to the grid or by other p..."
+          },
+          {
+            "citation": "entsoe:EnergyTrader",
+            "label": "Energy Trader",
+            "definition": "A party that is selling or buying energy...."
+          },
+          {
+            "citation": "entsoe:ModellingAuthority",
+            "label": "Modelling Authority",
+            "definition": "A party accountable for the sourcing, consistency and quality of one or more model datasets...."
+          },
+          {
+            "citation": "entsoe:MeteredDataCollector",
+            "label": "Metered Data Collector",
+            "definition": "A party responsible for meter reading and quality control of the reading...."
+          },
+          {
+            "citation": "entsoe:EnergySupplier",
+            "label": "Energy Supplier",
+            "definition": "An Energy Supplier delivers energy to or takes energy from a Party Connected to the Grid at an Accou..."
+          },
+          {
+            "citation": "entsoe:GridAccessProvider",
+            "label": "Grid Access Provider",
+            "definition": "A party responsible for providing access to the grid.\n**\nAdditional information:\n**\nThe Grid Access ..."
+          },
+          {
+            "citation": "entsoe:PartyAdministrator",
+            "label": "Party Administrator",
+            "definition": "A party responsible for maintaining party characteristics for the energy sector...."
+          },
+          {
+            "citation": "entsoe:TransmissionCapacityAllocator",
+            "label": "Transmission Capacity Allocator",
+            "definition": "The Transmission Capacity Allocator manages, on behalf of the System Operators, the allocation of av..."
+          },
+          {
+            "citation": "entsoe:MeterAdministrator",
+            "label": "Meter Administrator",
+            "definition": "A party responsible for keeping a database of meters...."
+          },
+          {
+            "citation": "entsoe:ControlAreaOperator",
+            "label": "Control Area Operator",
+            "definition": "Responsible for:\nThe coordination of exchange programs between its related Market Balance Areas and ..."
+          },
+          {
+            "citation": "entsoe:PermissionAdministrator",
+            "label": "Permission Administrator",
+            "definition": "A party responsible for administrating a register of permissions for a domain. The permission Admini..."
+          },
+          {
+            "citation": "entsoe:NominatedElectricityMarketOperator",
+            "label": "Nominated Electricity Market Operator",
+            "definition": "An entity designated by the competent authority to perform tasks related to single day-ahead or sing..."
+          },
+          {
+            "citation": "entsoe:ConsumptionResponsibleParty",
+            "label": "Consumption Responsible Party",
+            "definition": "A Consumption Responsible Party is responsible for its imbalances, meaning the difference between th..."
+          },
+          {
+            "citation": "entsoe:CoordinationCentreOperator",
+            "label": "Coordination Centre Operator",
+            "definition": "A party responsible for the coordination of its Coordination Centre Zone in respect of scheduling, l..."
+          },
+          {
+            "citation": "entsoe:BalancingServiceProvider",
+            "label": "Balancing Service Provider",
+            "definition": "A party providing energy balancing services to the energy or capacity market.\n\n**\nAdditional informa..."
+          },
+          {
+            "citation": "entsoe:MarketOperator",
+            "label": "Market Operator",
+            "definition": "A party that provides a service whereby the offers to sell energy are matched with bids to buy energ..."
+          },
+          {
+            "citation": "entsoe:MeterOperator",
+            "label": "Meter Operator",
+            "definition": "A party responsible for installing, maintaining, testing, certifying and decommissioning physical me..."
+          },
+          {
+            "citation": "entsoe:Producer",
+            "label": "Producer",
+            "definition": "A party that generates electricity.\n**\nAdditional information:\n**\nThis is a type of Party Connected ..."
+          },
+          {
+            "citation": "entsoe:ReserveAllocator",
+            "label": "Reserve Allocator",
+            "definition": "Informs the market of reserve requirements, receives bids against the requirements and in compliance..."
+          },
+          {
+            "citation": "entsoe:InterconnectionTradeResponsible",
+            "label": "Interconnection Trade Responsible",
+            "definition": "Is a Balance Responsible Party or depends on one. He is recognise by the Nomination Validator for th..."
+          },
+          {
+            "citation": "entsoe:ResourceProvider",
+            "label": "Resource Provider",
+            "definition": "A role that manages a resource and provides production/consumption schedules for it, if required...."
+          },
+          {
+            "citation": "entsoe:MeteredDataAdministrator",
+            "label": "Metered Data Administrator",
+            "definition": "A party responsible for storing and distributing validated measured data...."
+          },
+          {
+            "citation": "entsoe:4001",
+            "label": "Role Collection",
+            "definition": "A collection of HEMRM's terms and definitions in relation to role that is the responsibility for per..."
+          },
+          {
+            "citation": "entsoe:MeteredDataAggregator",
+            "label": "Metered Data Aggregator",
+            "definition": "A party responsible for the establishment and qualification of measured data from the Metered Data R..."
+          },
+          {
+            "citation": "entsoe:BalanceResponsibleParty",
+            "label": "Balance Responsible Party",
+            "definition": "A party financially accountable for its imbalances.\n\n**\nBased on:\n**\n\n[_Consolidated text: Commissio..."
+          },
+          {
+            "citation": "entsoe:MeteredDataResponsible",
+            "label": "Metered Data Responsible",
+            "definition": "A party responsible for the establishment and validation of measured data based on the collected dat..."
+          },
+          {
+            "citation": "entsoe:CapacityCoordinator",
+            "label": "Capacity Coordinator ",
+            "definition": "A party that has a contract to participate in the Capacity Market to acquire capacity through a Tran..."
+          },
+          {
+            "citation": "entsoe:Consumer",
+            "label": "Consumer",
+            "definition": "A party that consumes energy.\n**\nAdditional information:\n**\nThis is a Type of Party Connected to the..."
+          },
+          {
+            "citation": "entsoe:MeteringPoint",
+            "label": "Metering Point Administrator",
+            "definition": "A party responsible for administrating and making available the Metering Point characteristics, incl..."
+          },
+          {
+            "citation": "entsoe:GridOperator",
+            "label": "Grid Operator",
+            "definition": "A party that operates one or more grids...."
+          },
+          {
+            "citation": "entsoe:LocalServiceProvider",
+            "label": "Local service provider",
+            "definition": null
+          },
+          {
+            "citation": "entsoe:MeritOrderListResponsible",
+            "label": "Merit Order List Responsible",
+            "definition": "Responsible for the management of the available tenders for all Acquiring LFC Operators to establish..."
+          },
+          {
+            "citation": "entsoe:AlignmentAgent",
+            "label": "Alignment Agent",
+            "definition": "A party responsible for aligning the forecasts and/or the verification of the Bidding Zones net posi..."
+          },
+          {
+            "citation": "entsoe:ReconciliationResponsible",
+            "label": "Reconciliation Responsible",
+            "definition": "A party that is responsible for reconciling, within a Metering Grid Area, the volumes used in the im..."
+          },
+          {
+            "citation": "entsoe:ReconciliationAccountable",
+            "label": "Reconciliation Accountable",
+            "definition": "A party that is financially accountable for the reconciled volume of energy products for a profiled ..."
+          },
+          {
+            "citation": "entsoe:Ontology",
+            "label": "Harmonized Electricity Market Role Model (ENTSO-E)",
+            "definition": null
+          },
+          {
+            "citation": "entsoe:LfcOperator",
+            "label": "LFC Operator",
+            "definition": "Responsible for the load frequency control for its LFC Area or LFC Block.\n**\nAdditional information:..."
+          },
+          {
+            "citation": "entsoe:ResourceAggregator",
+            "label": "Resource Aggregator",
+            "definition": "A party that aggregates Resources for usage by other market participants.\n**\nAdditional information:..."
+          }
+        ]
+      },
+      "eurlex": {
+        "count": 562,
+        "description": "EUR-LEX European Union energy regulations",
+        "examples": [
+          {
+            "citation": "eurlex:543-19",
+            "label": "Markttijdseenheid",
+            "definition": "De periode waarvoor de marktprijs is vastgesteld of de kortst mogelijke gemeenschappelijke tijdsperi..."
+          },
+          {
+            "citation": "eurlex:2195-21",
+            "label": "Exchange of balancing services",
+            "definition": "Either or both exchange of balancing energy and exchange of balancing capacity...."
+          },
+          {
+            "citation": "eurlex:1485-51",
+            "label": "Indicatoren voor de operationele veiligheid",
+            "definition": "Indicatoren die door TSB's worden gebruikt voor het toezicht op de operationele veiligheid ten aanzi..."
+          },
+          {
+            "citation": "eurlex:944-7",
+            "label": "Kleine onderneming",
+            "definition": "Onderneming met minder dan vijftig werknemers en een jaaromzet en/of een jaarlijks balanstotaal van ..."
+          },
+          {
+            "citation": "eurlex:1222-45",
+            "label": "Overmacht",
+            "definition": "Elke onvoorzienbare of ongebruikelijke gebeurtenis waarover een TSB redelijkerwijs geen controle hee..."
+          },
+          {
+            "citation": "eurlex:1222-19",
+            "label": "Structurele congestie",
+            "definition": "Congestie in het transmissiesysteem die ondubbelzinnig kan worden gedefinieerd, voorspelbaar is, in ..."
+          },
+          {
+            "citation": "eurlex:543-27",
+            "label": "Totale belasting",
+            "definition": "Inclusief verliezen, maar zonder voor energieopslag gebruikte elektriciteit: een belasting die gelij..."
+          },
+          {
+            "citation": "eurlex:1388-19",
+            "label": "Aggregatie van het verbruik",
+            "definition": "Een groep verbruiksinstallaties of gesloten distributiesystemen die als één voorziening of gesloten ..."
+          },
+          {
+            "citation": "eurlex:631-20",
+            "label": "Active power",
+            "definition": "The real component of the apparent power at fundamental frequency, expressed in watts or multiples t..."
+          },
+          {
+            "citation": "eurlex:1485-25",
+            "label": "Invloedsfactor",
+            "definition": "Numerieke waarde ter kwantificering van het grootste effect van een niet-beschikbaarheid van een ele..."
+          },
+          {
+            "citation": "eurlex:944-24c",
+            "label": "Flexible Connection Agreement",
+            "definition": "means a set of agreed conditions for connecting electrical capacity to the grid that includes condit..."
+          },
+          {
+            "citation": "eurlex:943-63",
+            "label": "Regional coordination centre",
+            "definition": "Regional coordination centre established pursuant to Article 35..."
+          },
+          {
+            "citation": "eurlex:943-35",
+            "label": "Final customer",
+            "definition": "Final customer as defined in Directive (EU) 2019/944..."
+          },
+          {
+            "citation": "eurlex:944-53",
+            "label": "Verticaal geïntegreerd bedrijf",
+            "definition": "Elektriciteitsbedrijf of groep van elektriciteitsbedrijven waarin dezelfde persoon of dezelfde perso..."
+          },
+          {
+            "citation": "eurlex:1388-13",
+            "label": "Blokkeren van een trappenschakelaar",
+            "definition": "Een actie waarbij de trappenschakelaar wordt geblokkeerd tijdens een gebeurtenis die leidt tot een l..."
+          },
+          {
+            "citation": "eurlex:944-24",
+            "label": "Flexible Connection Agreement",
+            "definition": "means a set of agreed conditions for connecting electrical capacity to the grid that includes condit..."
+          },
+          {
+            "citation": "eurlex:1485-119",
+            "label": "Primaire regeling",
+            "definition": "Regelactie die automatisch en lokaal wordt geactiveerd om de frequentie direct na een storing te sta..."
+          },
+          {
+            "citation": "eurlex:944-13",
+            "label": "Elektriciteitsleveringscontract",
+            "definition": "Een contract voor de levering van elektriciteit, elektriciteitsderivaten niet inbegrepen...."
+          },
+          {
+            "citation": "eurlex:1485-120",
+            "label": "Gekwalificeerde reserveleverancier",
+            "definition": "Reserveleverancier die voldoet aan de eisen van de TSB of toezichthoudende instantie;..."
+          },
+          {
+            "citation": "eurlex:1485-4",
+            "label": "Programma",
+            "definition": "Referentiereeks van waarden die de productie, het verbruik of de uitwisseling van elektriciteit gedu..."
+          },
+          {
+            "citation": "eurlex:944-38",
+            "label": "Producent",
+            "definition": "Natuurlijke persoon of rechtspersoon die elektriciteit opwekt...."
+          },
+          {
+            "citation": "eurlex:943-74",
+            "label": "Peak-shaving product",
+            "definition": "‘peak-shaving product’ means a market-based product by means of which market participants can provid..."
+          },
+          {
+            "citation": "eurlex:943-32",
+            "label": "Specific balancing product",
+            "definition": "A balancing product different from a standard balancing product..."
+          },
+          {
+            "citation": "eurlex:1485-6",
+            "label": "Monitoringverantwoordelijke voor een synchrone zone",
+            "definition": "TSB die verantwoordelijk is voor het verzamelen van gegevens voor de frequentiekwaliteitsevaluatiecr..."
+          },
+          {
+            "citation": "eurlex:543-30",
+            "label": "Year-ahead-prognosemarge",
+            "definition": "Het verschil tussen de jaarlijkse prognose van de beschikbare opwekkingscapaciteit en de jaarlijkse ..."
+          },
+          {
+            "citation": "eurlex:1222-23",
+            "label": "Benoemde elektriciteitsmarktbeheerder (NEMO)",
+            "definition": "Een entiteit die door de bevoegde autoriteit is aangewezen om taken uit te voeren met betrekking tot..."
+          },
+          {
+            "citation": "eurlex:943-46",
+            "label": "Interoperability",
+            "definition": "Interoperability as defined in Directive (EU) 2019/944..."
+          },
+          {
+            "citation": "eurlex:631-44",
+            "label": "Houseload operation",
+            "definition": "The operation which ensures that power-generating facilities are able to continue to supply their in..."
+          },
+          {
+            "citation": "eurlex:1711",
+            "label": "1711 - het verbeteren van de opzet van de elektriciteitsmarkt van de Unie",
+            "definition": null
+          },
+          {
+            "citation": "eurlex:1485-53",
+            "label": "Operationele tests",
+            "definition": "Tests die door een TSB of DSB worden verricht ten behoeve van het onderhoud en de ontwikkeling van w..."
+          },
+          {
+            "citation": "eurlex:1485-89",
+            "label": "Regelzonebeheerder",
+            "definition": "TSB die verantwoordelijk is voor het beheer van een regelzone;..."
+          },
+          {
+            "citation": "eurlex:1388-8",
+            "label": "Maximale importcapaciteit",
+            "definition": "Het maximale ononderbroken werkzame vermogen dat een transmissiegekoppelde verbruiksinstallatie of e..."
+          },
+          {
+            "citation": "eurlex:1485-43",
+            "label": "Frequentieherstelregelfout",
+            "definition": "Regelfout voor het FRP, die gelijk is aan de ACE van een LFC-zone of aan de frequentieafwijking wann..."
+          },
+          {
+            "citation": "eurlex:1485-148",
+            "label": "Nulcomponent",
+            "definition": "Component van ongebalanceerde driefasige stromen of spanningen, waarbij alle drie de fasen dezelfde ..."
+          },
+          {
+            "citation": "eurlex:1388-15",
+            "label": "Blokbelasting",
+            "definition": "De maximale belastingsstap van werkzaam vermogen dat heringeschakeld kan worden tijdens het systeemh..."
+          },
+          {
+            "citation": "eurlex:1485-145",
+            "label": "Spanningsovertreding",
+            "definition": "Situatie waarin de spanning de gespecificeerde grenzen in het transmissiesysteem overschrijdt of ond..."
+          },
+          {
+            "citation": "eurlex:1485-46",
+            "label": "Lokale toestand",
+            "definition": "Kwalificatie van een alarmtoestand, noodtoestand of black-outtoestand wanneer er geen risico bestaat..."
+          },
+          {
+            "citation": "eurlex:1222-14",
+            "label": "Betrouwbaarheidsmarge",
+            "definition": "De vermindering van de zoneoverschrijdende capaciteit om de onzekerheid binnen de capaciteitsbereken..."
+          },
+          {
+            "citation": "eurlex:944-14",
+            "label": "Elektriciteitsderivaat",
+            "definition": "Een financieel instrument, als omschreven in punt 5, 6 of 7 van deel C van bijlage I bij Richtlijn 2..."
+          },
+          {
+            "citation": "eurlex:1485-42",
+            "label": "Frequentieherstelproces",
+            "definition": "Proces dat is gericht op herstel van de nominale frequentie en, voor synchrone zones die uit meer da..."
+          },
+          {
+            "citation": "eurlex:1222-36",
+            "label": "Gate-sluitingstijd van de day-aheadmarkt",
+            "definition": "Het tijdstip tot waarop orders op de day-aheadmarkt worden aanvaard;..."
+          },
+          {
+            "citation": "eurlex:944-47",
+            "label": "Balanceringsverantwoordjke",
+            "definition": "Een balanceringsverantwoordjke als gedefinieerd in artikel 2, punt 14, van Verordening (EU) 2019/943..."
+          },
+          {
+            "citation": "eurlex:1485-115",
+            "label": "Operationele planningsfase",
+            "definition": "Tijdsperiode voorafgaand aan de realtime operatie waarin TSB's het beheer van het transmissiesysteem..."
+          },
+          {
+            "citation": "eurlex:944-17",
+            "label": "Overstapgerelateerde vergoeding",
+            "definition": "Iedere heffing of boete die rechtstreeks of indirect door leveranciers, marktdeelnemers die aan aggr..."
+          },
+          {
+            "citation": "eurlex:1485-8",
+            "label": "Nuldoorgang",
+            "definition": "Het tijdstip waarop de spannings- of stroomgolfvorm door nul gaat;..."
+          },
+          {
+            "citation": "eurlex:1485-151",
+            "label": "Zonetijd",
+            "definition": "De tijd zoals gedefinieerd door de tijdzone waarin het transmissiesysteem of een gedeelte daarvan op..."
+          },
+          {
+            "citation": "eurlex:943-29",
+            "label": "Central dispatching model",
+            "definition": "A scheduling and dispatching model where the schedules and dispatch are determined by a transmission..."
+          },
+          {
+            "citation": "eurlex:2195-45",
+            "label": "Validity period",
+            "definition": "The period when the balancing energy bid offered by the balancing service provider can be activated,..."
+          },
+          {
+            "citation": "eurlex:944-56",
+            "label": "Zeggenschap",
+            "definition": "Rechten, overeenkomsten of andere middelen die, afzonderlijk of tezamen, met inachtneming van alle f..."
+          }
+        ]
+      },
+      "lido": {
+        "count": 222,
+        "description": "LIDO Dutch government energy regulations",
+        "examples": [
+          {
+            "citation": "lido:94",
+            "label": "Meetverantwoordelijke",
+            "definition": "Meetverantwoordelijke:Een persoon die meetverantwoordelijkheid uitoefent en die daarvoor conform bij..."
+          },
+          {
+            "citation": "lido:48",
+            "label": "(Normale toestand met) enkelvoudige storingsreserve tijdens onderhoud",
+            "definition": "(Normale toestand met) enkelvoudige storingsreserve tijdens onderhoud:Een (normale toestand met) enk..."
+          },
+          {
+            "citation": "lido:6",
+            "label": "Schakelstoring",
+            "definition": "Een storing in de meetinrichting waardoor de aansturing van de telwerken niet heeft plaatsgevonden o..."
+          },
+          {
+            "citation": "lido:128",
+            "label": "Particulier net",
+            "definition": "Particulier net..."
+          },
+          {
+            "citation": "lido:171",
+            "label": "Standaardjaarinvoeding (SJI)",
+            "definition": "Standaardjaarinvoeding (SJI):De verwachte invoeding op een aansluiting bij gestandaardiseerde condit..."
+          },
+          {
+            "citation": "lido:148",
+            "label": "Regeling groencertificaten",
+            "definition": "Regeling groencertificaten..."
+          },
+          {
+            "citation": "lido:100",
+            "label": "Mutatiedatum",
+            "definition": "De datum waarop door de netbeheerder de wijziging van stamgegevens in het aansluitingenregister word..."
+          },
+          {
+            "citation": "lido:115",
+            "label": "Normaal telwerk",
+            "definition": "Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan..."
+          },
+          {
+            "citation": "lido:62",
+            "label": "Gevraagde transportcapaciteit",
+            "definition": "Gevraagde transportcapaciteit:De transportcapaciteit nodig om aan de vraag naar transport van één in..."
+          },
+          {
+            "citation": "lido:27",
+            "label": "BRP-register",
+            "definition": "BRP-register:Een door de netbeheerder van het landelijk hoogspanningsnet ingericht en beheerd regist..."
+          },
+          {
+            "citation": "lido:173",
+            "label": "Stroomsommatie (van de meetinrichting)",
+            "definition": "Stroomsommatie (van de meetinrichting):Het sommeren van meetstromen door parallelschakeling van de s..."
+          },
+          {
+            "citation": "lido:3",
+            "label": "Transporttarief",
+            "definition": "Transporttarief:Het tarief in rekening gebracht door de netbeheerder bij een aangeslotene ter dekkin..."
+          },
+          {
+            "citation": "lido:153",
+            "label": "Rekening",
+            "definition": "Rekening..."
+          },
+          {
+            "citation": "lido:75",
+            "label": "Inzetbaar vermogen",
+            "definition": "Inzetbaar vermogen..."
+          },
+          {
+            "citation": "lido:136",
+            "label": "Profielgrootverbruikmeetinrichting",
+            "definition": "Een meetinrichting die voldoet aan de in 4.3.4 van de Meetcode elektriciteitgenoemde eisen;..."
+          },
+          {
+            "citation": "lido:109",
+            "label": "Netverliezen (NV)",
+            "definition": "Saldo van energie ingevoed op en energie afgenomen van een bepaald net gedurende een bepaalde tijd;..."
+          },
+          {
+            "citation": "lido:40",
+            "label": "EAN-codeboek",
+            "definition": "EAN-codeboek:Een online toegankelijk uittreksel van het aansluitingenregister;..."
+          },
+          {
+            "citation": "lido:106",
+            "label": "Netbeheerdersregister",
+            "definition": "Administratie van bedrijfsgegevens en operationele contactgegevens van de netbeheerders in Nederland..."
+          },
+          {
+            "citation": "lido:71",
+            "label": "Standaardjaarinvoeding (SJI)",
+            "definition": "Standaardjaarinvoeding (SJI):De verwachte invoeding op een aansluiting bij gestandaardiseerde condit..."
+          },
+          {
+            "citation": "lido:78",
+            "label": "Tariefcategorie (TC)",
+            "definition": "Tariefcategorie (TC):Eén van de categorieën volgens 3.7.1 van de Tarievencode elektriciteit, waarbij..."
+          },
+          {
+            "citation": "lido:149",
+            "label": "Regelzone Maasvlakte – Groot-Brittannië",
+            "definition": "Het gebied als bedoeld in artikel 2, zesde lid, van de Verordening (EU) 543/2013 voor de verbinding ..."
+          },
+          {
+            "citation": "lido:138",
+            "label": "Programmeringszone Nederland",
+            "definition": "Het gebied als bedoeld in artikel 3, tweede lid, onderdeel 91, van de Verordening (EU) 2017/type (GL..."
+          },
+          {
+            "citation": "lido:175",
+            "label": "Syntactisch correct",
+            "definition": "Syntactisch correct:Voldoet aan de specificaties, bedoeld in 9.1.1 van de Informatiecode elektricite..."
+          },
+          {
+            "citation": "lido:114",
+            "label": "Normatermtarief",
+            "definition": "Normatermtarief..."
+          },
+          {
+            "citation": "lido:205",
+            "label": "Verondersteld geprofileerde afname (VGA)",
+            "definition": "Verondersteld geprofileerde afname (VGA):De profielfractie voor afname (PFA) vermenigvuldigd met de ..."
+          },
+          {
+            "citation": "lido:121",
+            "label": "Onbemeten aansluiting",
+            "definition": "Een aansluiting waarbij op grond van artikel 2.30of 2.31 van de Netcode elektriciteitgeen meetinrich..."
+          },
+          {
+            "citation": "lido:203",
+            "label": "Verliesbericht",
+            "definition": "Verliesbericht:Het bericht waarmee de netbeheerder aan de oude leverancier, oude BRP of oude meetver..."
+          },
+          {
+            "citation": "lido:96",
+            "label": "Meterbeheerder",
+            "definition": "Meterbeheerder:Een organisatorische eenheid die verantwoordelijk is voor ontwerp, plaatsing, beheer,..."
+          },
+          {
+            "citation": "lido:79",
+            "label": "Kleinverbruikmeetinrichting",
+            "definition": "Kleinverbruikmeetinrichting:Een meetinrichting bij een kleinverbruikaansluiting, zijnde een op afsta..."
+          },
+          {
+            "citation": "lido:26",
+            "label": "Overdrachtspunt",
+            "definition": "Het fysieke punt waar respectievelijk een scheiding tussen de aansluiting van twee netten onderling ..."
+          },
+          {
+            "citation": "lido:151",
+            "label": "Regionaal hoogspanningsnet",
+            "definition": "Net bestemd voor het transport van elektriciteit op een spanningsniveau van 50 kV of hoger, maar lag..."
+          },
+          {
+            "citation": "lido:35",
+            "label": "Profielgrootverbruikaansluiting",
+            "definition": "Een grootverbruikaansluiting waarbij een profielgrootverbruikmeetinrichting aanwezig is;..."
+          },
+          {
+            "citation": "lido:19",
+            "label": "Transportdienst",
+            "definition": "Transportdienst:Het transporteren van elektriciteit van producenten naar verbruikers door gebruik te..."
+          },
+          {
+            "citation": "lido:33",
+            "label": "Productiemeetinrichting",
+            "definition": "Een meetinrichting waarmee de hoeveelheid opgewekte elektrische energie op de plaats waar de GCvO-in..."
+          },
+          {
+            "citation": "lido:141",
+            "label": "Recreatienet",
+            "definition": "Een net waarvoor niet op grond van artikel 10, negende lid, van de Weteen netbeheerder is aangewezen..."
+          },
+          {
+            "citation": "lido:52",
+            "label": "Frequentierelais",
+            "definition": "Frequentierelais:Een voorziening, reagerend op frequentiedaling via vooraf ingestelde frequentiewaar..."
+          },
+          {
+            "citation": "lido:84",
+            "label": "Telwerk",
+            "definition": "Telwerk:Een samenstel van cijferrollen bij een Ferrarismeter dan wel een dataregister van een digita..."
+          },
+          {
+            "citation": "lido:66",
+            "label": "Spanning Uc",
+            "definition": "De door de netbeheerder aangegeven en met de aangeslotene overeengekomen waarde van de spanning; Dit..."
+          },
+          {
+            "citation": "lido:87",
+            "label": "Laaguren",
+            "definition": "Laaguren:Uren van de dag waarvoor, in geval van een meetinrichting met dubbel telwerk, de met het ne..."
+          },
+          {
+            "citation": "lido:119",
+            "label": "Onbalansverrekeningsperiode",
+            "definition": "De tijdseenheid waarmee de onbalansverrekening plaatsvindt, te weten 15 minuten, ofwel per klokkwart..."
+          },
+          {
+            "citation": "lido:12",
+            "label": "Particulier net",
+            "definition": "Particulier net..."
+          },
+          {
+            "citation": "lido:183",
+            "label": "Telemetriegrootverbruikmeetinrichting",
+            "definition": "Telemetriegrootverbruikmeetinrichting:Een meetinrichting die voldoet aan de in 4.3.5 van de Meetcode..."
+          },
+          {
+            "citation": "lido:199",
+            "label": "Validatiestatus",
+            "definition": "Validatiestatus:Het resultaat van de datavalidatie door de meetverantwoordelijke van de betreffende ..."
+          },
+          {
+            "citation": "lido:132",
+            "label": "Primaire energiebron",
+            "definition": "Een aanduiding voor de soort brandstof en/of energiebron voor de elektriciteitsproductie-eenheid, on..."
+          },
+          {
+            "citation": "lido:105",
+            "label": "Netaansluitpunt",
+            "definition": "Het fysieke punt dat de grens tussen de aansluiting en het net van de netbeheerder aangeeft;..."
+          },
+          {
+            "citation": "lido:134",
+            "label": "Profielcategorie (PC)",
+            "definition": "Een classificering van aansluitingen op grond van objectief vast te stellen kenmerken, zoals aanslui..."
+          },
+          {
+            "citation": "lido:145",
+            "label": "Regelbaar vermogen voor invoedings-congestie",
+            "definition": "Vermogen dat overeenkomstig artikel 9.31, eerste lid, van de Netcode elektriciteitvoor inzet beschik..."
+          },
+          {
+            "citation": "lido:176",
+            "label": "Systeemdienstentarief",
+            "definition": "Systeemdienstentarief..."
+          },
+          {
+            "citation": "lido:4",
+            "label": "Meetverantwoordelijke",
+            "definition": "Meetverantwoordelijke:Een persoon die meetverantwoordelijkheid uitoefent en die daarvoor conform bij..."
+          },
+          {
+            "citation": "lido:180",
+            "label": "Tariefperiode (TP)",
+            "definition": "Tariefperiode (TP):Een aaneengesloten periode van normaaluren of laaguren;..."
+          }
+        ]
+      }
+    }
+  },
+  "archimate_models": {
+    "IEC 61968.xml": {
+      "count": 669,
+      "examples": [
+        {
+          "citation": "archi:id-id-3c38e9b0f62b4c62becc3f34ec656063",
+          "name": "Capability_ec656063",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-bb4927cb312145fe8f2cf2804f8b8a74",
+          "name": "Capability_4f8b8a74",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-bf89eda8e8d44851ada21feb506de359",
+          "name": "Capability_506de359",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-30665c6818a24c08b3a79beaf16d3469",
+          "name": "Capability_f16d3469",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-7621c17eb2c745d08fbec3d5e844251e",
+          "name": "Capability_e844251e",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-9b71ef0ab53942de9a1a449df7a946ce",
+          "name": "Capability_f7a946ce",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-16ef38ad0fdb448eb7c104adf86e11cb",
+          "name": "Capability_f86e11cb",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-a8b4fdadb4354a63ba24c3d62b4c5500",
+          "name": "Capability_2b4c5500",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-f77f984635f046b1a1f36110e5a26492",
+          "name": "Capability_e5a26492",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-dff8f8addffc4a9fa4effe621624e183",
+          "name": "Capability_1624e183",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-dac06d85674d4e108586f414da2e0a5e",
+          "name": "Capability_da2e0a5e",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-a9eb54e9d30a447c9823f87ddfce170b",
+          "name": "Capability_dfce170b",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-0114d9f83f5648099ed577b43f3fed46",
+          "name": "Capability_3f3fed46",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-a50729c7a4a0495fa3bbd17cf9ac7e78",
+          "name": "Capability_f9ac7e78",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-ab490bd43350493886843a1d3b1941be",
+          "name": "Capability_3b1941be",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-61a1b512dd9d4cde91779499eb3cdbe8",
+          "name": "Capability_eb3cdbe8",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-95730ee75a344451a54b23f9fade1d95",
+          "name": "Capability_fade1d95",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-cbbe8f78e9384b49bd380159bed3bc2c",
+          "name": "Capability_bed3bc2c",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-f65576198a874311a73b6ae2282d96ea",
+          "name": "Capability_282d96ea",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-5ac31aac8fb04969b41c86e12bd13c6b",
+          "name": "Capability_2bd13c6b",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-18d26b0e99a842db9ef2a334815dcf6c",
+          "name": "Capability_815dcf6c",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-1f05d442afd3480987a480f50d9ed0c9",
+          "name": "Capability_0d9ed0c9",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-8fcda84147c54cdd86783c5aae415243",
+          "name": "Capability_ae415243",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-66668045c07148bdbdfdeb3e8a7abfd1",
+          "name": "Capability_8a7abfd1",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-d0af786359594b17ae19f761ec863e40",
+          "name": "Capability_ec863e40",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-ee21b01478354a4c8c073251f0e83d1b",
+          "name": "Capability_f0e83d1b",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-673e717eeb5e468487b056b6b0bcc3db",
+          "name": "Capability_b0bcc3db",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-a3f10633347d418684571a2203ab60eb",
+          "name": "Capability_03ab60eb",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-20cf9966874c4d0887080e432cf16ea1",
+          "name": "Capability_2cf16ea1",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-aebfc7784b0948588e4209ab523a57f8",
+          "name": "Capability_523a57f8",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-e5b707d6614840c483d61f02f13018c6",
+          "name": "Capability_f13018c6",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-dd3969d5da104dd1b0a1c412de283293",
+          "name": "Capability_de283293",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-675f38b5710442929ad97962ec07c5fe",
+          "name": "Capability_ec07c5fe",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-901a37e0846646dab082340dd1f6496d",
+          "name": "Capability_d1f6496d",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-facc13e450f84a1191bb13af386c1f70",
+          "name": "Capability_386c1f70",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-9bb99c7404bf4bb2bcc43d074f641936",
+          "name": "Capability_4f641936",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-7cc85455e11d46ac91c3897b1182ff08",
+          "name": "Capability_1182ff08",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-1cdfbcb3671d476bbe62d72bb45b1c4f",
+          "name": "Capability_b45b1c4f",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-e73a80b021e24ae994a70f8c928a3d35",
+          "name": "Capability_928a3d35",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-5f226afcf3c74f699f8d4afc00ddee4f",
+          "name": "Capability_00ddee4f",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-997469c5f18940c092489dff6a86ed20",
+          "name": "Capability_6a86ed20",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-6c598331c2da4c879a8b05de033ddf79",
+          "name": "Capability_033ddf79",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-cff4a7e2c34f466aaee37941ebfa1a8e",
+          "name": "Capability_ebfa1a8e",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-0f7fb1218a9347b68d86b87aadec1156",
+          "name": "Capability_adec1156",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-b70470065cd843da82cd7e400bb0da37",
+          "name": "Capability_0bb0da37",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-462a6a292fe04f79a50910422232d74e",
+          "name": "Capability_2232d74e",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-08212c727d10439695c4b538551e5efc",
+          "name": "Capability_551e5efc",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-6e3f59e0f5754b4d9e2fabc70643b43c",
+          "name": "Capability_0643b43c",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-6856336d2abb459c840cb0d94503f37f",
+          "name": "Capability_4503f37f",
+          "type": "Capability",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-5c039684147c4aa0a2797e915f97c406",
+          "name": "Capability_5f97c406",
+          "type": "Capability",
+          "layer": "Business"
+        }
+      ],
+      "element_types": {
+        "Capability": 50
+      }
+    },
+    "archi-4-archi.xml": {
+      "count": 82,
+      "examples": [
+        {
+          "citation": "archi:id-id-9282b5aca1ef4d47b392177f7f8798dc",
+          "name": "BusinessObject_7f8798dc",
+          "type": "BusinessObject",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-0af40f60e0934978831d4748ba45e454",
+          "name": "BusinessFunction_ba45e454",
+          "type": "BusinessFunction",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-dba81bba5c6641f0a1050e026c33f4f9",
+          "name": "BusinessService_6c33f4f9",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-3ab58fdf287f45dca774c4cd9c458ba5",
+          "name": "BusinessFunction_9c458ba5",
+          "type": "BusinessFunction",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-067f2455c44747b682d6640a9bff181d",
+          "name": "BusinessService_9bff181d",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-ca478e2760ec4006ab4609367fdc87d5",
+          "name": "BusinessObject_7fdc87d5",
+          "type": "BusinessObject",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-5704cdb79cb84546b9e5a2e477b6509e",
+          "name": "BusinessFunction_77b6509e",
+          "type": "BusinessFunction",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-eb82c39754294a98aaa5a554b0bf65ca",
+          "name": "BusinessService_b0bf65ca",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-703b24eada034440adc0457622b6d6f7",
+          "name": "BusinessObject_22b6d6f7",
+          "type": "BusinessObject",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-87a862dd50474ef7baae874a492f74fe",
+          "name": "BusinessFunction_492f74fe",
+          "type": "BusinessFunction",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-dff66d98b04442cf8b9cc87b624c9360",
+          "name": "BusinessService_624c9360",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-b3b6bf22bb2544c18f818181914a0d43",
+          "name": "BusinessService_914a0d43",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-3a32b69552ed4bf183a27cd92773bc83",
+          "name": "BusinessFunction_2773bc83",
+          "type": "BusinessFunction",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-b4af32bc2edd4d289a9a086cd4c3aecc",
+          "name": "BusinessService_d4c3aecc",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-b56c55ac2398441ca7689e07e5c54e91",
+          "name": "BusinessService_e5c54e91",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-45cf7ed28a2744a7bc20be042df2178c",
+          "name": "BusinessRole_2df2178c",
+          "type": "BusinessRole",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-7c52b44cf687495d90ee9d221aeeb08d",
+          "name": "BusinessFunction_1aeeb08d",
+          "type": "BusinessFunction",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-1032b51f91154870ae57929c1a0b2fcf",
+          "name": "BusinessService_1a0b2fcf",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-380bd932ec6d49d79b90cbfaab44d174",
+          "name": "Product_ab44d174",
+          "type": "Product",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-1c1b15efecf14a0b81d05fe629550ce7",
+          "name": "BusinessService_29550ce7",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-cdf5b5c7a35e48029278cbc5bc9e21dd",
+          "name": "Product_bc9e21dd",
+          "type": "Product",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-09e040cca59a45218631aae6486b5ce3",
+          "name": "BusinessService_486b5ce3",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-e67e26ea21494575bf6c2f46e64b7282",
+          "name": "BusinessService_e64b7282",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-f17d5006eae9412ebed757f1222c4d4e",
+          "name": "BusinessService_222c4d4e",
+          "type": "BusinessService",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-842d938f6c154e98bfaebfd66d0064cc",
+          "name": "BusinessObject_6d0064cc",
+          "type": "BusinessObject",
+          "layer": "Business"
+        },
+        {
+          "citation": "archi:id-id-48fac7e034d54a51972126a2f5798bf3",
+          "name": "ApplicationComponent_f5798bf3",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-cc8e7387ac064cbc957795f32292f32d",
+          "name": "ApplicationComponent_2292f32d",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-98434f71d9664d1f8b25a30cdd87866d",
+          "name": "ApplicationComponent_dd87866d",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-607e5d071ddb4f0189e7caf52be957a4",
+          "name": "ApplicationComponent_2be957a4",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-54fcf42523534aa6ab13a05113132e62",
+          "name": "ApplicationComponent_13132e62",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-d84598734263491e9833230820b001b6",
+          "name": "ApplicationComponent_20b001b6",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-a4e34860134b45a98a1ef15e27962136",
+          "name": "ApplicationComponent_27962136",
+          "type": "ApplicationComponent",
+          "layer": "Application"
+        },
+        {
+          "citation": "archi:id-id-e68d7b47c062463c8d61ba4990fe15b7",
+          "name": "Requirement_90fe15b7",
+          "type": "Requirement",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-1b7f39b3b3124378a766b4cc7259f4b8",
+          "name": "Assessment_7259f4b8",
+          "type": "Assessment",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-3262c22e49dc46cf81c1d07be7cf757c",
+          "name": "Goal_e7cf757c",
+          "type": "Goal",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-7628785b9c3946bba1280a694af1bb7a",
+          "name": "Driver_4af1bb7a",
+          "type": "Driver",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-52daaf487ec14b7abaed8f4a93c65099",
+          "name": "Stakeholder_93c65099",
+          "type": "Stakeholder",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-a6cce886bba146f391bbbfba6ad6f9f7",
+          "name": "Principle_6ad6f9f7",
+          "type": "Principle",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-57274a781fc24884aabf7bb298134406",
+          "name": "Requirement_98134406",
+          "type": "Requirement",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-43c2a6b258404bd480f345aa5ca3ba2a",
+          "name": "Stakeholder_5ca3ba2a",
+          "type": "Stakeholder",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-955f56b341d84d5886e4689faf727009",
+          "name": "Constraint_af727009",
+          "type": "Constraint",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-46687d71384a4a949b1512c79be4ca23",
+          "name": "Stakeholder_9be4ca23",
+          "type": "Stakeholder",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-bf6fe54759994d4caaa395200d607aeb",
+          "name": "Goal_0d607aeb",
+          "type": "Goal",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-5d8b53e84cce4f89b1b1fb1e44bc94e8",
+          "name": "Goal_44bc94e8",
+          "type": "Goal",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-fe63be44e2dd47ff824aed58b0076874",
+          "name": "Assessment_b0076874",
+          "type": "Assessment",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-2d744c2fca2c45faaa07480f999fc3a3",
+          "name": "Constraint_999fc3a3",
+          "type": "Constraint",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-96101c4f4018434c8465c1bace57a936",
+          "name": "Driver_ce57a936",
+          "type": "Driver",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-d3cf21cc72ea4d0389a0904d1c9de953",
+          "name": "Assessment_1c9de953",
+          "type": "Assessment",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-f6eebdee4fef4e45966518da97820561",
+          "name": "Goal_97820561",
+          "type": "Goal",
+          "layer": "Strategy"
+        },
+        {
+          "citation": "archi:id-id-c2c8a93ea3f749599e8d75d8910416ad",
+          "name": "Goal_910416ad",
+          "type": "Goal",
+          "layer": "Strategy"
+        }
+      ],
+      "element_types": {
+        "BusinessObject": 4,
+        "BusinessFunction": 6,
+        "BusinessService": 12,
+        "BusinessRole": 1,
+        "Product": 2,
+        "ApplicationComponent": 7,
+        "Requirement": 2,
+        "Assessment": 3,
+        "Goal": 5,
+        "Driver": 2,
+        "Stakeholder": 3,
+        "Principle": 1,
+        "Constraint": 2
+      }
+    }
+  },
+  "usage_notes": {
+    "citation_formats": {
+      "skos": "skos:1502, skos:220, etc.",
+      "iec": "iec:Asset, iec:DCLine, etc.",
+      "entsoe": "entsoe:ReconciliationResponsible, etc.",
+      "eurlex": "eurlex:944-2, eurlex:1485-10, etc.",
+      "lido": "lido:108, lido:93, etc.",
+      "archimate": "archi:id-id-{uuid}"
+    },
+    "fake_citation_examples": [
+      "iec:GridCongestion (does not exist)",
+      "archi:id-cap-001 (wrong format)",
+      "skos:FakeTerm (invented)",
+      "iec:61968 (standard number, not concept)"
+    ],
+    "validation_rules": [
+      "All citations must exist in knowledge sources",
+      "Use citation_exists() to validate before use",
+      "Build citation pool from retrieval context",
+      "LLM must only use citations from provided pool"
+    ]
+  }
+}
