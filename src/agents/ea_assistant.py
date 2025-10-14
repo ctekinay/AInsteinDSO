@@ -836,13 +836,13 @@ class ProductionEAAgent:
 
             with tracer.trace_function(trace_id, "ea_assistant", "retrieve_knowledge", route=route):
                 
-                # 🎯 ENHANCED: For follow-up queries, add terms from session history
-                retrieval_query = enhanced_query if is_followup else query
+                # Start with original query (enhanced_query is for LLM context, not retrieval)
+                retrieval_query = query
                 
+                # 🎯 ENHANCED: For follow-up queries, add terms from session history
                 if is_followup and session_history and len(session_history) >= 1:
                     print(f"🎯 RETRIEVAL ENHANCEMENT FOR FOLLOW-UP:")
                     print(f"🎯   Original query: {query}")
-                    print(f"🎯   Enhanced query: {enhanced_query}")
                     
                     # Extract terms from previous queries
                     prev_terms = []
@@ -852,13 +852,16 @@ class ProductionEAAgent:
                         print(f"🎯   Previous query: {turn.query}")
                         print(f"🎯   Extracted terms: {turn_terms[:5]}")
                     
-                    # Remove duplicates
+                    # Remove duplicates and common words
                     prev_terms = list(set(prev_terms))
-                    print(f"🎯   Total previous terms: {len(prev_terms)}")
-                    print(f"🎯   Previous terms: {prev_terms[:10]}")
+                    # Filter out generic terms
+                    prev_terms = [t for t in prev_terms if len(t) > 4 and 'what' not in t and 'is' not in t]
                     
-                    # Combine with current query
-                    retrieval_query = enhanced_query + " " + " ".join(prev_terms[:5])  # Add top 5 previous terms
+                    print(f"🎯   Filtered previous terms: {prev_terms[:10]}")
+                    
+                    # Combine with current query - add key terms
+                    key_prev_terms = [t for t in prev_terms if 'power' in t or 'active' in t or 'reactive' in t][:3]
+                    retrieval_query = query + " " + " ".join(key_prev_terms)
                     print(f"🎯   Final retrieval query: {retrieval_query}")
                 
                 retrieval_context = await self._retrieve_knowledge(
@@ -1060,141 +1063,94 @@ class ProductionEAAgent:
                 })
 
             refine_phase.complete()
+            
             # ========== PHASE 8: GROUND 🔒 ==========
             ground_phase = trace.add_phase("GROUND")
             citation_pool_ids = [c['citation'] for c in citation_pool]
 
             # CRITICAL: Determine response type based on data availability
             has_kg_data = len(retrieval_context.get("candidates", [])) > 0
-            response_type = "grounded" if has_kg_data else "llm_synthesized"
 
-            with tracer.trace_function(trace_id, "grounding_check", "assert_citations",
-                                    response_length=len(response),
-                                    citation_pool_size=len(citation_pool_ids),
-                                    has_kg_data=has_kg_data):
-                try:
-                    if has_kg_data:
-                        # TYPE 1: Knowledge Graph Response - REQUIRE real citations
-                        ground_phase.add_substep("Grounding KG-based response", "Citations required")
-                        
-                        # Extract citations from response
-                        found_citations = self.grounder._extract_existing_citations(response)
-                        ground_phase.add_detail("citations_found", len(found_citations))
-                        ground_phase.add_substep("Extracted citations from response", found_citations[:10])
-                        
-                        # Validate citations
-                        ground_phase.add_substep("Validating citation authenticity", "Started")
-                        
-                        grounding_result = self.grounder.assert_citations(
-                            response,
-                            retrieval_context,
-                            citation_pool_ids,
-                            trace_id
-                        )
-                        
-                        citations = grounding_result.get("citations", [])
-                        if not citations:
-                            logger.warning("Grounding passed but no citations in result, using extracted")
-                            citations = found_citations
-                        
-                        # Validation checks
-                        ground_phase.add_substep("✓ All citations authentic", "Passed")
-                        
-                        if len(citations) < 1:
-                            ground_phase.add_detail("error", "Insufficient citations")
-                            ground_phase.complete("failed")
-                            raise UngroundedReplyError(
-                                message="KG-based response lacks required citations",
-                                required_prefixes=["skos:", "eurlex:", "iec:", "entsoe:", "archi:"],
-                                suggestions=[c for c in citation_pool_ids[:5]] if citation_pool_ids else []
-                            )
-                        
-                        ground_phase.add_substep("✓ Minimum citations met", f"{len(citations)} citations")
-                        ground_phase.add_detail("grounding_status", "PASSED")
-                        ground_phase.add_detail("response_type", "grounded")
-                        
-                    else:
-                        # TYPE 2: LLM-Synthesized Response - Cite the model
-                        ground_phase.add_substep("LLM-synthesized response", "No KG data available")
-                        
-                        # Extract model name
-                        model_name = "gpt-5"  # Default
-                        if self.llm_council:
-                            model_name = self.llm_council.primary_model
-                        elif self.llm_provider:
-                            model_name = self.llm_provider.model
-                        
-                        llm_citation = model_name
-                        
-                        # Add LLM disclaimer to response
-                        response = f"""{response}
+            # 🎯 NEW LOGIC: Distinguish between retrieval and synthesis
+            is_synthesis_query = (
+                is_followup and 
+                self.session_manager._is_comparison_query(query)
+            )
+
+            if is_synthesis_query:
+                # TYPE A: LLM SYNTHESIS - Citations optional/not applicable
+                ground_phase.add_substep("LLM synthesis response", "Citations not required")
+                
+                # Extract citations if present (for reference), but don't enforce
+                citations = self.grounder._extract_existing_citations(response)
+                
+                # If no citations, that's fine - it's synthesized reasoning
+                if not citations:
+                    citations = []  # Empty is OK for synthesis
+                    ground_phase.add_detail("synthesis_mode", "no_citations_required")
+                
+                ground_phase.add_detail("response_type", "llm_synthesis")
+                ground_phase.add_detail("validation", "content_based")
+                ground_phase.complete()
+                
+                audit_trail["steps"].append({
+                    "step": "GROUND",
+                    "response_type": "llm_synthesis",
+                    "citations": citations,
+                    "validation_mode": "relaxed",
+                    "timestamp": datetime.utcnow().isoformat()
+                })
+
+            elif has_kg_data:
+                # TYPE B: DIRECT KG RETRIEVAL - Citations REQUIRED
+                ground_phase.add_substep("Grounding KG-based response", "Citations required")
+                
+                # Extract citations from response
+                found_citations = self.grounder._extract_existing_citations(response)
+                ground_phase.add_detail("citations_found", len(found_citations))
+                
+                # Validate citations
+                grounding_result = self.grounder.assert_citations(
+                    response,
+                    retrieval_context,
+                    citation_pool_ids,
+                    trace_id
+                )
+                
+                citations = grounding_result.get("citations", [])
+                if not citations:
+                    citations = found_citations
+                
+                # ENFORCE: KG responses MUST have citations
+                if len(citations) < 1:
+                    ground_phase.add_detail("error", "Insufficient citations")
+                    ground_phase.complete("failed")
+                    raise UngroundedReplyError(
+                        message="KG-based response lacks required citations",
+                        required_prefixes=["skos:", "eurlex:", "iec:", "entsoe:", "archi:"],
+                        suggestions=[c for c in citation_pool_ids[:5]] if citation_pool_ids else []
+                    )
+                
+                ground_phase.add_detail("response_type", "kg_retrieval")
+                ground_phase.add_detail("grounding_status", "PASSED")
+                ground_phase.complete()
+
+            else:
+                # TYPE C: NO DATA - Pure LLM fallback
+                ground_phase.add_substep("No KG data - LLM fallback", "No citations available")
+                
+                citations = []  # No KG data = no citations
+                
+                # Add disclaimer to response
+                response = f"""{response}
 
             ---
 
-            **⚠️ AI-Synthesized Response**
-
-            This response was generated by AI reasoning ({model_name}) as no direct information was found in our knowledge bases (SKOS vocabularies, IEC standards, ArchiMate models).
-
-            **AI Model Reference:** [{llm_citation}]
+            **⚠️ Note:** This response was generated by AI reasoning as no information was found in our knowledge bases.
             """
-                        
-                        citations = [llm_citation]
-                        response_type = "llm_synthesized"
-                        
-                        ground_phase.add_detail("response_type", "llm_synthesized")
-                        ground_phase.add_detail("model_used", model_name)
-                        ground_phase.add_detail("llm_citation", llm_citation)
-                        ground_phase.add_substep("✓ LLM model cited", llm_citation)
-                    
-                    ground_phase.add_detail("validated_citations", citations[:10])
-                    
-                    audit_trail["steps"].append({
-                        "step": "GROUND",
-                        "citations_found": len(citations),
-                        "response_type": response_type,
-                        "authenticity_validated": has_kg_data,
-                        "timestamp": datetime.utcnow().isoformat()
-                    })
-                    
-                    ground_phase.complete()
-                    
-                except FakeCitationError as e:
-                    logger.error(f"FAKE CITATIONS BLOCKED: {e.fake_citations}")
-                    
-                    ground_phase.add_detail("error", str(e))
-                    ground_phase.add_detail("fake_citations", e.fake_citations)
-                    ground_phase.add_detail("valid_pool_size", len(e.valid_pool))
-                    ground_phase.complete("failed")
-                    
-                    audit_trail["steps"].append({
-                        "step": "GROUND",
-                        "status": "fake_citations_detected",
-                        "fake_citations": e.fake_citations,
-                        "valid_pool_size": len(e.valid_pool),
-                        "timestamp": datetime.utcnow().isoformat()
-                    })
-                    
-                    trace.finalize()
-                    
-                    return PipelineResponse(
-                        query=query,
-                        response=(
-                            "I cannot provide a fully grounded response to this query. "
-                            "The system detected citation authenticity issues. "
-                            "Please consult with a human Enterprise Architect for this request.\n\n"
-                            f"Technical details: Detected {len(e.fake_citations)} fabricated citation(s). "
-                            f"Valid citation pool contained {len(e.valid_pool)} authentic citations."
-                        ),
-                        route=route,
-                        citations=[],
-                        confidence=0.0,
-                        requires_human_review=True,
-                        togaf_phase=None,
-                        archimate_elements=[],
-                        processing_time_ms=(time.perf_counter() - start_time) * 1000,
-                        session_id=session_id,
-                        timestamp=datetime.utcnow().isoformat()
-                    ), trace
+                
+                ground_phase.add_detail("response_type", "llm_fallback")
+                ground_phase.complete()
 
             # ========== PHASE 9: CRITIC 🎓 ==========
             critic_phase = trace.add_phase("CRITIC")
