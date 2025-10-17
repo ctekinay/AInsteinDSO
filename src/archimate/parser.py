@@ -145,6 +145,7 @@ class ArchiMateParser:
         self.elements = {}  # id -> ArchiMateElement
         self.model_path = None
         self.model_name = None
+        self.model_paths = [] # Track all loaded model paths
 
         logger.info("ArchiMate parser initialized")
 
@@ -173,7 +174,13 @@ class ArchiMateParser:
             # Store model metadata
             self.model_path = str(model_path)
             self.model_name = model_path.stem
-
+            self.model_paths.append(str(model_path))
+            
+            # NEW: Avoid duplicate paths
+            abs_path = str(model_path.absolute())
+            if abs_path not in self.model_paths:
+                self.model_paths.append(abs_path)
+            
             # Clear existing elements
             self.elements = {}
 
@@ -189,6 +196,28 @@ class ArchiMateParser:
         except Exception as e:
             logger.error(f"Error loading model: {e}")
             return False
+    
+    def clear_loaded_models(self):
+        """Clear all loaded models and their paths."""
+        self.elements = {}
+        self.model_path = None
+        self.model_name = None
+        self.model_paths = []
+        logger.info("Cleared all loaded ArchiMate models")
+        
+    def get_model_file_info(self) -> Dict[str, float]:
+        """
+        Get modification times of all loaded model files.
+        
+        Returns:
+            Dict mapping file path → last modified timestamp
+        """
+        file_info = {}
+        for model_path in self.model_paths:
+            path = Path(model_path)
+            if path.exists():
+                file_info[str(path)] = path.stat().st_mtime
+        return file_info
 
     def _extract_elements(self, root: ET.Element) -> None:
         """
