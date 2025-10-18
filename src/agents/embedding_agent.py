@@ -1,9 +1,13 @@
-# src/agents/embedding_agent.py
 """
 Embedding Agent - Adds semantic search capabilities when KG/ArchiMate fail.
 
 This agent creates and manages embeddings for all knowledge sources,
 providing context-aware fallback when structured queries return nothing.
+
+HARDENED VERSION with:
+- A) Model fingerprint validation (auto-rebuild on model change)
+- B) Vector normalization (faster similarity search)
+- C) OpenAI retry logic with exponential backoff
 """
 from __future__ import annotations
 
@@ -11,6 +15,7 @@ import os
 import pickle
 import json
 import logging
+import time
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 import numpy as np
@@ -23,6 +28,12 @@ logger = logging.getLogger(__name__)
 SENTENCE_TRANSFORMERS_AVAILABLE = False
 SentenceTransformer = None
 
+# Top of file - OpenAI client
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except Exception:
+    OPENAI_AVAILABLE = False
 
 def _lazy_load_sentence_transformers():
     """Lazy load sentence-transformers library."""
@@ -37,13 +48,6 @@ def _lazy_load_sentence_transformers():
             logger.debug(f"sentence-transformers not available: {e}")
             SENTENCE_TRANSFORMERS_AVAILABLE = False
 
-
-try:
-    from openai import OpenAI
-    OPENAI_AVAILABLE = True
-except Exception:
-    OPENAI_AVAILABLE = False
-
 @dataclass
 class EmbeddingResult:
     """Result from semantic search."""
@@ -52,6 +56,36 @@ class EmbeddingResult:
     source: str  # 'knowledge_graph', 'archimate', 'pdf', 'domain'
     metadata: Dict
     citation: Optional[str] = None
+
+
+def _with_backoff(fn, *, max_retries=5, base_delay=0.5):
+    """
+    Execute function with exponential backoff retry logic.
+    
+    Args:
+        fn: Function to execute (should be a lambda/callable)
+        max_retries: Maximum number of retry attempts
+        base_delay: Initial delay in seconds (doubles each retry)
+    
+    Returns:
+        Function result
+    
+    Raises:
+        Exception: Last exception after all retries exhausted
+    """
+    for attempt in range(max_retries):
+        try:
+            return fn()
+        except Exception as e:
+            if attempt == max_retries - 1:
+                raise
+            
+            delay = base_delay * (2 ** attempt)
+            logger.warning(
+                f"Retry {attempt + 1}/{max_retries} after error: {e}; "
+                f"sleeping {delay:.2f}s"
+            )
+            time.sleep(delay)
 
 
 class EmbeddingAgent:
@@ -63,6 +97,9 @@ class EmbeddingAgent:
     - Provides semantic search when structured queries fail
     - Caches embeddings for performance
     - Supports both local (sentence-transformers) and API (OpenAI) embeddings
+    - Auto-rebuilds cache when model changes (fingerprint validation)
+    - Normalized vectors for faster similarity search
+    - Retry logic for API calls
     """
 
     def __init__(
@@ -100,13 +137,19 @@ class EmbeddingAgent:
 
         # Initialize embedding model and model configuration
         self.use_openai = use_openai and OPENAI_AVAILABLE
-        self.openai_embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-large")
+        self.openai_embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+        self.openai_client = None
+
+        # NEW (A): Track backend and model for fingerprint validation
+        self.backend = "openai" if self.use_openai else "sentence-transformers"
+        self.model_name = self.openai_embedding_model if self.use_openai else embedding_model
+        self.vector_dim = None  # Will be set after first encoding
 
         if self.use_openai:
-            # prefer explicit arg, else env var OPENAI_API_KEY
+            # Initialize OpenAI client (v1.0+ syntax)
             api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
             if not api_key:
-                raise RuntimeError("OPENAI_API_KEY not set but use_openai=True")
+                raise ValueError("OpenAI API key required when use_openai=True")
             self.openai_client = OpenAI(api_key=api_key)
             self.model = None
             logger.info(f"✅ Using OpenAI embeddings ({self.openai_embedding_model})")
@@ -114,18 +157,23 @@ class EmbeddingAgent:
             logger.info("Attempting to load sentence-transformers...")
             _lazy_load_sentence_transformers()
             if SENTENCE_TRANSFORMERS_AVAILABLE and SentenceTransformer is not None:
-                logger.info(f"Initializing sentence-transformers model: {embedding_model}")
-                self.model = SentenceTransformer(embedding_model)
-                logger.info(f"✅ Embedding agent initialized with sentence-transformers ({embedding_model})")
+                try:
+                    logger.info(f"Initializing sentence-transformers model: {embedding_model}")
+                    self.model = SentenceTransformer(embedding_model)
+                    logger.info(f"✅ Embedding agent initialized with sentence-transformers ({embedding_model})")
+                except Exception as e:
+                    logger.error(f"Failed to load sentence-transformers model: {e}")
+                    raise RuntimeError(f"Failed to load sentence-transformers: {e}")
             else:
-                error_msg = "No embedding backend available. Install sentence-transformers or set use_openai=True"
+                error_msg = "No embedding backend available. Install sentence-transformers or openai"
                 logger.error(error_msg)
                 logger.error("Install with: pip install sentence-transformers torch")
                 raise RuntimeError(error_msg)
 
         logger.info(f"Auto-refresh: {'ENABLED' if self.auto_refresh else 'DISABLED'}")
+        logger.info(f"Embedding backend: {self.backend}, model: {self.model_name}")
 
-        # Load or create embeddings (single implementation; removed duplicate)
+        # Load or create embeddings
         logger.info("Loading or creating embeddings...")
         self.embeddings = self._load_or_create_embeddings()
         logger.info("✅ Embedding agent fully initialized")
@@ -141,28 +189,37 @@ class EmbeddingAgent:
 
         # Knowledge Graph TTL file
         if self.kg_loader and hasattr(self.kg_loader, 'kg_path'):
-            kg_path = Path(self.kg_loader.kg_path)
-            if kg_path.exists():
-                file_info['kg_ttl'] = kg_path.stat().st_mtime
+            kg_path_str = self.kg_loader.kg_path
+            if kg_path_str:  # Check if not None
+                kg_path = Path(kg_path_str)
+                if kg_path.exists():
+                    file_info['kg_ttl'] = kg_path.stat().st_mtime
 
         # ArchiMate model files
         if self.archimate_parser and hasattr(self.archimate_parser, 'model_paths'):
             for model_path in getattr(self.archimate_parser, 'model_paths', []):
-                path = Path(model_path)
-                if path.exists():
-                    file_info[f"archimate_{path.name}"] = path.stat().st_mtime
+                if model_path:  # Check if not None
+                    path = Path(model_path)
+                    if path.exists():
+                        file_info[f"archimate_{path.name}"] = path.stat().st_mtime
 
         # PDF documents
         if self.pdf_indexer and hasattr(self.pdf_indexer, 'docs_path'):
-            docs_dir = Path(self.pdf_indexer.docs_path)
-            if docs_dir.exists():
-                for pdf in docs_dir.glob("*.pdf"):
-                    file_info[f"pdf_{pdf.name}"] = pdf.stat().st_mtime
+            docs_path_str = self.pdf_indexer.docs_path
+            if docs_path_str:  # Check if not None
+                docs_dir = Path(docs_path_str)
+                if docs_dir.exists():
+                    for pdf in docs_dir.glob("*.pdf"):
+                        file_info[f"pdf_{pdf.name}"] = pdf.stat().st_mtime
 
         return file_info
 
     def _load_or_create_embeddings(self) -> Dict:
-        """Load cached embeddings or create new ones with optional auto-refresh."""
+        """
+        Load cached embeddings or create new ones with optional auto-refresh.
+        
+        NEW (A): Validates model fingerprint and rebuilds if model changed.
+        """
         cache_file = self.cache_dir / "embeddings.pkl"
         metadata_file = self.cache_dir / "embeddings_metadata.json"
 
@@ -178,46 +235,81 @@ class EmbeddingAgent:
         current_source_mtimes = self._get_source_file_info()
 
         should_refresh = False
-        if self.auto_refresh and cache_file.exists():
-            for fname, current_mtime in current_source_mtimes.items():
-                last_mtime = last_source_mtimes.get(fname)
-                if last_mtime is None or current_mtime > last_mtime:
-                    logger.info(f"Source file changed: {fname}")
-                    should_refresh = True
-                    break
-
-        if not cache_file.exists() or should_refresh:
-            logger.info("Creating new embeddings (files changed or cache missing)...")
-            embeddings = self._create_embeddings()
-
-            # Cache them
+        
+        # Check if cache exists
+        if cache_file.exists():
+            # NEW (A): Load and validate fingerprint
             try:
-                with open(cache_file, 'wb') as f:
-                    pickle.dump(embeddings, f)
-                logger.info(f"✅ Cached embeddings to {cache_file}")
-
-                metadata = {
-                    'created_at': datetime.utcnow().isoformat(),
-                    'source_file_mtimes': current_source_mtimes,
-                    'embedding_count': len(embeddings['texts']),
-                }
-                with open(metadata_file, 'w') as f:
-                    json.dump(metadata, f, indent=2)
-                logger.info(f"✅ Saved metadata to {metadata_file}")
+                with open(cache_file, 'rb') as f:
+                    embeddings = pickle.load(f)
+                
+                fp = embeddings.get('fingerprint', {})
+                
+                # Check if model changed
+                if (fp.get('backend') != self.backend or 
+                    fp.get('model_name') != self.model_name):
+                    logger.info(
+                        f"Embedding model changed: {fp.get('backend')}/{fp.get('model_name')} "
+                        f"→ {self.backend}/{self.model_name}"
+                    )
+                    logger.info("Rebuilding embeddings with new model...")
+                    return self._rebuild_embeddings(cache_file, metadata_file)
+                
+                # Set vector dimension from cache
+                self.vector_dim = int(embeddings['vectors'].shape[1])
+                logger.info(f"Loaded embeddings with fingerprint: {self.backend}/{self.model_name} (dim={self.vector_dim})")
+                
+                # Check file changes if auto-refresh enabled
+                if self.auto_refresh:
+                    for fname, current_mtime in current_source_mtimes.items():
+                        last_mtime = last_source_mtimes.get(fname)
+                        if last_mtime is None or current_mtime > last_mtime:
+                            logger.info(f"Source file changed: {fname}")
+                            should_refresh = True
+                            break
+                
+                if should_refresh:
+                    logger.info("Source files changed, rebuilding embeddings...")
+                    return self._rebuild_embeddings(cache_file, metadata_file)
+                
+                logger.info(f"✅ Loaded {len(embeddings.get('texts', []))} cached embeddings")
+                return embeddings
+                
             except Exception as e:
-                logger.warning(f"Failed to cache embeddings: {e}")
+                logger.warning(f"Failed to load cached embeddings: {e}, creating new ones")
+                return self._rebuild_embeddings(cache_file, metadata_file)
+        else:
+            # No cache exists, create new
+            logger.info("No cache found, creating new embeddings...")
+            return self._rebuild_embeddings(cache_file, metadata_file)
 
-            return embeddings
-
-        logger.info("Loading cached embeddings...")
+    def _rebuild_embeddings(self, cache_file: Path, metadata_file: Path) -> Dict:
+        """
+        Helper to rebuild embeddings and save cache.
+        
+        NEW (A): Includes fingerprint in saved metadata.
+        """
+        embeddings = self._create_embeddings()
+        
         try:
-            with open(cache_file, 'rb') as f:
-                embeddings = pickle.load(f)
-            logger.info(f"✅ Loaded {len(embeddings.get('texts', []))} cached embeddings")
-            return embeddings
+            with open(cache_file, 'wb') as f:
+                pickle.dump(embeddings, f)
+            logger.info(f"✅ Cached embeddings to {cache_file}")
+            
+            metadata = {
+                'created_at': datetime.utcnow().isoformat(),
+                'source_file_mtimes': self._get_source_file_info(),
+                'embedding_count': len(embeddings['texts']),
+                'fingerprint': embeddings['fingerprint']  # NEW (A): Save fingerprint
+            }
+            with open(metadata_file, 'w') as f:
+                json.dump(metadata, f, indent=2)
+            logger.info(f"✅ Saved metadata to {metadata_file}")
+            
         except Exception as e:
-            logger.warning(f"Failed to load cached embeddings: {e}, creating new ones")
-            return self._create_embeddings()
+            logger.warning(f"Failed to cache embeddings: {e}")
+        
+        return embeddings
 
     def refresh_embeddings(self):
         """Force refresh embeddings by recreating from current knowledge sources."""
@@ -240,7 +332,12 @@ class EmbeddingAgent:
     # ---------- Extraction ----------
 
     def _create_embeddings(self) -> Dict:
-        """Create embeddings from all knowledge sources."""
+        """
+        Create embeddings from all knowledge sources.
+        
+        NEW (B): Normalizes vectors for faster similarity search.
+        NEW (A): Includes fingerprint in returned dict.
+        """
         texts: List[str] = []
         metadata: List[Dict] = []
         citations: List[Optional[str]] = []
@@ -299,21 +396,36 @@ class EmbeddingAgent:
             if self.use_openai:
                 vectors = self._create_openai_embeddings(texts)
             else:
-                # Ensure numpy ndarray output
                 vectors = self.model.encode(texts, convert_to_numpy=True, show_progress_bar=True)  # type: ignore
                 vectors = np.asarray(vectors, dtype=np.float32)
         except Exception as e:
             logger.error(f"Failed to create embeddings: {e}")
             raise
 
-        logger.info(f"✅ Created {len(vectors)} embeddings")
+        # NEW (B): Normalize vectors once for faster similarity search
+        logger.info("Normalizing vectors for fast cosine similarity...")
+        norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+        norms = np.where(norms == 0.0, 1e-12, norms)  # Avoid divide-by-zero
+        vectors = vectors / norms
+        logger.info("✅ Vectors normalized")
 
+        # NEW (A): Set vector dimension
+        self.vector_dim = int(vectors.shape[1])
+
+        logger.info(f"✅ Created {len(vectors)} embeddings (dim={self.vector_dim})")
+
+        # NEW (A): Include fingerprint
         return {
             'texts': texts,
             'vectors': vectors,
             'metadata': metadata,
             'citations': citations,
             'created_at': datetime.utcnow().isoformat(),
+            'fingerprint': {
+                'backend': self.backend,
+                'model_name': self.model_name,
+                'vector_dim': self.vector_dim,
+            }
         }
 
     def _extract_kg_texts(self) -> List[Tuple[str, Dict, str]]:
@@ -327,7 +439,7 @@ class EmbeddingAgent:
 
         for concept_uri, label, definition in concepts:
             text = f"{label}: {definition}" if definition else label
-            # naive prefix mapping (kept as-is)
+            
             if "vocabs.alliander.com" in concept_uri:
                 citation = f"skos:{concept_uri.split('/')[-1]}"
             elif "iec.ch" in concept_uri:
@@ -437,13 +549,40 @@ class EmbeddingAgent:
     # ---------- OpenAI backend ----------
 
     def _create_openai_embeddings(self, texts: List[str]) -> np.ndarray:
-        """Create embeddings using OpenAI API (v1+ client)."""
-        resp = self.openai_client.embeddings.create(
-            model=self.openai_embedding_model,
-            input=texts
-        )
-        vectors = [item.embedding for item in resp.data]
-        return np.array(vectors, dtype=np.float32)
+        """
+        Create embeddings using OpenAI API (v1.0+ syntax).
+        
+        NEW (C): Includes retry logic with exponential backoff.
+        """
+        if not self.openai_client:
+            raise RuntimeError("OpenAI client not initialized")
+        
+        embeddings: List[List[float]] = []
+        batch_size = 100
+        
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+            try:
+                # NEW (C): Wrap in retry logic
+                response = _with_backoff(
+                    lambda: self.openai_client.embeddings.create(
+                        model=self.openai_embedding_model,
+                        input=batch
+                    ),
+                    max_retries=5,
+                    base_delay=0.5
+                )
+                
+                batch_embeddings = [item.embedding for item in response.data]
+                embeddings.extend(batch_embeddings)
+                
+                logger.debug(f"Processed batch {i // batch_size + 1} ({len(batch)} texts)")
+                
+            except Exception as e:
+                logger.error(f"OpenAI embedding batch {i}-{i+len(batch)} failed: {e}")
+                raise
+        
+        return np.asarray(embeddings, dtype=np.float32)
 
     # ---------- Search ----------
 
@@ -456,17 +595,35 @@ class EmbeddingAgent:
     ) -> List[EmbeddingResult]:
         """
         Perform semantic search across all embedded content.
+        
+        NEW (B): Faster similarity with pre-normalized vectors.
+        NEW (C): Retry logic for OpenAI query embedding.
         """
         # Create query embedding
         if self.use_openai:
-            response = openai.Embedding.create(  # type: ignore[attr-defined]
-                input=[query],
-                model=self.openai_embedding_model,
-            )
-            query_vector = np.asarray(response['data'][0]['embedding'], dtype=np.float32)  # type: ignore[index]
+            if not self.openai_client:
+                raise RuntimeError("OpenAI client not initialized")
+            try:
+                # NEW (C): Wrap in retry logic
+                response = _with_backoff(
+                    lambda: self.openai_client.embeddings.create(
+                        model=self.openai_embedding_model,
+                        input=[query]
+                    ),
+                    max_retries=5,
+                    base_delay=0.5
+                )
+                query_vector = np.asarray(response.data[0].embedding, dtype=np.float32)
+            except Exception as e:
+                logger.error(f"OpenAI query embedding failed: {e}")
+                raise
         else:
             query_vector = self.model.encode([query], convert_to_numpy=True)[0]  # type: ignore
             query_vector = np.asarray(query_vector, dtype=np.float32)
+
+        # NEW (B): Normalize query vector
+        query_norm = np.linalg.norm(query_vector)
+        query_vector = query_vector / (query_norm if query_norm != 0.0 else 1e-12)
 
         vectors = self.embeddings['vectors']
         if isinstance(vectors, list):
@@ -484,11 +641,8 @@ class EmbeddingAgent:
                 "Run refresh_embeddings() to rebuild with the current model."
             )
 
-        # Cosine similarity
-        denom = (np.linalg.norm(vectors, axis=1) * np.linalg.norm(query_vector))
-        # Avoid divide-by-zero
-        denom = np.where(denom == 0.0, 1e-12, denom)
-        similarities = np.dot(vectors, query_vector) / denom
+        # NEW (B): Fast cosine similarity (vectors already normalized)
+        similarities = vectors @ query_vector
 
         # Get top results
         top_indices = np.argsort(similarities)[::-1][: max(top_k * 2, top_k)]
@@ -567,4 +721,6 @@ class EmbeddingAgent:
                 "fallback": sum(1 for m in self.embeddings.get('metadata', []) if m.get('source') == 'fallback'),
             },
             "created_at": self.embeddings.get("created_at"),
+            "fingerprint": self.embeddings.get("fingerprint", {}),
+            "vector_dim": self.vector_dim,
         }
