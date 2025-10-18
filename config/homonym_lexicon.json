@@ -1,0 +1,1166 @@
+{
+  "aangeslotene": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluit- en transportovereenkomst": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluitcapaciteit": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluitcategorie": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluitdienst": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluitingenregister": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluittarief": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aansluitvoorwaarden": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "aclinesegment": {
+    "analytical_task": {
+      "archimate_weight_adjustment": 0.0,
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source",
+      "semantic_weight_adjustment": 0.1
+    },
+    "architectural_guidance": {
+      "archimate_weight_adjustment": 0.3,
+      "avoid_sense": "electrical",
+      "kg_weight_adjustment": -0.6,
+      "preferred_sense": "non_electrical",
+      "semantic_weight_adjustment": 0.3
+    },
+    "knowledge_retrieval": {
+      "kg_weight_adjustment": 0.2,
+      "preferred_sense": "electrical"
+    }
+  },
+  "actief telwerk": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "administratieve status van een aansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "adresgegevens": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "afgelezen meterstand": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "afschakelplan": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "alert state": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "analog": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "asset": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "asset info": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "asset management": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "balance responsible party": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "balancing service provider": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "bay": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "bedrijfsvoeringcriteria": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "blokorder": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "busbarsection": {
+    "analytical_task": {
+      "archimate_weight_adjustment": 0.0,
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source",
+      "semantic_weight_adjustment": 0.1
+    },
+    "architectural_guidance": {
+      "archimate_weight_adjustment": 0.3,
+      "avoid_sense": "electrical",
+      "kg_weight_adjustment": -0.6,
+      "preferred_sense": "non_electrical",
+      "semantic_weight_adjustment": 0.3
+    },
+    "knowledge_retrieval": {
+      "kg_weight_adjustment": 0.2,
+      "preferred_sense": "electrical"
+    }
+  },
+  "capaciteitstariefcode": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "cg-aangeslotene": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "comptabele meetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "congestion": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "congestion service provider": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "connection agreement": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "connection point": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "contingency": {
+    "analytical_task": {
+      "archimate_weight_adjustment": 0.0,
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source",
+      "semantic_weight_adjustment": 0.1
+    },
+    "architectural_guidance": {
+      "archimate_weight_adjustment": 0.3,
+      "avoid_sense": "electrical",
+      "kg_weight_adjustment": -0.6,
+      "preferred_sense": "non_electrical",
+      "semantic_weight_adjustment": 0.3
+    },
+    "knowledge_retrieval": {
+      "kg_weight_adjustment": 0.2,
+      "preferred_sense": "electrical"
+    }
+  },
+  "contingency element": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "contingency equipment": {
+    "analytical_task": {
+      "archimate_weight_adjustment": 0.0,
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source",
+      "semantic_weight_adjustment": 0.1
+    },
+    "architectural_guidance": {
+      "archimate_weight_adjustment": 0.3,
+      "avoid_sense": "electrical",
+      "kg_weight_adjustment": -0.6,
+      "preferred_sense": "non_electrical",
+      "semantic_weight_adjustment": 0.3
+    },
+    "knowledge_retrieval": {
+      "kg_weight_adjustment": 0.2,
+      "preferred_sense": "electrical"
+    }
+  },
+  "control": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "currency": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "curtailment": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "customer": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "datavalidatie": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "deelnet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "delivery period": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "demand response": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "demand side response": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "demand side response service provider": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "diagram": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "distributienet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "ean-codeboek": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "elektriciteitsvoorzieningssysteem": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "emergency state": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "energieprogramma": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "energietransactie": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "enkel telwerk": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "enkelvoudige storing": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "fiscale entiteit": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "flexibility": {
+    "analytical_task": {
+      "archimate_weight_adjustment": 0.0,
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source",
+      "semantic_weight_adjustment": 0.1
+    },
+    "architectural_guidance": {
+      "archimate_weight_adjustment": 0.3,
+      "avoid_sense": "electrical",
+      "kg_weight_adjustment": -0.6,
+      "preferred_sense": "non_electrical",
+      "semantic_weight_adjustment": 0.3
+    },
+    "knowledge_retrieval": {
+      "kg_weight_adjustment": 0.2,
+      "preferred_sense": "electrical"
+    }
+  },
+  "frequency": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "frequentierelais": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "fysieke meteropname": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "fysieke status van de aansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "geautoriseerde meterstand": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "gebiedsgrens": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "gecontracteerd transportvermogen": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "grootschalige storing": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "grootverbruikaansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "grootverbruiker": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "hoogspanning": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "inhuizing": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "installatie": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "interoperability": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "islanding": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "kleinverbruikaansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "kleinverbruiker": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "kleinverbruikmeetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "kwmax": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "laag telwerk": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "laagspanning": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "laagspanningsnet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "leveranciersregister": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "leveringsrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "line": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "market evaluation point": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "market participant": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "marktpartij": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "marktsegment": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meetgegevens": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meetmethode": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meetmiddel (van de meetinrichting)": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meettransformator": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meetverantwoordelijke": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meetverantwoordelijkheid": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meter": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meterbeheerder": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meterplaatser": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "meting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "middenspanningsnet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "mp-erkenner": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "mutatiedatum": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "mv-erkenner": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "mv-register": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "netaansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "netaansluitpunt": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "netbeheerdersregister": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "netgebied": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "nettarief": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "netvlak": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "niet op afstand uitleesbare kleinverbruikmeetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "nominaal meetvermogen": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "normaal telwerk": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "normaaluren": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "normal state": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "onbemeten aansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "op afstand uitleesbare kleinverbruikmeetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "operational security limits": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "opgesteld vermogen": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "overdrachtspunt": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "p4": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "particulier net": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "power park module": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "powertransformer": {
+    "analytical_task": {
+      "archimate_weight_adjustment": 0.0,
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source",
+      "semantic_weight_adjustment": 0.1
+    },
+    "architectural_guidance": {
+      "archimate_weight_adjustment": 0.3,
+      "avoid_sense": "electrical",
+      "kg_weight_adjustment": -0.6,
+      "preferred_sense": "non_electrical",
+      "semantic_weight_adjustment": 0.3
+    },
+    "knowledge_retrieval": {
+      "kg_weight_adjustment": 0.2,
+      "preferred_sense": "electrical"
+    }
+  },
+  "primair gedeelte van de meetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "primaire energiebron": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "productiemeetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "profielgrootverbruikaansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "profielgrootverbruikmeetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "raad van bestuur van de mededingingsautoriteit": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "reconciliatie": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "recreatienet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "referentienummer": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "regeling garanties van oorsprong": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "regionaal hoogspanningsnet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "regionale netbeheerder": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "remedial action": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "resource": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "restspanning": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "scenario": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "schakelstoring": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "secundair gedeelte van de meetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "security": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "sensor": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "setpoint": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "spanning uc": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "standaardprofiel": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "stationcomplex": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "status": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "switch": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "syntactisch correct": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "systeemdienstentarief": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "system operator": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "system state": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "tariefdrager": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "tariefzone": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "telemetriegrootverbruikaansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "telemetriegrootverbruikmeetinrichting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "telwerk": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "telwerkindicatie": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "terminal": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "toegankelijk meetregister": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "totaaltelwerk": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "transactiepartij": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "transit": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "transmission capacity allocator": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "transportdienst": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "transporttarief": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "type aansluiting": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "uitgelezen meterstand": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "uithuizing": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "uitwisseling met het buitenland": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "vastgestelde meterstand": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "verbruiker": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "verliesbericht": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "vermenigvuldigingsfactor": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "verordening": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "verwervingsbericht": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "verzamelpunt": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "voltage": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "voltage violation": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "voorzieningsgebied": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "werkdag": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  },
+  "wet": {
+    "analytical_task": {
+      "kg_weight_adjustment": 0.0,
+      "preferred_sense": "multi_source"
+    }
+  }
+}

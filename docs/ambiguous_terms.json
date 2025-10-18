@@ -1,0 +1,3969 @@
+{
+  "aangeslotene": [
+    {
+      "context": "regulatory",
+      "definition": "Een ieder, die beschikt over een aansluiting op een net;",
+      "prefLabel": "Aangeslotene",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/1"
+    },
+    {
+      "context": "organizational",
+      "definition": "een persoon die beschikt over een aansluiting op een gastransportnet, niet\nzijnde een netkoppeling, dan wel degene die om een aansluiting heeft\nverzocht",
+      "prefLabel": "Aangeslotene",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/3"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een ieder, die beschikt over een aansluiting op een net",
+      "prefLabel": "Aangeslotene",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/4"
+    }
+  ],
+  "aansluit- en transportovereenkomst": [
+    {
+      "context": "regulatory",
+      "definition": "Aansluit- en transportovereenkomst:Overeenkomst tussen een aangeslotene en een netbeheerder betreffende de aansluiting op een net en het transport van elektriciteit over dat net;",
+      "prefLabel": "Aansluit- en transportovereenkomst",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/3"
+    },
+    {
+      "context": "organizational",
+      "definition": "de overeenkomst tussen een aangeslotene en een netbeheerder betreffende de aansluiting op een gastransportnet en het transport van gas\n\n\n ",
+      "prefLabel": "Aansluit- en Transportovereenkomst",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/31"
+    }
+  ],
+  "aansluitcapaciteit": [
+    {
+      "context": "organizational",
+      "definition": "hoeveelheid gas die in een uur maximaal over een aansluiting kan worden\novergedragen, uitgedrukt in m3 (n)/uur",
+      "prefLabel": "Aansluitcapaciteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/16"
+    },
+    {
+      "context": "organizational",
+      "definition": "De capaciteitsklasse die de capaciteit aangeeft welke fysiek maximaal gelijktijdig op deze aansluiting geleverd kan worden. Voorheen bekend als de doorlaatwaarde van de aansluiting. Dit kenmerk vormt mede de basis voor de financiële verrekening (capaciteitstariefcode).",
+      "prefLabel": "Aansluitcapaciteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/19"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Aansluitcapaciteit:Het transportvermogen van de aansluiting zoals door een potentiële aangeslotene is aangevraagd en waarvoor het aansluittarief wordt betaald;",
+      "prefLabel": "Aansluitcapaciteit",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/4"
+    },
+    {
+      "context": "organizational",
+      "definition": "De capaciteit die fysiek maximaal op een aansluiting geleverd kan worden.",
+      "prefLabel": "Aansluitcapaciteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/18"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het transportvermogen van de aansluiting zoals door een potentiële aangeslotene is aangevraagd en waarvoor het aansluittarief wordt betaald.",
+      "prefLabel": "Aansluitcapaciteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/20"
+    },
+    {
+      "context": "organizational",
+      "definition": "De capaciteitsklasse die de capaciteit aangeeft welke fysiek maximaal gelijktijdig op deze aansluiting geleverd kan worden.",
+      "prefLabel": "Aansluitcapaciteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/17"
+    }
+  ],
+  "aansluitcategorie": [
+    {
+      "context": "organizational",
+      "definition": "Opsplitsing van aansluitingen naar categorieën met vergelijkbare aansluitcapaciteit, spanningsniveau of drukniveau),  en wijze van aansluiten",
+      "prefLabel": "Aansluitcategorie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/21"
+    },
+    {
+      "context": "organizational",
+      "definition": "Aanduiding van de capaciteit van de aansluiting.",
+      "prefLabel": "Aansluitcategorie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/23"
+    },
+    {
+      "context": "organizational",
+      "definition": "Opsplitsing van aansluitingen naar categorieën met vergelijkbare aansluitcapaciteit, spanningsniveau of drukniveau), en wijze van aansluiten.\nVoorbeeldwaarden: AC1, AC2, AC3, AC4, AC5",
+      "prefLabel": "Aansluitcategorie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/25"
+    },
+    {
+      "context": "organizational",
+      "definition": "Opsplitsing van aansluitingen naar categorieën met vergelijkbare aansluitcapaciteit, spanningsniveau of drukniveau en vergelijkbare wijze van aansluiten.\nBijvoorbeeld: AC1, AC2, AC3, AC4, AC5.",
+      "prefLabel": "Aansluitcategorie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/24"
+    },
+    {
+      "context": "general",
+      "definition": "De aansluitcategorie (bijv. AC5) waarop het product toegepast kan worden",
+      "prefLabel": "Aansluitcategorie",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/15"
+    },
+    {
+      "context": "organizational",
+      "definition": "Opsplitsing van aansluitingen naar categorieën met vergelijkbare aansluitcapaciteit, spanningsniveau en wijze van aansluiten. Per aansluitcategorie gelden dezelfde standaardbijdragen en standaardprijzen.",
+      "prefLabel": "Aansluitcategorie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/22"
+    }
+  ],
+  "aansluitdienst": [
+    {
+      "context": "organizational",
+      "definition": "Dienst rondom het leveren, wijzigen, verwijderen van een aansluiting.",
+      "prefLabel": "Aansluitdienst",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/27"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het verzorgen en instandhouden van een aansluiting van een afnemer of ander net op een net en het desgevraagd beschikbaar stellen van een meetinrichting",
+      "prefLabel": "Aansluitdienst",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/26"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Aansluitdienst:Het verzorgen en instandhouden van een aansluiting van een aangeslotene of ander net op een net en het desgevraagd beschikbaar stellen van een meetinrichting;",
+      "prefLabel": "Aansluitdienst",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/5"
+    }
+  ],
+  "aansluitingenregister": [
+    {
+      "context": "organizational",
+      "definition": "Een register, ingericht en beheerd door de netbeheerder voor de aansluitingen op zijn net, waarin per aansluiting die gegevens zijn vastgelegd die nodig zijn voor de communicatie tussen netbeheerders en marktpartijen aangaande programmaverantwoordelijkheid, de facilitering van de mutatieprocessen, de uitvoering van het leveranciersmodel en de productie van duurzame elektriciteit",
+      "prefLabel": "Aansluitingenregister",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/42"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Aansluitingenregister:Een register, ingericht en beheerd door de netbeheerder voor de aansluitingen op zijn net, waarin per aansluiting die gegevens zijn vastgelegd die nodig zijn voor de communicatie tussen netbeheerders en marktpartijen aangaande btermanceringsverantwoordelijkheid, de facilitering van de mutatieprocessen, de uitvoering van het leveranciersmodel en de productie van duurzame elektriciteit;",
+      "prefLabel": "Aansluitingenregister",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/6"
+    },
+    {
+      "context": "organizational",
+      "definition": "een register, ingericht en beheerd door de netbeheerder, waarin voor de\naansluitingen op zijn net kenmerkende gegevens zijn vastgelegd",
+      "prefLabel": "Aansluitingenregister",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/43"
+    }
+  ],
+  "aansluittarief": [
+    {
+      "context": "organizational",
+      "definition": "Het tarief in rekening gebracht door de netbeheerder bij een aangeslotene ter dekking van de kosten van de aansluitdienst",
+      "prefLabel": "Aansluittarief",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/62"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Aansluittarief:Het tarief in rekening gebracht door de netbeheerder bij een aangeslotene ter dekking van de kosten van de aansluitdienst;",
+      "prefLabel": "Aansluittarief",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/7"
+    }
+  ],
+  "aansluitvoorwaarden": [
+    {
+      "context": "organizational",
+      "definition": "De technische en operationele voorwaarden waaraan een netbeheerder en een klant ten minste moeten voldoen.",
+      "prefLabel": "Aansluitvoorwaarden",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/63"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Aansluitvoorwaarden:De technische en operationele voorwaarden waaraan een netbeheerder en een aangeslotene ten minste moeten voldoen;",
+      "prefLabel": "Aansluitvoorwaarden",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/8"
+    },
+    {
+      "context": "organizational",
+      "definition": "De technische en operationele voorwaarden waaraan een netbeheerder en een aangeslotene ten minste moeten voldoen",
+      "prefLabel": "Aansluitvoorwaarden",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/64"
+    }
+  ],
+  "aclinesegment": [
+    {
+      "context": "electrical",
+      "definition": "A wire or combination of wires, with consistent electrical characteristics, building a single electrical system, used to carry alternating current between points in the power system.\nFor symmetrical, transposed three phase lines, it is sufficient to use attributes of the line segment, which describe impedances and admittances for the entire length of the segment.  Additionally impedances can be computed by using length and associated per length impedances.\nThe BaseVoltage at the two ends of ACLineSegments in a Line shall have the same BaseVoltage.nominalVoltage. However, boundary lines may have slightly different BaseVoltage.nominalVoltages and variation is allowed. Larger voltage difference in general requires use of an equivalent branch.",
+      "prefLabel": "ACLineSegment",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/ACLineSegment"
+    },
+    {
+      "context": "electrical",
+      "definition": "A wire or combination of wires, with consistent electrical characteristics, building a single electrical system, used to carry alternating current between points in the power system.\nFor symmetrical, transposed three phase lines, it is sufficient to use attributes of the line segment, which describe impedances and admittances for the entire length of the segment.  Additionally impedances can be computed by using length and associated per length impedances.\nThe BaseVoltage at the two ends of ACLineSegments in a Line shall have the same BaseVoltage.nominalVoltage. However, boundary lines may have slightly different BaseVoltage.nominalVoltages and variation is allowed. Larger voltage difference in general requires use of an equivalent branch.",
+      "prefLabel": "ACLineSegment",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/ACLineSegment"
+    },
+    {
+      "context": "business_process",
+      "definition": "Elektriciteitskabel waarmee elektrische energie kan worden getransporteerd of gedistribueerd. Kabels worden door middel van moffen galvanisch aan elkaar verbonden. Samen met de eindsluitingen vormt de gehele samenstelling van kabels waar door middel van een schakelaar de connectie met de netvoeding verbonden of verbroken kan worden, één Verbinding.",
+      "prefLabel": "ACLineSegment",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/74"
+    }
+  ],
+  "actief telwerk": [
+    {
+      "context": "regulatory",
+      "definition": "Een telwerk waarin daadwerkelijk de gemeten hoeveelheid elektrische energie wordt vastgelegd en waarvan de stand wordt uitgelezen t.b.v. de marktprocessen;",
+      "prefLabel": "Actief telwerk",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/10"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een telwerk waarin daadwerkelijk de gemeten hoeveelheid elektrische energie wordt vastgelegd en waarvan de stand wordt uitgelezen t.b.v. de marktprocessen",
+      "prefLabel": "Actief telwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/102"
+    }
+  ],
+  "administratieve status van een aansluiting": [
+    {
+      "context": "regulatory",
+      "definition": "De aanduiding in het aansluitingenregister waaruit blijkt dat de aansluiting administratief aangesloten of administratief afgesloten is, te weten of de aansluiting wel of niet beschikbaar is voor gebruik op de energiemarkt;",
+      "prefLabel": "Administratieve status van een aansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/12"
+    },
+    {
+      "context": "organizational",
+      "definition": "De aanduiding in het aansluitingenregister waaruit blijkt dat de aansluiting administratief aangesloten of administratief afgesloten is, te weten of de aansluiting wel of niet beschikbaar is voor gebruik op de energiemarkt",
+      "prefLabel": "Administratieve status van een aansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/119"
+    }
+  ],
+  "adresgegevens": [
+    {
+      "context": "organizational",
+      "definition": "Straatnaam, huisnummer met eventuele toevoegingen, postcode en plaatsnaam",
+      "prefLabel": "Adresgegevens",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/124"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Straatnaam, huisnummer met eventuele toevoegingen, postcode en plaatsnaam;",
+      "prefLabel": "Adresgegevens",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/13"
+    }
+  ],
+  "afgelezen meterstand": [
+    {
+      "context": "regulatory",
+      "definition": "Een meterstand die ter plaatse van de meetinrichting visueel is afgelezen;",
+      "prefLabel": "Afgelezen meterstand",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/14"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meterstand die ter plaatse van de meetinrichting visueel is afgelezen",
+      "prefLabel": "Afgelezen meterstand",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/136"
+    }
+  ],
+  "afschakelplan": [
+    {
+      "context": "organizational",
+      "definition": "Plan waarin wordt aangegeven onder welke condities en op welke wijze door het afschakelen van een beperkte hoeveelheid belasting uitbreiding van een grootschalige storing in het Nederlandse elektriciteitsvoorzieningssysteem kan worden voorkomen",
+      "prefLabel": "Afschakelplan",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/153"
+    },
+    {
+      "context": "organizational",
+      "definition": "Plan waarin wordt aangegeven onder welke condities en op welke wijze door het afschakelen van een beperkte hoeveelheid belasting uitbreiding van een grootschalige storing in het Nederlandse elektriciteitsvoorzieningsysteem kan worden voorkomen.",
+      "prefLabel": "Afschakelplan",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/152"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Plan waarin wordt aangegeven onder welke condities en op welke wijze door het afschakelen van een beperkte hoeveelheid belasting uitbreiding van een grootschalige storing in het Nederlandse elektriciteitsvoorzieningssysteem kan worden voorkomen;",
+      "prefLabel": "Afschakelplan",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/15"
+    }
+  ],
+  "alert state": [
+    {
+      "context": "business_process",
+      "definition": "The system state in which the system is within operational security limits, but a contingency from the contingency list has been detected and in case of its occurrence the available remedial actions are not sufficient to keep the normal state",
+      "prefLabel": "Alert state",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/57"
+    },
+    {
+      "context": "regulatory",
+      "definition": "The system state in which the system is within operational security limits, but a contingency from the contingency list has been detected and in case of its occurrence the available remedial actions are not sufficient to keep the normal state;",
+      "prefLabel": "Alert state",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-17"
+    }
+  ],
+  "analog": [
+    {
+      "context": "business_process",
+      "definition": "Of a quantity or a system in which the information is represented by a physical variable that is continuous in time and/or magnitude.",
+      "prefLabel": "Analog",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/108"
+    },
+    {
+      "context": "general",
+      "definition": "Analog represents an analog Measurement.",
+      "prefLabel": "Analog",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/Operation-EU/Analog"
+    }
+  ],
+  "asset": [
+    {
+      "context": "organizational",
+      "definition": "Een fysiek onderdeel van het netwerk",
+      "prefLabel": "Asset",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/221"
+    },
+    {
+      "context": "organizational",
+      "definition": "Overkoepelende term die alle componenten van de infrastructuur van Alliander bevat.",
+      "prefLabel": "Asset",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/220"
+    },
+    {
+      "context": "organizational",
+      "definition": "Alles wat waarde heeft voor de organisatie. Dit is een brede definitie, waarbij je kunt denken aan gebouwen, informatie, software, hardware, hard-copies (papier), diensten; maar ook aan mensen, vaardigheden en ervaring en immateriële vaste activa, zoals de reputatie en het imago van de organisatie",
+      "prefLabel": "Asset",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/222"
+    },
+    {
+      "context": "general",
+      "definition": "Entity of value to individuals or organizations.",
+      "prefLabel": "Asset",
+      "prefix": "default8",
+      "uri": "http://linkeddata.bsigroup.com/pas/1879/Asset"
+    },
+    {
+      "context": "architectural",
+      "definition": "\n  An Asset is a tangible resource of the utility, including power system equipment, end devices, vehicles, tools, cabinets, buildings, etc.\n  For electrical network equipment, the function of the asset is modelled with the PowerSystemResource hierarchy, defined fully 9 in the wires model (refer to IEC 61970-301 and model package IEC61970::Wires ).\n  Asset description places emphasis on the physical characteristics and the lifecycle of the equipment performing that function, and relies on PowerSystemResource hierarchy for electrical connectivity.",
+      "prefLabel": "Asset",
+      "prefix": "default10",
+      "uri": "http://iec.ch/TC57/IEC61968/Asset"
+    },
+    {
+      "context": "organizational",
+      "definition": "Alles wat tastbaar of immaterieel is dat in het bezit of onder controle kan wordt gehouden om waarde te produceren en dat door het bedrijf wordt gehouden om een ​​positieve economische waarde te produceren.",
+      "prefLabel": "Asset",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/219"
+    },
+    {
+      "context": "organizational",
+      "definition": "Fysieke bedrijfsmiddelen benodigd ten behoeve het realiseren van de primaire doelstellingen van de organisatie",
+      "prefLabel": "Asset",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/218"
+    },
+    {
+      "context": "organizational",
+      "definition": "Zie bedrijfsmiddel.",
+      "prefLabel": "Asset",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/223"
+    }
+  ],
+  "asset info": [
+    {
+      "context": "business_process",
+      "definition": "Among other things, the mechanical and physical characteristics of an conducting equipment (electrotechnical component).",
+      "prefLabel": "Asset Info",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/44"
+    },
+    {
+      "context": "architectural",
+      "definition": "AssetInfo is the container for datasheet information about Asset and AssetModel, and it can also be referenced by multiple instances of Asset and PowerSystemResource (i.e., shared).",
+      "prefLabel": "Asset Info",
+      "prefix": "default10",
+      "uri": "http://iec.ch/TC57/IEC61968/AssetInfo"
+    }
+  ],
+  "asset management": [
+    {
+      "context": "business_process",
+      "definition": "Asset Management in the energy domain encompasses systematically managing the energy assets in scope with their characteristics. It involves the strategic utilization of data, technology, and best practices to achieve optimal performance, cost-effectiveness, and sustainability of energy asset operations.",
+      "prefLabel": "Asset Management",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/125"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Asset Management",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/227"
+    },
+    {
+      "context": "general",
+      "definition": "Asset Management in the energy domain encompasses systematically managing the energy assets in scope with their characteristics. It involves the strategic utilization of data, technology, and best practices to achieve optimal performance, cost-effectiveness, and sustainability of energy asset operations.",
+      "prefLabel": "Asset Management",
+      "prefix": "default10",
+      "uri": "http://iec.ch/TC57/IEC61968/AssetManagement"
+    }
+  ],
+  "balance responsible party": [
+    {
+      "context": "regulatory",
+      "definition": "A market participant or its chosen representative responsible for its imbalances.",
+      "prefLabel": "Balance responsible party",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/2195-3"
+    },
+    {
+      "context": "business_process",
+      "definition": "A party financially accountable for its imbalances.\n\n**\nBased on:\n**\n\n[_Consolidated text: Commission Regulation (EU) 2017/2195 - Art.2 Definitions_](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02017R2195-20220619)\n[_._](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2017.312.01.0006.01.ENG&toc=OJ:L:2017:312:TOC \\l d1e325-6-1)\n\n**\nAdditional information:\n**\n\nA balance responsibility requires a contract proving financial security with the Imbalance Settlement Responsible of the Scheduling Area entitling the party to operate in the market.\nImbalance means an energy volume calculated for a Balance Responsible Party and representing the difference between the allocated volume attributed to that Balance Responsible Party and the final position of that Balance Responsible Party, including any imbalance adjustment applied to that Balance Responsible Party, within a given imbalance settlement period.",
+      "prefLabel": "Balance Responsible Party",
+      "prefix": "hemrm",
+      "uri": "http://vocabs.entsoe.com/terms/BalanceResponsibleParty"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A market participant or its chosen representative responsible for its imbalances in the electricity market",
+      "prefLabel": "Balance responsible party",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-14"
+    }
+  ],
+  "balancing service provider": [
+    {
+      "context": "regulatory",
+      "definition": "A market participant with reserve-providing units or reserve-providing groups able to provide balancing services to TSOs.",
+      "prefLabel": "Balancing service provider",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/2195-9"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A market participant providing balancing services to TSOs;",
+      "prefLabel": "Balancing service provider",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-85"
+    },
+    {
+      "context": "business_process",
+      "definition": "A party providing energy balancing services to the energy or capacity market.\n\n**\nAdditional information:\n**\n\nBalancing services can be balancing energy and/or balancing capacity.\nThis is a type of Flexibility Service Provider.\n\n**\nBased on:\n**\n\n[_Consolidated text: Commission Regulation (EU) 2017/2195 - Art.2 Definitions_](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02017R2195-20220619 \\l PP2Contents)\n and\n_\n\n_\n[_Consolidated text: Regulation (EU) 2019/943_](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02019R0943-20220623)\n.",
+      "prefLabel": "Balancing Service Provider",
+      "prefix": "hemrm",
+      "uri": "http://vocabs.entsoe.com/terms/BalancingServiceProvider"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A market participant providing either or both balancing energy and balancing capacity to transmission system operators",
+      "prefLabel": "Balancing service provider",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-12"
+    }
+  ],
+  "bay": [
+    {
+      "context": "general",
+      "definition": "A collection of power system resources (within a given substation) including conducting equipment, protection relays, measurements, and telemetry.  A bay typically represents a physical grouping related to modularization of equipment.",
+      "prefLabel": "Bay",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/Bay"
+    },
+    {
+      "context": "general",
+      "definition": "A collection of power system resources (within a given substation) including conducting equipment, protection relays, measurements, and telemetry.  A bay typically represents a physical grouping related to modularization of equipment.",
+      "prefLabel": "Bay",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Bay"
+    },
+    {
+      "context": "business_process",
+      "definition": "Abstract designation of a coupling point on a rail. Contains the connection and protection, but a field can also be empty (in which case the switch does allow for something to be connected in the future)",
+      "prefLabel": "Bay",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/73"
+    }
+  ],
+  "bedrijfsvoeringcriteria": [
+    {
+      "context": "organizational",
+      "definition": "Criteria die ten aanzien van de veiligheid en betrouwbaarheid van het transport van elektrische energie worden gehanteerd door netbeheerders",
+      "prefLabel": "Bedrijfsvoeringcriteria",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/294"
+    },
+    {
+      "context": "organizational",
+      "definition": "Criteria die ten aanzien van de veiligheid en betrouwbaarheid van het transport van elektrische energie worden gehanteerd door netbeheerders.",
+      "prefLabel": "Bedrijfsvoeringcriteria",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/295"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Bedrijfsvoeringcriteria:Criteria die ten aanzien van de veiligheid en betrouwbaarheid van het transport van elektrische energie worden gehanteerd door netbeheerders;",
+      "prefLabel": "Bedrijfsvoeringcriteria",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/20"
+    }
+  ],
+  "blokorder": [
+    {
+      "context": "organizational",
+      "definition": "Een opdracht tot het aankopen of verkopen van elektriciteit gedurende een aaneengesloten periode van méér dan één klokuur",
+      "prefLabel": "Blokorder",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/390"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Blokorder:Een opdracht tot het aankopen of verkopen van elektriciteit gedurende een aaneengesloten periode van méér dan één klokuur;",
+      "prefLabel": "Blokorder",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/26"
+    }
+  ],
+  "busbarsection": [
+    {
+      "context": "electrical",
+      "definition": "A conductor, or group of conductors, with negligible impedance, that serve to connect other conducting equipment within a single substation. \nVoltage measurements are typically obtained from voltage transformers that are connected to busbar sections. A bus bar section may have many physical terminals but for analysis is modelled with exactly one logical terminal.",
+      "prefLabel": "BusbarSection",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/BusbarSection"
+    },
+    {
+      "context": "electrical",
+      "definition": "A conductor, or group of conductors, with negligible impedance, that serve to connect other conducting equipment within a single substation. \nVoltage measurements are typically obtained from voltage transformers that are connected to busbar sections. A bus bar section may have many physical terminals but for analysis is modelled with exactly one logical terminal.",
+      "prefLabel": "BusbarSection",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/BusbarSection"
+    },
+    {
+      "context": "business_process",
+      "definition": "A busbar section is a part of a busbar system that can be isolated from the rest of the busbar system for maintenance or operational purposes. It is typically used in substations and switchyards to connect multiple circuits or equipment, allowing for flexibility in operation and maintenance.",
+      "prefLabel": "BusbarSection",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/70"
+    }
+  ],
+  "capaciteitstariefcode": [
+    {
+      "context": "regulatory",
+      "definition": "Capaciteitstariefcode:De aanduiding in het aansluitingenregister van het op een aansluiting van toepassing zijnde nettarief;",
+      "prefLabel": "Capaciteitstariefcode",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/29"
+    },
+    {
+      "context": "organizational",
+      "definition": "De aanduiding in het aansluitingenregister van het op een aansluiting van toepassing zijnde nettarief",
+      "prefLabel": "Capaciteitstariefcode",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/460"
+    },
+    {
+      "context": "organizational",
+      "definition": "De identificerende EAN13 code voor het capaciteitstarief op deze aansluiting",
+      "prefLabel": "Capaciteitstariefcode",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/461"
+    }
+  ],
+  "cg-aangeslotene": [
+    {
+      "context": "organizational",
+      "definition": "Een aangeslotene waarvoor de bieding als bedoeld in 5.1.2.4 van de Netcode Elektriciteit is afgeroepen.",
+      "prefLabel": "CG-aangeslotene",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/476"
+    },
+    {
+      "context": "regulatory",
+      "definition": "CG-aangeslotene:Een aangeslotene of CSP waarvan een bieding overeenkomstig artikel 9.41, vierde lid, is afgeroepen dan wel waarvoor een capaciteitsbeperking overeenkomstig artikel 9.41, vierde lid, of artikel 9.45, vijfde lid, is opgedragen;",
+      "prefLabel": "CG-aangeslotene",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/30"
+    }
+  ],
+  "comptabele meetinrichting": [
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting ten behoeve van de financiële verrekening.",
+      "prefLabel": "Comptabele meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/507"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Comptabele meetinrichting:Een meetinrichting ten behoeve van de verrekening;",
+      "prefLabel": "Comptabele meetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/31"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting ten behoeve van de verrekening.",
+      "prefLabel": "Comptabele meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/508"
+    }
+  ],
+  "congestion": [
+    {
+      "context": "business_process",
+      "definition": "In the context of an electricity network, congestion means that there is too much demand or too much supply of electricity at a certain point in the network, causing the transport capacity of the network (cables, transformers, or connections) to be temporarily or structurally insufficient to handle all desired energy flows.",
+      "prefLabel": "Congestion",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/86"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A situation in which all requests from market participants to trade between network areas cannot be accommodated because they would significantly affect the physical flows on network elements which cannot accommodate those flows",
+      "prefLabel": "Congestion",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-4"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Congestion as defined in Article 2, point 4, of Regulation (EU) 2019/943.",
+      "prefLabel": "Congestion",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-44"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A situation where transmission capacity is not sufficient to accommodate all desired transfers of electricity;",
+      "prefLabel": "Congestion",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-87"
+    }
+  ],
+  "congestion service provider": [
+    {
+      "context": "organizational",
+      "definition": "De Congestion service provider (CSP) is een marktdeelnemer die het recht heeft om congestiemanagementdiensten aan te bieden door namens zichzelf of namens een of meerdere aangesloten biedingen te plaatsen, in reactie op uitvragen van de netbeheerder(s).",
+      "prefLabel": "Congestion service provider",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/528"
+    },
+    {
+      "context": "business_process",
+      "definition": "CSP’s act as intermediaries between large business customers and grid operators, helping prevent congestion on the electricity grid by adjusting clients' electricity production or consumption in response to grid needs, with financial compensation. Only CSPs can submit bids on the open energy market through platforms connected to GOPACS. Businesses can either partner with an existing CSP or become one themselves if they have a contracted capacity of 1,000 kW or more.",
+      "prefLabel": "Congestion Service Provider",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/29"
+    }
+  ],
+  "connection agreement": [
+    {
+      "context": "regulatory",
+      "definition": "A contract between the relevant system operator and either the power-generating facility owner, demand facility owner, distribution system operator or HVDC system owner, which includes the relevant site and specific technical requirements for the power-generating facility, demand facility, distribution system, distribution system connection or HVDC system.",
+      "prefLabel": "Connection agreement",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/631-14"
+    },
+    {
+      "context": "business_process",
+      "definition": "Agreement between a connected party and a grid operator regarding the connection to a grid and the transportation of electricity over that grid;",
+      "prefLabel": "Connection Agreement",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/33"
+    }
+  ],
+  "connection point": [
+    {
+      "context": "regulatory",
+      "definition": "The interface at which the power-generating module, demand facility, distribution system or HVDC system is connected to a transmission system, offshore network, distribution system, including closed distribution systems, or HVDC system, as identified in the connection agreement.",
+      "prefLabel": "Connection point",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/631-15"
+    },
+    {
+      "context": "business_process",
+      "definition": "The point at which a utility's electrical system connects to a customer’s system.\n- It's the demarcation point between the DSO and the 'party connected to the grid'.\n- It is used in standards such as IEEE 1547, which defines requirements for connecting distributed generation (e.g., solar panels, wind turbines) to the electric grid.\n- At the connection, power quality (PQ) measurements are often taken to assess disturbances like voltage sags, harmonics, or flicker.\n",
+      "prefLabel": "Connection point",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/24"
+    }
+  ],
+  "contingency": [
+    {
+      "context": "regulatory",
+      "definition": "The identified and possible or already occurred fault of an element, including not only the transmission system elements, but also significant grid users and distribution network elements if relevant for the transmission system operational security;",
+      "prefLabel": "Contingency",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1222-10"
+    },
+    {
+      "context": "business_process",
+      "definition": "A Measurement represents any measured, calculated or non-measured non-calculated quantity. Any piece of equipment may contain Measurements, e.g. a substation may have temperature measurements and door open indications, a transformer may have oil temperature and tank pressure measurements, a bay may contain a number of power flow measurements and a Breaker may contain a switch status measurement.",
+      "prefLabel": "Contingency",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/54"
+    },
+    {
+      "context": "electrical",
+      "definition": "An event (or sequence of events) that results in the loss or unavailability of one or more components of a power system (such as a generator, transmission line, transformer, etc.) that may affect system reliability or stability.",
+      "prefLabel": "Contingency",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/Contingency"
+    }
+  ],
+  "contingency element": [
+    {
+      "context": "general",
+      "definition": "An element of a system event to be studied by contingency analysis, representing a change in status of a single piece of equipment.",
+      "prefLabel": "Contingency Element",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ContingencyElement"
+    },
+    {
+      "context": "business_process",
+      "definition": "An asset or group of assets that are operationally monitored against overload.",
+      "prefLabel": "Contingency Element",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/12"
+    }
+  ],
+  "contingency equipment": [
+    {
+      "context": "business_process",
+      "definition": "means an equipment identified in advance, or as a result of contingency analysis, to model and manage the impact of potential failures on the energy system.",
+      "prefLabel": "Contingency Equipment",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/104"
+    },
+    {
+      "context": "electrical",
+      "definition": "Equipment whose in service status is to change, such as a power transformer or AC line segment.",
+      "prefLabel": "Contingency Equipment",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ContingencyEquipment"
+    }
+  ],
+  "control": [
+    {
+      "context": "regulatory",
+      "definition": "Rights, agreements or other means which, either separately or jointly, taking into account all factual or legal circumstances, make it possible to exercise a decisive influence on the activities of an undertaking, in particular: (a) ownership or rights to use all or part of the assets of an undertaking; (b) rights or agreements which confer a decisive influence on the composition, voting or decisions of the organs of an undertaking.",
+      "prefLabel": "Control",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-56"
+    },
+    {
+      "context": "organizational",
+      "definition": "Middelen voor het managen van een risico. Meestal wordt een control ingezet als technische of organisatorische beveiligingsmaatregel. Hieronder vallen ook het bedrijfsbeveiligingsbeleid, procedures, richtlijnen en ‘best-practices’. Deze kunnen organisatorische structuren omvatten zoals administratieve, technische en managementactiviteiten.",
+      "prefLabel": "Control",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/555"
+    },
+    {
+      "context": "general",
+      "definition": "Control is used for supervisory/device control. It represents control outputs that are used to change the state in a process, e.g. close or open breaker, a set point value or a raise lower command.",
+      "prefLabel": "Control",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/Operation-EU/Control"
+    }
+  ],
+  "currency": [
+    {
+      "context": "general",
+      "definition": "Monetary currencies.  ISO 4217 standard including 3-character currency code.",
+      "prefLabel": "Currency",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Currency"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Euro if at least one part of the bidding zone(s) concerned is part of a country in which euro is a legal tender. In any other case it is the local currency: De euro wanneer ten minste één deel van de desbetreffende biedzone(s) deel is van een land waarin de euro een wettig betaalmiddel is. In elk ander geval wordt de plaatselijke valuta bedoeld;",
+      "prefLabel": "Currency",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/543-11"
+    }
+  ],
+  "curtailment": [
+    {
+      "context": "regulatory",
+      "definition": "A reduction in the scheduled or actual electricity generation or consumption;",
+      "prefLabel": "Curtailment",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-91"
+    },
+    {
+      "context": "organizational",
+      "definition": "Curtailment betekent dat de teruglevercapaciteit van een opwekinstallatie onder bepaalde voorwaarden tijdelijk wordt verminderd.",
+      "prefLabel": "Curtailment",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/566"
+    },
+    {
+      "context": "business_process",
+      "definition": "means the deliberate reduction of electricity generation or consumption initiated by the system operator to manage congestion or ensure system security.",
+      "prefLabel": "Curtailment",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/110"
+    }
+  ],
+  "customer": [
+    {
+      "context": "general",
+      "definition": "Organisation receiving services from service supplier.",
+      "prefLabel": "Customer",
+      "prefix": "default10",
+      "uri": "http://iec.ch/TC57/IEC61968/Customer"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A customer as defined in Directive (EU) 2019/944",
+      "prefLabel": "Customer",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-34"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A wholesale or final customer of electricity.",
+      "prefLabel": "Customer",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-1"
+    },
+    {
+      "context": "business_process",
+      "definition": "An entity that is directly connected to the grid and receives services from a transmission or distribution system operator.",
+      "prefLabel": "Customer",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/23"
+    }
+  ],
+  "datavalidatie": [
+    {
+      "context": "organizational",
+      "definition": "De controle op volledigheid en juistheid van de meetdata",
+      "prefLabel": "Datavalidatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/666"
+    },
+    {
+      "context": "organizational",
+      "definition": "De controle op volledigheid en juistheid van de meetdata.",
+      "prefLabel": "Datavalidatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/667"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Datavalidatie:De controle op volledigheid en juistheid van de meetdata;",
+      "prefLabel": "Datavalidatie",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/34"
+    }
+  ],
+  "deelnet": [
+    {
+      "context": "regulatory",
+      "definition": "Deelnet:Een net met een bepaald spanningsniveau met sterke samenhang, aangesloten op een net van hogere spanning;",
+      "prefLabel": "Deelnet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/35"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een net met een bepaald spanningsniveau met sterke samenhang, aangesloten op een net van hogere spanning.",
+      "prefLabel": "Deelnet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/679"
+    }
+  ],
+  "delivery period": [
+    {
+      "context": "regulatory",
+      "definition": "The period of delivery during which the balancing service provider delivers the full requested change of power in-feed to, or the full requested change of withdrawals from the system.",
+      "prefLabel": "Delivery period",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/2195-17"
+    },
+    {
+      "context": "business_process",
+      "definition": "means the period of delivery of a during which the flexibility service provider delivers the full requested change of power in-feed to, or the full requested change of withdrawals from the system.",
+      "prefLabel": "Delivery Period",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/103"
+    }
+  ],
+  "demand response": [
+    {
+      "context": "business_process",
+      "definition": "Demand Response (DR), on the contrary, implies a ‘bottom-up’ approach: the\ncustomer becomes active in managing his/her consumption – in order to achieve\nefficiency gains and by this means monetary/economic benefits. Demand Response\n(DR) can be defined as “the changes in electric usage by end-use customers from their\nnormal consumption patterns in response to changes in the price of electricity over\ntime. Further, DR can be also defined as the incentive payments designed to induce\nlower electricity use at times of high wholesale market prices or when system reliability\nis jeopardized. DR includes all intentional modifications to consumption patterns of\nelectricity of end use customers that are intended to alter the timing, level of\ninstantaneous demand, or the total electricity consumption”. DR aims to reduce\nelectricity consumption in times of high energy cost or network constraints by allowing\ncustomers to respond to price or quantity signals.",
+      "prefLabel": "Demand Response",
+      "prefix": "dsm",
+      "uri": "http://iec.ch/TC57/2013/IEC62746/DemandResponseDR"
+    },
+    {
+      "context": "business_process",
+      "definition": "Changes in electric usage by demand-side resources from their normal consumption patterns in response to changes in the price of electricity over time, or to incentive payments designed to induce lower electricity use at times of high wholesale market prices or when system reliability is jeopardized.”",
+      "prefLabel": "Demand Response",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/35"
+    },
+    {
+      "context": "general",
+      "definition": "concept describing an incentivizing of customers by costs, ecological information or others in\norder to initiate a change in their consumption or feed-in pattern (“bottom-up approach” =\nCustomer decides, based on EURELECTRIC Views on Demand-Side Participation)",
+      "prefLabel": "Demand Response",
+      "prefix": "dsm",
+      "uri": "http://iec.ch/TC57/2013/IEC62746/DemandResponse"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Demand response as defined in Directive (EU) 2019/944",
+      "prefLabel": "Demand response",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-44"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Changes in electric usage by end-use customers from their normal consumption patterns in response to changes in the price of electricity or to incentive payments;",
+      "prefLabel": "Demand response",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-93"
+    },
+    {
+      "context": "regulatory",
+      "definition": "The change of electricity load by final customers from their normal or current consumption patterns in response to market signals, including time-variable electricity prices or financial incentives, or in response to accepting the offer of the final customer, individually or through aggregation, to sell demand reduction or increase at a given price on the organised market as defined in Article 2(4) of Commission Implementing Regulation (EU) No 1348/2014.",
+      "prefLabel": "Demand response",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-20"
+    }
+  ],
+  "demand side response": [
+    {
+      "context": "general",
+      "definition": "Control of electricity use/production through ESAs in response to market signals.",
+      "prefLabel": "Demand side response",
+      "prefix": "default8",
+      "uri": "http://linkeddata.bsigroup.com/pas/1879/DemandSideResponse"
+    },
+    {
+      "context": "business_process",
+      "definition": "means D/R products operated in line with operating constraints and consumer preferences, in response to signals from, and acting in agreement with, regulated electricity market participants",
+      "prefLabel": "Demand Side Response",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/37"
+    }
+  ],
+  "demand side response service provider": [
+    {
+      "context": "general",
+      "definition": "Provider of energy management services using ESAs.",
+      "prefLabel": "Demand side response service provider",
+      "prefix": "default8",
+      "uri": "http://linkeddata.bsigroup.com/pas/1879/DemandSideResponseServiceProvider"
+    },
+    {
+      "context": "business_process",
+      "definition": "means an organization using ESAs to provide demand-side-related energy management services to regulated electricity market participants",
+      "prefLabel": "Demand Side Response Service Provider",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/39"
+    }
+  ],
+  "diagram": [
+    {
+      "context": "general",
+      "definition": "The diagram being exchanged. The coordinate system is a standard Cartesian coordinate system and the orientation attribute defines the orientation. The initial view related attributes can be used to specify an initial view with the x,y coordinates of the diagonal points.",
+      "prefLabel": "Diagram",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/DiagramLayout-EU/Diagram"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een diagram is een visuele weergave van een model met als primaire doel het communiceren van een specifiek onderdeel van het model",
+      "prefLabel": "Diagram",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/695"
+    }
+  ],
+  "distributienet": [
+    {
+      "context": "organizational",
+      "definition": "Een of meer verbindingen voor de distributie van elektriciteit en de daarmee verbonden stations, ruimten en kasten en andere hulpmiddelen. Behoudens voor zover deze verbindingen en hulpmiddelen liggen binnen de installatie van een producent of van een afnemer.",
+      "prefLabel": "Distributienet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/720"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Distributienet:Een net dat wordt beheerd door een regionale netbeheerder;",
+      "prefLabel": "Distributienet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/36"
+    }
+  ],
+  "ean-codeboek": [
+    {
+      "context": "regulatory",
+      "definition": "EAN-codeboek:Een online toegankelijk uittreksel van het aansluitingenregister;",
+      "prefLabel": "EAN-codeboek",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/40"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "EAN-codeboek",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/782"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een online toegankelijk uittreksel van het aansluitingenregister.",
+      "prefLabel": "Ean-codeboek",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/781"
+    }
+  ],
+  "elektriciteitsvoorzieningssysteem": [
+    {
+      "context": "regulatory",
+      "definition": "Elektriciteitsvoorzieningssysteem:Het totale systeem van onderling verbonden netten en aansluitingen;",
+      "prefLabel": "Elektriciteitsvoorzieningssysteem",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/42"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het totale systeem van onderling verbonden netten en aansluitingen.",
+      "prefLabel": "Elektriciteitsvoorzieningssysteem",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/859"
+    }
+  ],
+  "emergency state": [
+    {
+      "context": "business_process",
+      "definition": "The system state in which one or more operational security limits are violated.",
+      "prefLabel": "Emergency state",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/58"
+    },
+    {
+      "context": "regulatory",
+      "definition": "The system state in which one or more operational security limits are violated;",
+      "prefLabel": "Emergency state",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-37"
+    }
+  ],
+  "energieprogramma": [
+    {
+      "context": "regulatory",
+      "definition": "Energieprogramma:Een door een BRP opgesteld en bij de netbeheerder van het landelijk hoogspanningsnet ingediend programma dat voor elke onbalansverrekeningsperiode in een etmaal bevat: - de positie; - het intern commercieel handelsprogramma; - het extern commercieel handelsprogramma;",
+      "prefLabel": "Energieprogramma",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/49"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een door een programma-verantwoordelijke opgesteld en bij de netbeheerder van het landelijk hoogspanningsnet ingediend programma dat voor elke programma-tijdseenheid in een etmaal bevat:\n(i) het saldo van de transporten over alle aansluitingen waarvoor hij programma-verantwoordelijke is;\n(ii) de netto-omvang van alle energietransacties met andere programma-verantwoordelijken;\n(iii) de omvang van elke import-en exporttransactie.",
+      "prefLabel": "Energieprogramma",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/884"
+    }
+  ],
+  "energietransactie": [
+    {
+      "context": "regulatory",
+      "definition": "Energietransactie:Een overeenkomst die inhoudt dat een zekere hoeveelheid elektrische energie (in MWh) wordt geproduceerd en afgenomen;",
+      "prefLabel": "Energietransactie",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/43"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een overeenkomst die inhoudt dat een zekere hoeveelheid elektrische energie (in MWh) wordt geproduceerd en afgenomen.",
+      "prefLabel": "Energietransactie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/888"
+    }
+  ],
+  "enkel telwerk": [
+    {
+      "context": "organizational",
+      "definition": "Het telwerk van een kleinverbuikmeetinrichting met één actief telwerk.",
+      "prefLabel": "Enkel telwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/895"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Enkel telwerk:Het telwerk van een kleinverbruikmeetinrichting met één actief telwerk;",
+      "prefLabel": "Enkel telwerk",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/45"
+    }
+  ],
+  "enkelvoudige storing": [
+    {
+      "context": "organizational",
+      "definition": "De uitval van een productie-eenheid of een willekeurig element in het elektriciteitsvoorzieningssysteem.",
+      "prefLabel": "Enkelvoudige storing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/898"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Enkelvoudige storing:De uitval van een elektriciteitsproductie-eenheid of een willekeurig element in het elektriciteitsvoorzieningssysteem;",
+      "prefLabel": "Enkelvoudige storing",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/46"
+    },
+    {
+      "context": "organizational",
+      "definition": "De niet-beschikbaarheid van één willekeurige netcomponent in het elektriciteitsvoorzieningsysteem.",
+      "prefLabel": "Enkelvoudige storing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/897"
+    }
+  ],
+  "fiscale entiteit": [
+    {
+      "context": "organizational",
+      "definition": "Organisatorische eenheid die beschikt over een eigen BTW-nummer",
+      "prefLabel": "Fiscale entiteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/977"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Fiscale entiteit:Organisatorische eenheid die beschikt over een eigen BTW-nummer;",
+      "prefLabel": "Fiscale entiteit",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/50"
+    }
+  ],
+  "flexibility": [
+    {
+      "context": "electrical",
+      "definition": "general concept of elasticity of resource deployment (demand, storage, generation) providing\nancillary services for the grid stability and / or market optimization (change of power\nconsumption, reduction of power feed-in, reactive power supply, etc.)",
+      "prefLabel": "Flexibility",
+      "prefix": "dsm",
+      "uri": "http://iec.ch/TC57/2013/IEC62746/Flexibility"
+    },
+    {
+      "context": "regulatory",
+      "definition": "‘flexibility’ means the ability of an electricity system to adjust to the variability of generation and consumption patterns and to grid availability, across relevant market timeframes.",
+      "prefLabel": "Flexibility",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-79"
+    }
+  ],
+  "frequency": [
+    {
+      "context": "regulatory",
+      "definition": "The electric frequency of the system expressed in hertz that can be measured in all parts of the synchronous area under the assumption of a consistent value for the system in the time frame of seconds, with only minor differences between different measurement locations. Its nominal value is 50Hz.",
+      "prefLabel": "Frequency",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/631-22"
+    },
+    {
+      "context": "general",
+      "definition": "Cycles per second.",
+      "prefLabel": "Frequency",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Frequency"
+    }
+  ],
+  "frequentierelais": [
+    {
+      "context": "organizational",
+      "definition": "Een voorziening, reagerend op frequentiedaling via vooraf ingestelde frequentiewaarden, waarmee belasting automatisch kan worden afgeschakeld.",
+      "prefLabel": "Frequentierelais",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/995"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Frequentierelais:Een voorziening, reagerend op frequentiedaling via vooraf ingestelde frequentiewaarden, waarmee belasting automatisch kan worden afgeschakeld;",
+      "prefLabel": "Frequentierelais",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/52"
+    }
+  ],
+  "fysieke meteropname": [
+    {
+      "context": "regulatory",
+      "definition": "Fysieke meteropname:Het door een netbeheerder, meetbedrijf of meetverantwoordelijke ter plaatse van de meetinrichting aflezen van (een) meterstand(en) van die meetinrichting;",
+      "prefLabel": "Fysieke meteropname",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/53"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het door een netbeheerder, meetbedrijf of meetverantwoordelijke ter plaatse van de meetinrichting aflezen van (een) meterstand(en) van die meetinrichting.",
+      "prefLabel": "Fysieke meteropname",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1009"
+    }
+  ],
+  "fysieke status van de aansluiting": [
+    {
+      "context": "regulatory",
+      "definition": "Fysieke status van de aansluiting:De aanduiding of de aansluiting fysiek aangesloten of fysiek afgesloten is, te weten of de aansluiting wel of niet beschikbaar is voor uitwisseling van elektriciteit of gas tussen het net en de aangesloten installatie;",
+      "prefLabel": "Fysieke status van de aansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/54"
+    },
+    {
+      "context": "organizational",
+      "definition": "De aanduiding of de aansluiting fysiek aangesloten of fysiek afgesloten is, te weten of de aansluiting wel of niet beschikbaar is voor uitwisseling van elektriciteit of gas tussen het net en de aangesloten installatie.",
+      "prefLabel": "Fysieke status van de aansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1014"
+    }
+  ],
+  "geautoriseerde meterstand": [
+    {
+      "context": "regulatory",
+      "definition": "Geautoriseerde meterstand",
+      "prefLabel": "Geautoriseerde meterstand",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/57"
+    },
+    {
+      "context": "organizational",
+      "definition": "een door een erkende meetverantwoordelijke gevalideerde en valide\nbevonden meterstand\n[C",
+      "prefLabel": "Geautoriseerde meterstand",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1106"
+    }
+  ],
+  "gebiedsgrens": [
+    {
+      "context": "regulatory",
+      "definition": "Gebiedsgrens",
+      "prefLabel": "Gebiedsgrens",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/58"
+    },
+    {
+      "context": "organizational",
+      "definition": "De door de Energiekamer vastgestelde geografische grens tussen netten van één of meer netbeheerders.",
+      "prefLabel": "Gebiedsgrens",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1112"
+    }
+  ],
+  "gecontracteerd transportvermogen": [
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Gecontracteerd transportvermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1132"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Gecontracteerd transportvermogen:Het vermogen dat een aangeslotene redelijkerwijs verwacht maximaal op enig moment in het jaar nodig te hebben op zijn aansluiting;",
+      "prefLabel": "Gecontracteerd transportvermogen",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/59"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het vermogen dat een aangeslotene redelijkerwijs verwacht maximaal op enig moment in het jaar nodig te hebben op zijn aansluiting",
+      "prefLabel": "Gecontracteerd transportvermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1130"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het contractueel vastgelegde vermogen dat de aangeslotene redelijkerwijs verwacht maximaal op enig moment in het jaar nodig te hebben op deze elektra-aansluiting. Alleen verplicht indien de aansluiting in bedrijf genomen is en het grootverbruik betreft (leeg voor kleinverbruik). Eenheid is kW. Voorkeurterm (synoniem) bij gas: Gecontracteerde Transportcapaciteit.",
+      "prefLabel": "Gecontracteerd transportvermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1131"
+    }
+  ],
+  "grootschalige storing": [
+    {
+      "context": "regulatory",
+      "definition": "Grootschalige storing:De uitval van verscheidene elementen in het elektriciteitsvoorzieningssysteem of productie-eenheden waardoor in een groot gebied dan wel bij een groot aantal aangeslotenen de transportdienst onderbroken wordt;",
+      "prefLabel": "Grootschalige storing",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/63"
+    },
+    {
+      "context": "organizational",
+      "definition": "De uitval van verscheidene elementen in het elektriciteitsvoorzieningssysteem of productie-eenheden waardoor in een groot gebied dan wel bij een groot aantal aangeslotenen de transportdienst onderbroken wordt.",
+      "prefLabel": "Grootschalige storing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1197"
+    },
+    {
+      "context": "organizational",
+      "definition": "De uitval van verscheidene elementen in het elektriciteitsvoorzieningsysteem of productie-eenheden waardoor in een groot gebied dan wel bij een groot aantal aangeslotenen de transportdienst onderbroken wordt.",
+      "prefLabel": "Grootschalige storing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1198"
+    }
+  ],
+  "grootverbruikaansluiting": [
+    {
+      "context": "regulatory",
+      "definition": "Grootverbruikaansluiting:Een aansluiting met een total maximale doorlaatwaarde groter dan 3x80A of een aansluiting zoals bedoeld in artikel 1, lid 2 of lid 3, van de Wet;",
+      "prefLabel": "Grootverbruikaansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/64"
+    },
+    {
+      "context": "organizational",
+      "definition": "een aansluiting met een totale maximale capaciteit van groter dan 40 m3(n)\nper uur. [M]",
+      "prefLabel": "Grootverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1202"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aansluiting met een totale maximale doorlaatwaarde groter dan 3x80A of een aansluiting zoals bedoeld in artikel 1, lid 2 of lid 3, van de Wet.",
+      "prefLabel": "Grootverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1203"
+    }
+  ],
+  "grootverbruiker": [
+    {
+      "context": "organizational",
+      "definition": "Verbruiker die op jaarbasis ten minste 100 MWh elektrische energie betrekt of beschikt over een aansluiting met vermogen van ten minste 56 kVA",
+      "prefLabel": "Grootverbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1206"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aangeslotene, niet zijnde een kleinverbruiker.",
+      "prefLabel": "Grootverbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1205"
+    },
+    {
+      "context": "organizational",
+      "definition": "een verbruiker niet zijnde een kleinverbruiker",
+      "prefLabel": "Grootverbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1204"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Grootverbruiker:Een aangeslotene, niet zijnde een kleinverbruiker;",
+      "prefLabel": "Grootverbruiker",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/65"
+    }
+  ],
+  "hoogspanning": [
+    {
+      "context": "regulatory",
+      "definition": "Hoogspanning:Spanningsniveau hoger dan 1000 V;",
+      "prefLabel": "Hoogspanning",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/69"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Hoogspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1253"
+    },
+    {
+      "context": "organizational",
+      "definition": "Spanningsniveau hoger dan 35kV",
+      "prefLabel": "Hoogspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1252"
+    },
+    {
+      "context": "organizational",
+      "definition": "Spanningsniveau hoger dan 1000 V.",
+      "prefLabel": "Hoogspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1251"
+    }
+  ],
+  "inhuizing": [
+    {
+      "context": "organizational",
+      "definition": "een verhuizing waarbij een (rechts)persoon een onroerende zaak betrekt en\nde beschikkingsbevoegdheid over de aansluiting op zich neemt\n[ C ]",
+      "prefLabel": "Inhuizing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1319"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Inhuizing:Een verhuizing waarbij een (rechts)persoon een onroerende zaak betrekt en de beschikkingsbevoegdheid over de aansluiting op zich neemt;",
+      "prefLabel": "Inhuizing",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/71"
+    }
+  ],
+  "installatie": [
+    {
+      "context": "organizational",
+      "definition": "De verzameling van componenten (o.a. rails en velden), gelegen in een stationcomplex, dat als een functioneel geheel zorgt voor een verdeling van de inkomende naar uitgaande kabels.",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1345"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het samenstel van elektrisch materieel en leidingen van een aangeslotene, te rekenen na het overdrachtspunt van de aansluiting. MvT Elektriciteitswet: Voor zover het een producent van elektriciteit betreft, wordt hieronder verstaan de elektriciteitscentrale als geheel; voor zover het een afnemer van elektriciteit betreft, wordt hieronder verstaan alles wat - doorgaans achter de elektriciteitsmeter - in de woning of vestiging elektriciteit verbruikt. Tot de installatie kan ook behoren de verbinding tussen een vestiging van een aangeslotene en het punt waarop de aangeslotene is voorzien van een aansluiting op het net. (bron `TenneT - Begrippenlijst elektriciteit`)",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1343"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het samenstel van elektrisch materieel en leidingen van een aangeslotene, te rekenen na het overdrachtspunt van de aansluiting.",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1341"
+    },
+    {
+      "context": "organizational",
+      "definition": "Gas: Een behuizing van de onderdelen die de gasdruk regelen.\nDe installatie wordt gekenmerkt door een binnen het station unieke combinatie van:\n\n(1) functie zoals DS / OS / HAS / AS / OEL\n\n(2) inlaatdruk\n\n(3) uitlaatdruk",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1344"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het samenstel van elektrisch of gastechnisch materiaal en leidingen van een aangeslotene, te rekenen na het overdrachtspunt van de aansluiting. Delen van deze installatie kunnen een EAN-code krijgen zoals installaties of eenheden voor de opwekking, het verbruik of de opslag van energie, ten behoeve van vraagsturing, subsidie of groene-stroomcertificaten.",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1347"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het samenstel van elektrisch of gastechnisch materiaal en leidingen van een aangeslotene, te rekenen na het overdrachtspunt van de aansluiting.",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1348"
+    },
+    {
+      "context": "organizational",
+      "definition": "Gelegen in een stationcomplex: verzameling van rails en velden, dat zorgt voor een verbinding tussen ingaande en uitgaande kabels.",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1342"
+    },
+    {
+      "context": "organizational",
+      "definition": "x",
+      "prefLabel": "Installatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1346"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Het samenstel van elektrisch materieel en leidingen van een aangeslotene, te rekenen na het overdrachtspunt van de aansluiting;\n  ** MvT Elektriciteitswet:\n  Voor zover het een producent van elektriciteit betreft, wordt hieronder verstaan de elektriciteitscentrale als geheel;\n  voor zover het een afnemer van elektriciteit betreft, wordt hieronder verstaan alles wat – doorgaans achter de elektriciteitsmeter – in de woning of vestiging elektriciteit verbruikt. Tot de installatie kan ook behoren de verbinding tussen een vestiging van een aangeslotene en het punt waarop de aangeslotene is voorzien van een aansluiting op het net;",
+      "prefLabel": "Installatie",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/73"
+    }
+  ],
+  "interoperability": [
+    {
+      "context": "regulatory",
+      "definition": "In the context of smart metering systems, the ability of two or more energy or communication networks, systems, devices, applications or components to work together to exchange and use information to perform required functions.",
+      "prefLabel": "Interoperability",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-24"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Interoperability as defined in Directive (EU) 2019/944",
+      "prefLabel": "Interoperability",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-46"
+    },
+    {
+      "context": "general",
+      "definition": "ESA and CEM ability to function across multiple DSRSP services.",
+      "prefLabel": "Interoperability",
+      "prefix": "default8",
+      "uri": "http://linkeddata.bsigroup.com/pas/1879/Interoperability"
+    }
+  ],
+  "islanding": [
+    {
+      "context": "regulatory",
+      "definition": "The condition in which a part of the grid is electrically isolated from the rest of the interconnected system and operates independently;",
+      "prefLabel": "Islanding",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-108"
+    },
+    {
+      "context": "organizational",
+      "definition": "Zie 'eilandbedrijf'",
+      "prefLabel": "Islanding",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1388"
+    }
+  ],
+  "kleinverbruikaansluiting": [
+    {
+      "context": "regulatory",
+      "definition": "Kleinverbruikaansluiting:Een aansluiting met een total maximale doorlaatwaarde kleiner dan of gelijk aan 3x80A niet zijnde een artikel 1, lid 2 of 3-aansluiting;",
+      "prefLabel": "Kleinverbruikaansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/77"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aansluiting met een totale maximale doorlaatwaarde kleiner dan of gelijk aan 3x80A niet zijnde een artikel in artikel 1, lid 2 of 3-aansluiting.",
+      "prefLabel": "Kleinverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1496"
+    },
+    {
+      "context": "organizational",
+      "definition": "een aansluiting met een totale maximale capaciteit van ten hoogste 40\nm3(n) per uur, zoals bedoeld in de Wet artikel 43, lid 1. [M]",
+      "prefLabel": "Kleinverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1495"
+    }
+  ],
+  "kleinverbruiker": [
+    {
+      "context": "organizational",
+      "definition": "De in artikel 95a, eerste lid van de Elektriciteitswet 1998 bedoelde afnemer.",
+      "prefLabel": "Kleinverbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1497"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Kleinverbruiker:De in artikel 95a, eerste lid van de Elektriciteitswet 1998bedoelde afnemer;",
+      "prefLabel": "Kleinverbruiker",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/78"
+    },
+    {
+      "context": "organizational",
+      "definition": "de in artikel 43, eerste lid, van de Gaswet bedoelde afnemer",
+      "prefLabel": "Kleinverbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1498"
+    }
+  ],
+  "kleinverbruikmeetinrichting": [
+    {
+      "context": "regulatory",
+      "definition": "Kleinverbruikmeetinrichting:Een meetinrichting bij een kleinverbruikaansluiting, zijnde een op afstand uitleesbare kleinverbruikmeetinrichting of een niet op afstand uitleesbare kleinverbruikmeetinrichting;",
+      "prefLabel": "Kleinverbruikmeetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/79"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting bij een kleinverbruikaansluiting, zijnde een op afstand uitleesbare kleinverbruikmeetinrichting of een niet op afstand uitleesbare kleinverbruikmeetinrichting.",
+      "prefLabel": "Kleinverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1499"
+    }
+  ],
+  "kwmax": [
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "kWmax",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1552"
+    },
+    {
+      "context": "regulatory",
+      "definition": "kWmax:De werkelijk voorgekomen maximale belasting van het net door een aangeslotene op een netaansluiting, die bij een meetperiode van 15 minuten of minder wordt bepaald op basis van de waarde per klokkwartier en die bij een andere meetperiode wordt bepaald op basis van de hoogste waarde per meetperiode;",
+      "prefLabel": "kWmax",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/81"
+    },
+    {
+      "context": "organizational",
+      "definition": "De werkelijk voorgekomen maximale belasting van het net door een aangeslotene op een netaansluiting, die bij een meetperiode van 15 minuten of minder wordt bepaald op basis van de waarde per klokkwartier en die bij een andere meetperiode wordt bepaald op basis van de hoogste waarde per meetperiode.",
+      "prefLabel": "Kwmax",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1553"
+    }
+  ],
+  "laag telwerk": [
+    {
+      "context": "organizational",
+      "definition": "Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan worden voor de bepaling van de met het net uitgewisselde energie tijdens laaguren. Deze periode wordt ook wel aangeduid als “off-peak”.",
+      "prefLabel": "Laag telwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1563"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Laag telwerk:Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan worden voor de bepaling van de met het net uitgewisselde energie tijdens laaguren.",
+      "prefLabel": "Laag telwerk",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/86"
+    }
+  ],
+  "laagspanning": [
+    {
+      "context": "organizational",
+      "definition": "Laagspanning is het spanningsniveau onder de 1000 Volt wisselspanning of 1500 Volt gelijkspanning. Dit niveau is van toepassing in huishoudens en kleine bedrijven.",
+      "prefLabel": "Laagspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1559"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een spanningsniveau kleiner dan of gelijk aan 1 kV.",
+      "prefLabel": "Laagspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1557"
+    },
+    {
+      "context": "organizational",
+      "definition": "Spanningsniveau van 1000 V wisselspanning en lager.",
+      "prefLabel": "Laagspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1558"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Laagspanning:Een spanningsniveau kleiner dan of gelijk aan 1 kV in geval van een wisselspanningsnet en kleiner dan of gelijk aan 1,5 kV in geval van een gelijkspanningsnet;",
+      "prefLabel": "Laagspanning",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/83"
+    }
+  ],
+  "laagspanningsnet": [
+    {
+      "context": "regulatory",
+      "definition": "Laagspanningsnet:Net bestemd voor het transport van elektriciteit op een spanningsniveau kleiner dan of gelijk aan 1 kV in geval van een wisselspanningsnet en kleiner dan of gelijk aan 1,5 kV in geval van een gelijkspanningsnet en dat als zodanig wordt bedreven;",
+      "prefLabel": "Laagspanningsnet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/84"
+    },
+    {
+      "context": "organizational",
+      "definition": "Net bestemd voor het transport van elektriciteit op een spanningsniveau kleiner dan of gelijk aan 1 kV en dat als zodanig wordt bedreven.",
+      "prefLabel": "Laagspanningsnet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1562"
+    }
+  ],
+  "leveranciersregister": [
+    {
+      "context": "organizational",
+      "definition": "Administratie van bedrijfsgegevens en operationele contactgegevens van de leveranciers van elektriciteit of gas in Nederland.",
+      "prefLabel": "Leveranciersregister",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1608"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Leveranciersregister:Administratie van bedrijfsgegevens en operationele contactgegevens van de leveranciers van elektriciteit of gas in Nederland;",
+      "prefLabel": "Leveranciersregister",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/88"
+    }
+  ],
+  "leveringsrichting": [
+    {
+      "context": "organizational",
+      "definition": "De richting van de energiestroom van het product op deze aansluiting",
+      "prefLabel": "Leveringsrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1624"
+    },
+    {
+      "context": "organizational",
+      "definition": "De richting van de energiestroom van het product op deze aansluiting, ODN of LDN",
+      "prefLabel": "Leveringsrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1625"
+    },
+    {
+      "context": "general",
+      "definition": "Afname of invoeding op het net.",
+      "prefLabel": "Leveringsrichting",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/16"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Leveringsrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1626"
+    }
+  ],
+  "line": [
+    {
+      "context": "business_process",
+      "definition": "",
+      "prefLabel": "Line",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/32"
+    },
+    {
+      "context": "general",
+      "definition": "Contains equipment beyond a substation belonging to a power transmission line. ",
+      "prefLabel": "Line",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/Line"
+    },
+    {
+      "context": "general",
+      "definition": "Contains equipment beyond a substation belonging to a power transmission line. ",
+      "prefLabel": "Line",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Line"
+    }
+  ],
+  "market evaluation point": [
+    {
+      "context": "general",
+      "definition": "The identification of an entity where energy products are measured or computed.",
+      "prefLabel": "Market Evaluation Point",
+      "prefix": "default9",
+      "uri": "http://iec.ch/TC57/2013/IEC62325/MarketEvaluationPoint"
+    },
+    {
+      "context": "business_process",
+      "definition": "",
+      "prefLabel": "Market Evaluation Point",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/75"
+    }
+  ],
+  "market participant": [
+    {
+      "context": "business_process",
+      "definition": "An identification of a party acting in a electricity market business process.",
+      "prefLabel": "Market Participant",
+      "prefix": "default9",
+      "uri": "http://iec.ch/TC57/2013/IEC62325/MarketParticipant"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A market participant as defined in Article 2, point 25, of Regulation (EU) 2019/943.",
+      "prefLabel": "Market participant",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-10"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A natural or legal person who buys, sells, or generates electricity or provides related services in the electricity market;",
+      "prefLabel": "Market participant",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-111"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A natural or legal person who sells, purchases or generates electricity",
+      "prefLabel": "Market participant",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/943-25"
+    },
+    {
+      "context": "business_process",
+      "definition": "means an actor enabling market participation in capacity management by grid energy balancing and congestion management operating by operating demand and response products.",
+      "prefLabel": "Market Participant",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/76"
+    }
+  ],
+  "marktpartij": [
+    {
+      "context": "organizational",
+      "definition": "Iedere partij die gerechtigd is om transacties in elektriciteit of gas af te sluiten op de Nederlandse gas- of elektriciteitsmarkt.",
+      "prefLabel": "Marktpartij",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1701"
+    },
+    {
+      "context": "organizational",
+      "definition": "Partij die deelneemt aan de energiemarkt",
+      "prefLabel": "Marktpartij",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1699"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Marktpartij:Iedere partij die gerechtigd is om transacties in elektriciteit af te sluiten op de Nederlandse elektriciteitsmarkt;",
+      "prefLabel": "Marktpartij",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/89"
+    },
+    {
+      "context": "organizational",
+      "definition": "Iedere partij die gerechtigd is om transacties in elektriciteit of gas af te sluiten op de Nederlandse elektriciteitsmarkt of gasmarkt. Een marktpartij vervult een marktrol, bijvoorbeeld die van leverancier, regionale netbeheerder, landelijke netbeheerder, programmaverantwoordelijke of meetverantwoordelijke.",
+      "prefLabel": "Marktpartij",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1703"
+    },
+    {
+      "context": "organizational",
+      "definition": "Iedere partij die gerechtigd is om transacties uit te voeren in de energiemarkt.",
+      "prefLabel": "Marktpartij",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1700"
+    },
+    {
+      "context": "organizational",
+      "definition": "Iedere partij die gerechtigd is om transacties in elektriciteit af te sluiten op de Nederlandse elektriciteitsmarkt.",
+      "prefLabel": "Marktpartij",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1702"
+    }
+  ],
+  "marktsegment": [
+    {
+      "context": "organizational",
+      "definition": "De aanduiding in het aansluitingenregister van de categorie waartoe een aansluiting behoort, te weten: a. Een kleinverbruikaansluiting, of: b. Een grootverbruikaansluiting, niet zijnde een artikel 1, lid 2 of 3-aansluiting, of; c. Een grootverbruikaansluiting, zijnde een artikel 1, lid 2 of 3-aansluiting.",
+      "prefLabel": "Marktsegment",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1705"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Marktsegment:De aanduiding in het aansluitingenregister van de categorie waartoe een aansluiting behoort, te weten: - Een kleinverbruikaansluiting, of: - Een grootverbruikaansluiting, niet zijnde een artikel 1, lid 2 of 3-aansluiting, of; - Een grootverbruikaansluiting, zijnde een artikel 1, lid 2 of 3-aansluiting;",
+      "prefLabel": "Marktsegment",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/90"
+    }
+  ],
+  "meetgegevens": [
+    {
+      "context": "organizational",
+      "definition": "Alle gegevens die afkomstig zijn uit een meetinrichting (zoals meterstanden) of die daarvan zijn afgeleid (zoals verbruiken) of die als zodanig worden gebruikt (zoals door middel van profielensystematiek berekende gegevens omtrent verbruiken).",
+      "prefLabel": "Meetgegevens",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1760"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Meetgegevens:alle gegevens die afkomstig zijn uit een meetinrichting (zoals meterstanden) of die daarvan zijn afgeleid (zoals volumes) of die als zodanig worden gebruikt (zoals door middel van profielensystematiek berekende gegevens omtrent volumes);",
+      "prefLabel": "Meetgegevens",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/91"
+    }
+  ],
+  "meetinrichting": [
+    {
+      "context": "organizational",
+      "definition": "het gehele samenstel van apparatuur dat ten minste tot doel heeft het\nuitgewisselde gas te meten. [M]",
+      "prefLabel": "Meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1763"
+    },
+    {
+      "context": "general",
+      "definition": "instrument of samenstel van instrumenten met een meetfunctie dat ten minste de invoeding, onttrekking of het verbruik van elektriciteit of gas meet.",
+      "prefLabel": "Meetinrichting",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/17"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het gehele samenstel van apparatuur dat ten minste tot doel heeft de uitgewisselde elektriciteit te meten.",
+      "prefLabel": "Meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1764"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1762"
+    }
+  ],
+  "meetmethode": [
+    {
+      "context": "organizational",
+      "definition": "De aanduiding in het aansluitingenregister van de wijze waarop de energie-uitwisseling op de aansluiting wordt vastgesteld.",
+      "prefLabel": "Meetmethode",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1768"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Meetmethode:De aanduiding in het aansluitingenregister van de wijze waarop de energie-uitwisseling op de aansluiting wordt vastgesteld;",
+      "prefLabel": "Meetmethode",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/92"
+    }
+  ],
+  "meetmiddel (van de meetinrichting)": [
+    {
+      "context": "organizational",
+      "definition": "Een kWh-meter, kvarh-meter, stroom-of spanningstransformator.",
+      "prefLabel": "Meetmiddel (van de meetinrichting)",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1769"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Meetmiddel (van de meetinrichting):Een kWh-meter, kvarh-meter, stroom- of spanningstransformator;",
+      "prefLabel": "Meetmiddel (van de meetinrichting)",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/93"
+    }
+  ],
+  "meettransformator": [
+    {
+      "context": "general",
+      "definition": "Een elektrisch apparaat dat wordt toegepast voor het verlagen van een wisselspanning zodat deze\ngemeten kan worden.",
+      "prefLabel": "Meettransformator",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/1"
+    },
+    {
+      "context": "organizational",
+      "definition": "Zet de spanning (spanningstransformator) of stroom (stroomtransformator) om naar één of meer lagere gestandaardiseerde waarden ten behoeve van meting, beveiliging of combinatie daarvan.",
+      "prefLabel": "Meettransformator",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1778"
+    }
+  ],
+  "meetverantwoordelijke": [
+    {
+      "context": "organizational",
+      "definition": "De identificerende EAN13 code van de erkende MV op deze aansluiting",
+      "prefLabel": "Meetverantwoordelijke",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1780"
+    },
+    {
+      "context": "organizational",
+      "definition": "De meetverantwoordelijke is een gecertificeerde onderneming die bij de aangeslotene de meterstanden van de elektriciteitsmeter of gasmeter opneemt, verifieert, registreert en doorgeeft aan de relevante marktpartijen. De certificering wordt verzorgd door TenneT B.V.",
+      "prefLabel": "Meetverantwoordelijke",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1779"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Meetverantwoordelijke:Een persoon die meetverantwoordelijkheid uitoefent en die daarvoor conform bijlage 4 van de Meetcode elektriciteiten/of bijlage 3 van de Meetcode gas RNBis erkend;",
+      "prefLabel": "Meetverantwoordelijke",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/94"
+    },
+    {
+      "context": "organizational",
+      "definition": "een persoon die meetverantwoordelijkheid uitoefent en die daarvoor\nconform bijlage 4 van de Meetcode Elektriciteit en/of bijlage 3 van de\nMeetvoorwaarden Gas – RNB is erkend [M]",
+      "prefLabel": "Meetverantwoordelijke",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1782"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een persoon die meetverantwoordelijkheid uitoefent en die daarvoor conform bijlage 4 van de Meetcode Elektriciteit en/of bijlage 3 van de Meetvoorwaarden Gas – RNB is erkend.",
+      "prefLabel": "Meetverantwoordelijke",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1781"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een persoon die meetverantwoordelijkheid uitoefent en die daarvoor conform bijlage 4 van de Meetcode elektriciteit en/of bijlage 3 van de Meetcode gas RNB is erkend;",
+      "prefLabel": "Meetverantwoordelijke",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1783"
+    }
+  ],
+  "meetverantwoordelijkheid": [
+    {
+      "context": "regulatory",
+      "definition": "Meetverantwoordelijkheid:De verantwoordelijkheid van de aangeslotene voor het aanwezig zijn op de aansluiting van een op grond van hoofdstuk 2 van de Meetcode elektriciteitvereiste meetinrichting, meetinrichtingen in het kader van de eigen opwekking en meetinrichtingen in het kader van de Wet milieukwtermiteit elektriciteitsproductie, alsmede voor het correct en tijdig (doen) vaststellen en (doen) doorgeven van meetgegevens op grond van hoofdstuk 6 van de Informatiecode elektriciteit en gas;",
+      "prefLabel": "Meetverantwoordelijkheid",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/95"
+    },
+    {
+      "context": "organizational",
+      "definition": "De verantwoordelijkheid van de aangeslotene voor het aanwezig zijn op de netaansluiting van een op grond van hoofdstuk 2 van de Meetcode Elektriciteit vereiste meetinrichting, meetinrichtingen in het kader van de eigen opwekking en meetinrichtingen in het kader van de Wet milieukwaliteit elektriciteitsproductie, alsmede voor het correct en tijdig (doen) vaststellen en (doen) doorgeven van de in artikel 1.1.1 van de Meetcode Elektriciteit bedoelde meetgegevens op grond van hoofdstuk 3 van de Meetcode Elektriciteit.",
+      "prefLabel": "Meetverantwoordelijkheid",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1784"
+    },
+    {
+      "context": "organizational",
+      "definition": "De verantwoordelijkheid van de aangeslotene voor het aanwezig zijn op de aansluiting van een op grond van hoofdstuk 2 van de Meetcode Elektriciteit vereiste meetinrichting, meetinrichtingen in het kader van de eigen opwekking en meetinrichtingen in het kader van de Wet milieukwaliteit elektriciteitsproductie, alsmede voor het correct en tijdig (doen) vaststellen en (doen) doorgeven van meetgegevens op grond van hoofdstuk 6 van de Informatiecode Elektriciteit en Gas.",
+      "prefLabel": "Meetverantwoordelijkheid",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1785"
+    }
+  ],
+  "meter": [
+    {
+      "context": "organizational",
+      "definition": "Gas of elektriciteit tarief meter.",
+      "prefLabel": "Meter",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1812"
+    },
+    {
+      "context": "general",
+      "definition": "Een meter is een instrument ter bepaling en/of vastlegging van een grootheid (zoals kWh. m3, etc.).\nEntiteit Meter betreft de fysieke asset met een beschrijving van de unieke fysieke en technische eigenschappen.",
+      "prefLabel": "Meter",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/8"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een energiemeter is een apparaat waarmee je het energiegebruik en opwek kunt registreren.",
+      "prefLabel": "Meter",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1813"
+    },
+    {
+      "context": "organizational",
+      "definition": "Meetinstrument om een natuurkundige grootheid mee te meten.",
+      "prefLabel": "Meter",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1815"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meter is een instrument ter bepaling en/of vastlegging van een grootheid (zoals kWh. m3, etc.).\n\nEntiteit Meter betreft de fysieke asset met een beschrijving van de unieke fysieke en technische eigenschappen.",
+      "prefLabel": "Meter",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1814"
+    },
+    {
+      "context": "general",
+      "definition": "Physical asset that performs the metering role of the usage point. Used for measuring consumption and detection of events.",
+      "prefLabel": "Meter",
+      "prefix": "default10",
+      "uri": "http://iec.ch/TC57/IEC61968/Meter"
+    }
+  ],
+  "meterbeheerder": [
+    {
+      "context": "regulatory",
+      "definition": "Meterbeheerder:Een organisatorische eenheid die verantwoordelijk is voor ontwerp, plaatsing, beheer, onderhoud en verwijdering van de meetinrichting;",
+      "prefLabel": "Meterbeheerder",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/96"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een organisatorische eenheid die verantwoordelijk is voor ontwerp, plaatsing, beheer, onderhoud en verwijdering van de meetinrichting.",
+      "prefLabel": "Meterbeheerder",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1817"
+    },
+    {
+      "context": "organizational",
+      "definition": "een organisatorische eenheid die verantwoordelijk is voor ontwerp,\nplaatsing, beheer, onderhoud en verwijdering van de meetinrichting\n[M]",
+      "prefLabel": "Meterbeheerder",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1818"
+    }
+  ],
+  "meterplaatser": [
+    {
+      "context": "organizational",
+      "definition": "Een persoon, niet zijnde een netbeheerder, die conform artikel 26ad, lid 6 of artikel 26ae, lid 7 van de Elektriciteitswet 1998 of artikel 13d, lid 6, of artikel 13e, lid 7, van de Gaswet, op verzoek van een kleinverbruiker een meetinrichting plaatst bij een kleinverbruikaansluiting en die daarvoor conform bijlage 4 van de Meetcode Elektriciteit en/of bijlage 3 van de Meetvoorwaarden Gas – RNB is erkend.",
+      "prefLabel": "Meterplaatser",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1830"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Meterplaatser:Een persoon, niet zijnde een netbeheerder, die conform artikel 26ad, lid 6of artikel 26ae, lid 7 van de Elektriciteitswet 1998of artikel 13d, lid 6, of artikel 13e, lid 7, van de Gaswet, op verzoek van een kleinverbruiker een meetinrichting plaatst bij een kleinverbruikaansluiting en die daarvoor conform bijlage 4 van de Meetcode elektriciteiten/of bijlage 3 van de Meetcode gas RNBis erkend;",
+      "prefLabel": "Meterplaatser",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/97"
+    },
+    {
+      "context": "organizational",
+      "definition": "een persoon, niet zijnde een netbeheerder, die conform artikel 26ad, lid 6 of\nartikel 26ae, lid 7 van de Elektriciteitswet 1998 of artikel 13d, lid 6, of artikel\n13e, lid 7, van de Gaswet, op verzoek van een kleinverbruiker een\nmeetinrichting plaatst bij een kleinverbruikaansluiting en die daarvoor\nconform bijlage 4 van de Meetcode Elektriciteit en/of bijlage 3 van de\nMeetvoorwaarden Gas – RNB is erkend [M]",
+      "prefLabel": "Meterplaatser",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1829"
+    }
+  ],
+  "meting": [
+    {
+      "context": "organizational",
+      "definition": "Een waardebepaling,  verkregen uit één waarneming, één opname of één monstername op één meetlocatie.",
+      "prefLabel": "Meting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1834"
+    },
+    {
+      "context": "organizational",
+      "definition": "Alle handelingen om grootheden binnen een gastechnische installatie te meten",
+      "prefLabel": "Meting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1835"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Meting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1836"
+    },
+    {
+      "context": "general",
+      "definition": "bepalen van een waarde",
+      "prefLabel": "Meting",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/18"
+    }
+  ],
+  "middenspanningsnet": [
+    {
+      "context": "organizational",
+      "definition": "Net bestemd voor het transport van elektriciteit op een spanningsniveau groter dan 1 kV, maar kleiner dan of gelijk aan 35 kV en dat als zodanig wordt bedreven.",
+      "prefLabel": "Middenspanningsnet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1841"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Middenspanningsnet:Net bestemd voor het transport van elektriciteit op een spanningsniveau groter dan 1 kV, maar kleiner dan of gelijk aan 35 kV en dat als zodanig wordt bedreven.",
+      "prefLabel": "Middenspanningsnet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/98"
+    }
+  ],
+  "mp-erkenner": [
+    {
+      "context": "organizational",
+      "definition": "de instantie die conform bijlage 4 van de Meetcode Elektriciteit en bijlage 3\nvan de Meetvoorwaarden Gas – RNB door de gezamenlijke netbeheerders is\naangewezen om de meterplaatsers te erkennen\n[M]",
+      "prefLabel": "MP-erkenner",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1866"
+    },
+    {
+      "context": "organizational",
+      "definition": "De instantie die conform bijlage 4 van de Meetcode Elektriciteit en bijlage 3 van de Meetvoorwaarden Gas – RNB door de gezamenlijke netbeheerders is aangewezen om de meterplaatsers te erkennen.",
+      "prefLabel": "MP-erkenner",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1867"
+    },
+    {
+      "context": "regulatory",
+      "definition": "MP-erkenner:De instantie die conform bijlage 4 van de Meetcode elektriciteiten bijlage 3 van de Meetcode gas RNBdoor de gezamenlijke netbeheerders is aangewezen om de meterplaatsers te erkennen;",
+      "prefLabel": "MP-erkenner",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/99"
+    }
+  ],
+  "mutatiedatum": [
+    {
+      "context": "organizational",
+      "definition": "De datum waarop door de netbeheerder de wijziging van stamgegevens in het aansluitingenregister wordt geëffectueerd.",
+      "prefLabel": "Mutatiedatum",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1874"
+    },
+    {
+      "context": "regulatory",
+      "definition": "De datum waarop door de netbeheerder de wijziging van stamgegevens in het aansluitingenregister wordt geëffectueerd;",
+      "prefLabel": "Mutatiedatum",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/100"
+    }
+  ],
+  "mv-erkenner": [
+    {
+      "context": "regulatory",
+      "definition": "De instantie die conform bijlage 4 van de Meetcode elektriciteiten bijlage 3 van de Meetcode gas RNBis aangewezen om de meetverantwoordelijken te erkennen;",
+      "prefLabel": "MV-erkenner",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/101"
+    },
+    {
+      "context": "organizational",
+      "definition": "De instantie die conform bijlage 4 van de Meetcode Elektriciteit en bijlage 3 van de Meetvoorwaarden Gas – RNB is aangewezen om de meetverantwoordelijken te erkennen.",
+      "prefLabel": "MV-erkenner",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1877"
+    }
+  ],
+  "mv-register": [
+    {
+      "context": "regulatory",
+      "definition": "Een register waarin de namen, adressen, telefoon- en faxnummers alsmede de gegevens ten behoeve van elektronische gegevensuitwisseling zijn vermeld van de op grond van B4.2.1.1 van de Meetcode elektriciteiten B3.2.1.1 van de Meetcode gas RNBerkende meetverantwoordelijken;",
+      "prefLabel": "MV-register",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/102"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een register waarin de namen, adressen, telefoon-en faxnummers alsmede de gegevens ten behoeve van elektronische gegevensuitwisseling zijn vermeld van de op grond van B4.2.1.1 van de Meetcode Elektricteit en B3.2.1.1 van de Meetvoorwaarden Gas – RNB erkende meetverantwoordelijken.",
+      "prefLabel": "MV-register",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1878"
+    }
+  ],
+  "netaansluiting": [
+    {
+      "context": "organizational",
+      "definition": "Elke verbinding of elk samenstel verbindingen van een aansluiting, waarbij de elektrische installatie achter deze verbinding of samenstel verbindingen gescheiden is en blijft van andere elektrische installaties en wordt geïdentificeerd door een eigen EAN code.",
+      "prefLabel": "Netaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1904"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Netaansluiting",
+      "prefLabel": "Netaansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/104"
+    }
+  ],
+  "netaansluitpunt": [
+    {
+      "context": "regulatory",
+      "definition": "Het fysieke punt dat de grens tussen de aansluiting en het net van de netbeheerder aangeeft;",
+      "prefLabel": "Netaansluitpunt",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/105"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het fysieke punt dat de grens tussen de aansluiting en het net van de netbeheerder aangeeft.",
+      "prefLabel": "Netaansluitpunt",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1905"
+    }
+  ],
+  "netbeheerdersregister": [
+    {
+      "context": "organizational",
+      "definition": "Administratie van bedrijfsgegevens en operationele contactgegevens van de netbeheerders in Nederland.",
+      "prefLabel": "Netbeheerdersregister",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1914"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Administratie van bedrijfsgegevens en operationele contactgegevens van de netbeheerders in Nederland;",
+      "prefLabel": "Netbeheerdersregister",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/106"
+    }
+  ],
+  "netgebied": [
+    {
+      "context": "regulatory",
+      "definition": "Een aaneengesloten en samenhangend deel van een net van één netbeheerder, waarbinnen de processen termlocatie en reconciliatie plaatsvinden;",
+      "prefLabel": "Netgebied",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/107"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aaneengesloten en samenhangend deel van een net van één netbeheerder, waarbinnen de processen allocatie en reconciliatie plaatsvinden",
+      "prefLabel": "Netgebied",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1929"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aaneengesloten en samenhangend deel van een net van één netbeheerder, waarbinnen de processen allocatie en reconciliatie plaatsvinden.",
+      "prefLabel": "Netgebied",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1925"
+    },
+    {
+      "context": "organizational",
+      "definition": "onderdeel van een regionaal gastransportnet van één regionale\nnetbeheerder:\n dat wordt gebruikt als administratief verzamelpunt ten behoeve van\nde uitvoering van de allocatie van gasstromen van tussen het\nlandelijk gastransportnet en een regionaal gastransportnet zoals\nbedoeld in hoofdstuk 2 van de Allocatievoorwaarden Gas,\n waarbinnen de invoeding, eventueel gecorrigeerd voor\nnetkoppelingen tussen regionale gastransportnetten, gealloceerd\nwordt naar de afnemers,\n dat wordt begrensd door de aansluitingen en de\nsysteemverbindingen die hiermee verbonden zijn, dat niet\nopdeelbaar is in twee of meer gebieden die op zichzelf ook weer\neen netgebied zouden kunnen vormen.\n [K]",
+      "prefLabel": "Netgebied",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1927"
+    },
+    {
+      "context": "organizational",
+      "definition": "EDSN: Aanduiding van het gesloten inkoopgebied waar een aansluiting onder valt.",
+      "prefLabel": "Netgebied",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1926"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een administratief geclusterd aantal aansluitingen ten behoeve van marktfaciliterende processen. Een netgebied wordt geregistreerd middels een EAN18-code die alleen gewijzigd wordt in geval van herverkaveling.",
+      "prefLabel": "Netgebied",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1928"
+    }
+  ],
+  "nettarief": [
+    {
+      "context": "organizational",
+      "definition": "De door de aangeslotene verschuldigde bedragen als bedoeld in artikel 95cb van de Elektriciteitswet 1998 en artikel 44b van de Gaswet.",
+      "prefLabel": "Nettarief",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1944"
+    },
+    {
+      "context": "regulatory",
+      "definition": "De door de aangeslotene verschuldigde bedragen als bedoeld in artikel 95cb van de Elektriciteitswet 1998en artikel 44b van de Gaswet;",
+      "prefLabel": "Nettarief",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/108"
+    }
+  ],
+  "netvlak": [
+    {
+      "context": "organizational",
+      "definition": "Het bedreven spanningsniveau op een bepaald punt in het netwerk",
+      "prefLabel": "Netvlak",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1951"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een deel van het net waarvoor geldt dat de verbruikers aangesloten op dit deel van het net eenzelfde tarief in rekening krijgen;",
+      "prefLabel": "Netvlak",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/110"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een deel van het net waarvoor geldt dat de verbruikers aangesloten op dit deel van het net eenzelfde tarief in rekening krijgen.",
+      "prefLabel": "Netvlak",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1947"
+    },
+    {
+      "context": "organizational",
+      "definition": "Elektriciteit: Een deel van het net waarvoor geldt dat de verbruikers aangesloten op dit deel van het net eenzelfde tarief in rekening krijgen.\nGas: Gasnet waarvoor een eenduidige gasdruk geldt. Netvlakken zijn: 8 bar, 4 bar, 3 bar, 2 bar, 1 bar, 100 mbar, 30 mbar (bron: Autoriteit Consument &amp; Markt = ACM, voorheen Energiekamer)",
+      "prefLabel": "Netvlak",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1948"
+    },
+    {
+      "context": "organizational",
+      "definition": "Elektriciteit: Een deel van het net waarvoor geldt dat de verbruikers aangesloten op dit deel van het net eenzelfde tarief in rekening krijgen (bron: Tennet).\nGas: Gasnet waarvoor een eenduidige gasdruk geldt. Netvlakken zijn: 8 bar, 4 bar, 3 bar, 2 bar, 1 bar, 100 mbar, 30 mbar (bron: Autoriteit Consument &amp; Markt = ACM, voorheen Energiekamer)",
+      "prefLabel": "Netvlak",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1949"
+    },
+    {
+      "context": "organizational",
+      "definition": "Elektriciteit: Een deel van het net waarvoor geldt dat de verbruikers aangesloten op dit deel van het net eenzelfde tarief in rekening krijgen (bron: Tennet).\nGas: Gasnet waarvoor een eenduidige gasdruk geldt. Netvlakken zijn: 8 bar, 4 bar, 3 bar, 2 bar, 1 bar, 100 mbar, 30 mbar (bron: Autoriteit Consument &amp; Markt = ACM, voorheen Energiekamer)\n\nNetvlak definitie in de praktijk\n\nLS spanningsniveau &lt; 1 kV. We gebruiken: 0.23 , 0.4 , 0.5 en 0.7 kV\nMS spanningsniveau 1 kV en groter en tevens &lt; 35 kV. We gebruiken: 3, 5, 6, 10, 12½, 20, 25, 30 kV\nHS spanningsniveau &gt;= 35 kV. We gebruiken 50, 110, 150 kV\n\nLD drukniveau: We gebruiken: 0,2; 0,1; 0,03 bar\nHD drukniveau: We gebruiken: 16, 8, 4, 3, 2, 1 bar\nDiscussie of waarde 0.3 LD dan wel HD is.\n\nVoorbeeld 1:\n• Netvlak Code LS\n• Netvlak Omschrijving Elektriciteit Laagspanning\n• Niveau Min 0,001\n• Niveau Max 0,999\n• Niveau Eenheid kV\n\nVoorbeeld 2:\n• Netvlak Code LD\n• Netvlak Omschrijving Gas Lage Druk\n• Niveau Min 0,030\n• Niveau Max 0,200\n• Niveau Eenheid bar",
+      "prefLabel": "Netvlak",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1950"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Netvlak",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1952"
+    }
+  ],
+  "niet op afstand uitleesbare kleinverbruikmeetinrichting": [
+    {
+      "context": "regulatory",
+      "definition": "Een meetinrichting die niet voldoet aan het Besluit op afstand uitleesbare meetinrichtingen;",
+      "prefLabel": "Niet op afstand uitleesbare kleinverbruikmeetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/111"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting die niet voldoet aan het Besluit op afstand uitleesbare meetinrichtingen.",
+      "prefLabel": "Niet op afstand uitleesbare kleinverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1967"
+    },
+    {
+      "context": "organizational",
+      "definition": "een meetinrichting die niet voldoet aan het Besluit op\n afstand uitleesbare meetinrichtingen\n[M]",
+      "prefLabel": "Niet op afstand uitleesbare kleinverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1968"
+    }
+  ],
+  "nominaal meetvermogen": [
+    {
+      "context": "regulatory",
+      "definition": "Het schijnbaar vermogen, overeenkomstig het bepaalde in B3.1.1.2.1 tot en met B3.1.1.2.4 van de Meetcode elektriciteit, te berekenen uit de nominale primaire spanning van de spanningstransformatoren en de nominale primaire stroom van de stroomtransformatoren;",
+      "prefLabel": "Nominaal meetvermogen",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/113"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het schijnbaar vermogen te berekenen uit de nominale primaire spanning van de spanningstransformatoren en de nominale primaire stroom van de stroomtransformatoren.",
+      "prefLabel": "Nominaal meetvermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1976"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het schijnbaar vermogen, overeenkomstig het bepaalde in B3.1.1.2.1 tot en met B3.1.1.2.4 van de Meetcode Elektriciteit, te berekenen uit de nominale primaire spanning van de spanningstransformatoren en de nominale primaire stroom van de stroomtransformatoren.",
+      "prefLabel": "Nominaal meetvermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1975"
+    }
+  ],
+  "normaal telwerk": [
+    {
+      "context": "organizational",
+      "definition": "Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan worden voor de bepaling van de met het net uitgewisselde energie tijdens normaaluren.",
+      "prefLabel": "Normaal telwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1994"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan worden voor de bepaling van de met het net uitgewisselde energie tijdens normaaluren;",
+      "prefLabel": "Normaal telwerk",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/115"
+    }
+  ],
+  "normaaluren": [
+    {
+      "context": "organizational",
+      "definition": "Uren van de dag waarvoor het normaaltarief geldt.",
+      "prefLabel": "Normaaluren",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1996"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Uren van de dag waarvoor, in geval van een meetinrichting met dubbel telwerk, de met het net uitgewisselde elektrische energie wordt geregistreerd door het normaaltelwerk. Deze periode wordt ook wel aangeduid als “peak”;",
+      "prefLabel": "Normaaluren",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/116"
+    },
+    {
+      "context": "organizational",
+      "definition": "Uren van de dag waarvoor , in geval van een meetinrichting met dubbel telwerk, de met het net uitgewisselde elektrische energie wordt geregistreerd door het normaaltelwerk. Deze periode wordt ook wel aangeduid als “peak”.",
+      "prefLabel": "Normaaluren",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/1995"
+    }
+  ],
+  "normal state": [
+    {
+      "context": "business_process",
+      "definition": "A situation in which the system is within operational security limits in the N-situation and after the occurrence of any contingency from the contingency list, taking into account the effect of the available remedial actions",
+      "prefLabel": "Normal State",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/56"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A situation in which the system is within operational security limits in the N-situation and after the occurrence of any contingency from the contingency list, taking into account the effect of the available remedial actions;",
+      "prefLabel": "Normal state",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-5"
+    }
+  ],
+  "onbemeten aansluiting": [
+    {
+      "context": "organizational",
+      "definition": "een aansluiting waarbij op grond van 2.1.2.4 van de Aansluit- en\ntransportvoorwaarden Gas – RNB geen meetinrichting aanwezig is [M]",
+      "prefLabel": "Onbemeten aansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2039"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een aansluiting waarbij op grond van artikel 2.30of 2.31 van de Netcode elektriciteitgeen meetinrichting aanwezig is;",
+      "prefLabel": "Onbemeten aansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/121"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aansluiting waarbij op grond van 2.1.3.5 of 2.1.3.8 van de Netcode Elektriciteit geen meetinrichting aanwezig is.",
+      "prefLabel": "Onbemeten aansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2038"
+    }
+  ],
+  "op afstand uitleesbare kleinverbruikmeetinrichting": [
+    {
+      "context": "organizational",
+      "definition": "een meetinrichting die voldoet aan het Besluit\n op afstand uitleesbare meetinrichtingen [M]",
+      "prefLabel": "Op afstand uitleesbare kleinverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2083"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een meetinrichting die voldoet aan het Besluit op afstand uitleesbare meetinrichtingen;",
+      "prefLabel": "Op afstand uitleesbare kleinverbruikmeetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/122"
+    }
+  ],
+  "operational security limits": [
+    {
+      "context": "regulatory",
+      "definition": "The acceptable operating boundaries for secure grid operation such as thermal limits, voltage limits, short-circuit current limits, frequency and dynamic stability limits;",
+      "prefLabel": "Operational security limits",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1222-7"
+    },
+    {
+      "context": "business_process",
+      "definition": "The acceptable operating boundaries for secure grid operation such as thermal limits, voltage limits, short-circuit current limits, frequency and dynamic stability limits.",
+      "prefLabel": "Operational security limits",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/60"
+    }
+  ],
+  "opgesteld vermogen": [
+    {
+      "context": "organizational",
+      "definition": "Het maximale vermogen van een productie-eenheid dat onder nominale condities benut kan worden voor het leveren van elektrische energie (name-plate capacity).",
+      "prefLabel": "Opgesteld vermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2104"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Het maximale vermogen van een elektriciteitsproductie-eenheid dat onder nominale condities benut kan worden voor het leveren van elektrische energie (nameplate capacity).",
+      "prefLabel": "Opgesteld vermogen",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/123"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het maximale vermogen (van een productie-eenheid) dat onder nominale condities benut kan worden voor het leveren van elektrische energie.",
+      "prefLabel": "Opgesteld vermogen",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2105"
+    }
+  ],
+  "overdrachtspunt": [
+    {
+      "context": "general",
+      "definition": "Gas: het punt waar het gastransportnet ophoudt. In het geval van een verbinding tussen het landelijk\ngastransportnet en een regionaal gastransportnet: het punt waar het landelijk gastransportnet ophoudt.",
+      "prefLabel": "Overdrachtspunt",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/5"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het tussen de netbeheerders onderling of de netbeheerder en de aangeslotene overeengekomen fysieke punt waar respectievelijk een scheiding tussen de aansluiting van twee netten onderling of tussen de aansluiting van een net en de installatie van de aangeslotene kan worden gerealiseerd (bron: ACM 2012)",
+      "prefLabel": "Overdrachtspunt",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2143"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het tussen de netbeheerders onderling of de netbeheerder en de aangeslotene overeengekomen of door de aangeslotene aangewezen fysieke punt waar respectievelijk een scheiding tussen de aansluiting van twee netten onderling of tussen de aansluiting van een net en de installatie van de aangeslotene kan worden gerealiseerd.",
+      "prefLabel": "Overdrachtspunt",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2142"
+    },
+    {
+      "context": "organizational",
+      "definition": "het punt waar het gastransportnet ophoudt. In het geval van een verbinding\ntussen het landelijk gastransportnet en een regionaal gastransportnet: het\npunt waar het landelijk gastransportnet ophoudt [E]",
+      "prefLabel": "Overdrachtspunt",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2141"
+    },
+    {
+      "context": "general",
+      "definition": "Elektriciteit: Het fysieke punt waar respectievelijk een scheiding tussen de aansluiting van twee netten\nonderling of tussen de aansluiting van een net en de installatie van de aangeslotene kan worden\nGerealiseerd.",
+      "prefLabel": "Overdrachtspunt",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/4"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Het fysieke punt waar respectievelijk een scheiding tussen de aansluiting van twee netten onderling of tussen de aansluiting van een net en de installatie van de aangeslotene kan worden gerealiseerd;",
+      "prefLabel": "Overdrachtspunt",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/126"
+    }
+  ],
+  "p4": [
+    {
+      "context": "organizational",
+      "definition": "Onderdeel van de op afstand uitleesbare kleinverbruikmeetinrichting door middel waarvan de netbeheerder en de leverancier en in geval van een door de aangeslotene verstrekte machtiging een derde, toegang hebben tot de meetgegevens van die kleinverbruikmeetinrichting.",
+      "prefLabel": "P4",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2162"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Onderdeel van de op afstand uitleesbare kleinverbruikmeetinrichting door middel waarvan de netbeheerder en de leverancier en in geval van een door de aangeslotene verstrekte machtiging een derde, toegang hebben tot de meetgegevens van die kleinverbruikmeetinrichting;",
+      "prefLabel": "P4",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/127"
+    },
+    {
+      "context": "organizational",
+      "definition": "De computerserver van de netbeheerder waar de data verzameld wordt, is de 'P4-poort'.",
+      "prefLabel": "P4",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2161"
+    }
+  ],
+  "particulier net": [
+    {
+      "context": "regulatory",
+      "definition": "Particulier net",
+      "prefLabel": "Particulier net",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/128"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een net waarvoor op grond van artikel 15 van de Wet geen netbeheerder hoeft te worden aangewezen.",
+      "prefLabel": "Particulier net",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2178"
+    }
+  ],
+  "power park module": [
+    {
+      "context": "organizational",
+      "definition": "Een asynchrone of via omvormer gekoppelde generator.",
+      "prefLabel": "Power Park Module",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2223"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A unit or ensemble of units generating electricity, which is either non-synchronously connected to the network or connected through power electronics, and that also has a single connection point to a transmission system, distribution system including closed distribution system or HVDC system.",
+      "prefLabel": "Power park module",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/631-17"
+    }
+  ],
+  "powertransformer": [
+    {
+      "context": "electrical",
+      "definition": "An electrical device consisting of  two or more coupled windings, with or without a magnetic core, for introducing mutual coupling between electric circuits. Transformers can be used to control voltage and phase shift (active power flow).\nA power transformer may be composed of separate transformer tanks that need not be identical.\nA power transformer can be modelled with or without tanks and is intended for use in both balanced and unbalanced representations.   A power transformer typically has two terminals, but may have one (grounding), three or more terminals.\nThe inherited association ConductingEquipment.BaseVoltage should not be used.  The association from TransformerEnd to BaseVoltage should be used instead.",
+      "prefLabel": "PowerTransformer",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/PowerTransformer"
+    },
+    {
+      "context": "business_process",
+      "definition": "A static device with two or more windings which, by electromagnetic induction, converts a system of alternating voltage and current into another system of different voltage and current, usually of the same frequency.",
+      "prefLabel": "PowerTransformer",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/49"
+    },
+    {
+      "context": "electrical",
+      "definition": "An electrical device consisting of  two or more coupled windings, with or without a magnetic core, for introducing mutual coupling between electric circuits. Transformers can be used to control voltage and phase shift (active power flow).\nA power transformer may be composed of separate transformer tanks that need not be identical.\nA power transformer can be modelled with or without tanks and is intended for use in both balanced and unbalanced representations.   A power transformer typically has two terminals, but may have one (grounding), three or more terminals.\nThe inherited association ConductingEquipment.BaseVoltage should not be used.  The association from TransformerEnd to BaseVoltage should be used instead.",
+      "prefLabel": "PowerTransformer",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/PowerTransformer"
+    }
+  ],
+  "primair gedeelte van de meetinrichting": [
+    {
+      "context": "organizational",
+      "definition": "De eventueel aanwezige spannings- en stroommeettransformatoren met inbegrip van de aansluitklemmen waarop het secundaire deel van de meetinrichting is aangesloten.",
+      "prefLabel": "Primair gedeelte van de meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2244"
+    },
+    {
+      "context": "organizational",
+      "definition": "De eventueel aanwezige spannings-en stroommeettransformatoren met inbegrip van de aansluitklemmen waarop het secundaire deel van de meetinrichting is aangesloten.",
+      "prefLabel": "Primair gedeelte van de meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2245"
+    },
+    {
+      "context": "regulatory",
+      "definition": "De eventueel aanwezige spannings- en stroommeettransformatoren met inbegrip van de aansluitklemmen waarop het secundaire deel van de meetinrichting is aangesloten;",
+      "prefLabel": "Primair gedeelte van de meetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/131"
+    }
+  ],
+  "primaire energiebron": [
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Primaire energiebron",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2233"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een aanduiding voor de soort brandstof en/of energiebron voor de elektriciteitsproductie-eenheid, onderverdeeld in de volgende types: zon; wind; water; biomassa; kolen; gas; olie; nucleair; overig;",
+      "prefLabel": "Primaire energiebron",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/132"
+    }
+  ],
+  "productiemeetinrichting": [
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting waarmee de hoeveelheid opgewekte elektrische energie op het overdrachtspunt van een productie-installatie wordt gemeten.",
+      "prefLabel": "Productiemeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2271"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een meetinrichting waarmee de hoeveelheid opgewekte elektrische energie op de plaats waar de GCvO-installatie met de rest van de elektrische installatie verbonden is wordt gemeten;",
+      "prefLabel": "Productiemeetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/133"
+    }
+  ],
+  "profielgrootverbruikaansluiting": [
+    {
+      "context": "organizational",
+      "definition": "Een grootverbruikaansluiting waarvan de aansluitcapaciteit kleiner is dan of gelijk aan 100 kVA en waarbij de aangeslotene er voor gekozen heeft om een profielgrootverbruikmeetinrichting te (laten) plaatsen op het overdrachtspunt van zijn aansluiting.",
+      "prefLabel": "Profielgrootverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2297"
+    },
+    {
+      "context": "organizational",
+      "definition": "een grootverbruikaansluiting met de afnamecategorie G2C, zoals bedoeld in\nparagraaf 4.3.1 van de Allocatievoorwaarden Gas [M]",
+      "prefLabel": "Profielgrootverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2296"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een grootverbruikaansluiting waarbij een profielgrootverbruikmeetinrichting aanwezig is;",
+      "prefLabel": "Profielgrootverbruikaansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/135"
+    }
+  ],
+  "profielgrootverbruikmeetinrichting": [
+    {
+      "context": "regulatory",
+      "definition": "Een meetinrichting die voldoet aan de in 4.3.4 van de Meetcode elektriciteitgenoemde eisen;",
+      "prefLabel": "Profielgrootverbruikmeetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/136"
+    },
+    {
+      "context": "organizational",
+      "definition": "een meetinrichting die voldoet aan de in 4.3.3 van de Meetvoorwaarden Gas\n- RNB genoemde eisen [M]",
+      "prefLabel": "Profielgrootverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2300"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting die voldoet aan de in 4.3.3 van de Meetcode Elektriciteit genoemde eisen.",
+      "prefLabel": "Profielgrootverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2299"
+    }
+  ],
+  "raad van bestuur van de mededingingsautoriteit": [
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "raad van bestuur van de mededingingsautoriteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2334"
+    },
+    {
+      "context": "organizational",
+      "definition": "de raad van bestuur van de mededingingsautoriteit,\ngenoemd in artikel 2 van de Mededingingswet",
+      "prefLabel": "Raad van bestuur van de mededingingsautoriteit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2335"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Raad van bestuur van de mededingingsautoriteit",
+      "prefLabel": "Raad van bestuur van de mededingingsautoriteit",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/139"
+    }
+  ],
+  "reconciliatie": [
+    {
+      "context": "regulatory",
+      "definition": "Verrekening over een bepaalde periode op basis van het verschil tussen het ten behoeve van balanceringsverantwoordelijkheid vastgestelde volume en het vastgestelde werkelijke volume tegen een gewogen marktprijs per MWh;",
+      "prefLabel": "Reconciliatie",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/140"
+    },
+    {
+      "context": "organizational",
+      "definition": "Verrekening over een bepaalde periode op basis van het verschil tussen het met behulp van profielen berekende verbruik en het vastgestelde werkelijke verbruik tegen een gewogen marktprijs per kWh, zoals vastgesteld op basis van bijlage 6 van de Systeemcode.",
+      "prefLabel": "Reconciliatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2345"
+    }
+  ],
+  "recreatienet": [
+    {
+      "context": "regulatory",
+      "definition": "Een net waarvoor niet op grond van artikel 10, negende lid, van de Weteen netbeheerder is aangewezen en waarvan de onroerende zaken als bedoeld in artikel 16, onderdelen a tot en met e, van de Wet waardering onroerende zakenwaarmee het net een verbinding vormt ingevolge het bestemmingsplan, de WOZ-beschikking of een notariële akte recreatieve doeleinden hebben of ingevolge het bestemmingsplan, de WOZ-beschikking of een notariële akte niet bestemd zijn voor permanente bewoning en voor recreatieve doeleinden zijn bestemd;",
+      "prefLabel": "Recreatienet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/141"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een net waarvoor niet op grond van artikel 10, negende lid, van de Wet een netbeheerder is aangewezen en waarvan de onroerende zaken als bedoeld in artikel 16, onderdelen a tot en met e, van de Wet waardering onroerende zaken waarmee het net een verbinding vormt ingevolge het bestemmingsplan, de WOZ-beschikking of een notariële akte recreatieve doeleinden hebben of ingevolge het bestemmingsplan, de WOZ-beschikking of een notariële akte niet bestemd zijn voor permanente bewoning en voor recreatieve doeleinden zijn bestemd.",
+      "prefLabel": "Recreatienet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2348"
+    }
+  ],
+  "referentienummer": [
+    {
+      "context": "organizational",
+      "definition": "Een door de verzendende partij aan een bericht toe te kennen nummer waarmee het bericht en een eventuele reactie daarop in zijn administratie traceerbaar is.",
+      "prefLabel": "Referentienummer",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2356"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een door de verzendende partij aan een bericht toe te kennen nummer waarmee het bericht en een eventuele reactie daarop in zijn administratie traceerbaar is;",
+      "prefLabel": "Referentienummer",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/143"
+    }
+  ],
+  "regeling garanties van oorsprong": [
+    {
+      "context": "organizational",
+      "definition": "Regeling garanties van oorsprong voor duurzame elektriciteit Elektriciteitswet 1998.",
+      "prefLabel": "Regeling garanties van oorsprong",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2362"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Regeling garanties van oorsprong voor duurzame elektriciteit Elektriciteitswet 1998",
+      "prefLabel": "Regeling garanties van oorsprong",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/147"
+    }
+  ],
+  "regionaal hoogspanningsnet": [
+    {
+      "context": "organizational",
+      "definition": "Net bestemd voor het transport van elektriciteit op een spanningsniveau van 50 kV of hoger, maar lager dan 110 kV en dat als zodanig wordt bedreven.",
+      "prefLabel": "Regionaal hoogspanningsnet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2375"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Net bestemd voor het transport van elektriciteit op een spanningsniveau van 50 kV of hoger, maar lager dan 110 kV en dat als zodanig wordt bedreven;",
+      "prefLabel": "Regionaal hoogspanningsnet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/151"
+    }
+  ],
+  "regionale netbeheerder": [
+    {
+      "context": "organizational",
+      "definition": "Regionale netbeheerder wordt op grond van de wet aangewezen voor het beheren van één of meer energienetten. Alle afnemers van elektriciteit of gas zijn aangesloten op het energienet van de regionale netbeheerder. De regionale netbeheerder heeft de uitsluitende verantwoordelijkheid voor de beschikbaarheidsnuttigheid, i.c. de bouw en instandhouding van een verbinding tussen een afnemer en het net binnen een specifiek gebied. Alle energieleveranciers maken gebruik van het net van de regionale netbeheerder (Third Party Access). De aangeslotene kan niet kiezen voor een andere netbeheerder, wel voor een andere energieleverancier.",
+      "prefLabel": "Regionale netbeheerder",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2376"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een netbeheerder die is aangewezen voor het beheer van één of meer netten, anders dan het landelijk hoogspanningsnet;",
+      "prefLabel": "Regionale netbeheerder",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/152"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een netbeheerder die is aangewezen voor het beheer van één of meer netten, anders dan het landelijk hoogspanningsnet.",
+      "prefLabel": "Regionale netbeheerder",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2378"
+    },
+    {
+      "context": "organizational",
+      "definition": "beheerder van een regionaal gastransportnet",
+      "prefLabel": "Regionale netbeheerder",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2377"
+    }
+  ],
+  "remedial action": [
+    {
+      "context": "business_process",
+      "definition": "A remedial action is described by one of many grid state alterations applied to a grid model state or particular scenario in order to resolve one or more Identified constraints. Only costly remedial actions require a cost characteristic.\nRemedial action describes one or more actions that can be performed on a given power system model situation to eliminate one or more identified breaches of constraints. The remedial action can be costly, and have a cost characteristic, or non costly.\n",
+      "prefLabel": "Remedial Action",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/98"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Any measure applied by a TSO or several TSOs, manually or automatically, in order to maintain operational security;",
+      "prefLabel": "Remedial action",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1222-13"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A measure taken to maintain or restore operational security;",
+      "prefLabel": "Remedial action",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-125"
+    }
+  ],
+  "resource": [
+    {
+      "context": "business_process",
+      "definition": "delivers the capability to modify generation injection and/or consumption patterns in the energy system (like electricity or gas). It is a market representation of an asset, or a group of assets having this capability. A Resource represents for example grid assets, energy generating units, energy consuming units, energy storing units or a virtual power plant.",
+      "prefLabel": "Resource",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/121"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een resource is een device of identificatie waarmee magazijntaken kunnen worden uitgevoerd.",
+      "prefLabel": "Resource",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2405"
+    }
+  ],
+  "restspanning": [
+    {
+      "context": "organizational",
+      "definition": "Laagste waarde van de drie gekoppelde spanningen die optreedt op het netaansluitpunt van een productie-installatie tijdens een kortsluiting in het net.",
+      "prefLabel": "Restspanning",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2413"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Laagste waarde van de drie gekoppelde spanningen die optreedt op het netaansluitpunt van een productie-installatie tijdens een kortsluiting in het net.",
+      "prefLabel": "Restspanning",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/157"
+    }
+  ],
+  "scenario": [
+    {
+      "context": "regulatory",
+      "definition": "The forecasted status of the power system for a given time-frame;",
+      "prefLabel": "Scenario",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1222-4"
+    },
+    {
+      "context": "business_process",
+      "definition": "A scenario defines the operating parameters, when executing a study on a contingency. These operating parameters are:\n- the topological island (result of topology processing) of the power system on a given time (of time-frame).\n- the forecasted state of the power system on a given time-frame",
+      "prefLabel": "Scenario",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/51"
+    }
+  ],
+  "schakelstoring": [
+    {
+      "context": "organizational",
+      "definition": "Een storing in de meetinrichting waardoor de aansturing van de telwerken niet heeft plaatsgevonden op de bij het profiel behorende tijden.",
+      "prefLabel": "Schakelstoring",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2481"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Een storing in de meetinrichting waardoor de aansturing van de telwerken niet heeft plaatsgevonden op de bij het profiel behorende tijden.",
+      "prefLabel": "Schakelstoring",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/160"
+    }
+  ],
+  "secundair gedeelte van de meetinrichting": [
+    {
+      "context": "regulatory",
+      "definition": "Het deel van de meetinrichting vanaf de aansluitklemmen van de secundaire wikkelingen van de meettransformatoren tot en met de kWh-meters en de kvarh-meters en de dagelijks op afstand uitleesbare meetinrichting;",
+      "prefLabel": "Secundair gedeelte van de meetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/163"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het deel van de meetinrichting vanaf de aansluitklemmen van de secundaire wikkelingen van de meettransformatoren tot en met de kWh-meters en de kvarh-meters en de dagelijks van verre uitleesbare meetinrichting.",
+      "prefLabel": "Secundair gedeelte van de meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2508"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het deel van de meetinrichting vanaf de aansluitklemmen van de secundaire wikkelingen van de meettransformatoren tot en met de kWh-meters en de kvarhmeters en de dagelijks op afstand uitleesbare meetinrichting.",
+      "prefLabel": "Secundair gedeelte van de meetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2507"
+    }
+  ],
+  "security": [
+    {
+      "context": "general",
+      "definition": "State of protection against malicious digital threats.",
+      "prefLabel": "Security",
+      "prefix": "default8",
+      "uri": "http://linkeddata.bsigroup.com/pas/1879/Security"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Both the security of electricity supply and provision, and technical security.",
+      "prefLabel": "Security",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/944-58"
+    }
+  ],
+  "sensor": [
+    {
+      "context": "organizational",
+      "definition": "Apparaat dat een waargenomen grootheid omzetten in signalen die op displays kunnen worden weergegeven, in de besturing kunnen worden gebruikt of kunnen worden geregistreerd.",
+      "prefLabel": "Sensor",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2511"
+    },
+    {
+      "context": "organizational",
+      "definition": "apparaat voor de meting van een fysieke grootheid, zoals stroom of gasdruk.",
+      "prefLabel": "Sensor",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2510"
+    },
+    {
+      "context": "general",
+      "definition": "This class describe devices that transform a measured quantity into signals that can be presented at displays, used in control or be recorded.",
+      "prefLabel": "Sensor",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Sensor"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Sensor",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2512"
+    }
+  ],
+  "setpoint": [
+    {
+      "context": "regulatory",
+      "definition": "The target value for any parameter typically used in control schemes.",
+      "prefLabel": "Setpoint",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/631-25"
+    },
+    {
+      "context": "general",
+      "definition": "An analog control that issues a set point value.",
+      "prefLabel": "SetPoint",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/Operation-EU/SetPoint"
+    }
+  ],
+  "spanning uc": [
+    {
+      "context": "regulatory",
+      "definition": "De door de netbeheerder aangegeven en met de aangeslotene overeengekomen waarde van de spanning; Dit is tevens de toegekende spanning, zoals gedefinieerd in de norm “NEN-EN 50160:2010” (“Spanningskarakteristieken in openbare elektriciteitsnetten”);",
+      "prefLabel": "Spanning Uc",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/166"
+    },
+    {
+      "context": "organizational",
+      "definition": "De spanning Uc is de door de netbeheerder aangegeven en met de verbruiker overeengekomen toegekende waarde van de spanning.",
+      "prefLabel": "Spanning Uc",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2553"
+    }
+  ],
+  "standaardprofiel": [
+    {
+      "context": "regulatory",
+      "definition": "Standaardprofiel:Een vooraf vastgestelde tijdreeks van profielfracties, voor een bepaalde profielcategorie;",
+      "prefLabel": "Standaardprofiel",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/172"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een tijdreeks van profielfracties, zoals vastgesteld voor een bepaalde profielcategorie.",
+      "prefLabel": "Standaardprofiel",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2572"
+    }
+  ],
+  "stationcomplex": [
+    {
+      "context": "organizational",
+      "definition": "verzameling van schakel-en-verdeel installaties en transformatoren (voor elektriciteit) of regelstraten (voor gas) en de benodigde secundaire componenten, gebouwen en terreinen, dat als één geheel beschouwd wordt in het beheer van ons netwerk.",
+      "prefLabel": "Stationcomplex",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2581"
+    },
+    {
+      "context": "general",
+      "definition": "Overkoepelende term voor alles wat op een stationsterrein of stationterrein beschikbaar is. ",
+      "prefLabel": "Stationcomplex",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/14"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het stationcomplex is een samenstelling van één of meerdere gebouwen en/of terreinen die assetcomponenten bevat(ten) om de stationsfunctie in het energienetwerk voor E en/of G in te kunnen vullen ",
+      "prefLabel": "Stationcomplex",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2580"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het stationcomplex is een samenstelling van één of meerdere gebouwen en/of terreinen die assetcomponenten bevat(ten) om de stationsfunctie in het energienetwerk voor E en/of G in te kunnen vullen",
+      "prefLabel": "Stationcomplex",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2579"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "Stationcomplex",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2582"
+    }
+  ],
+  "status": [
+    {
+      "context": "organizational",
+      "definition": "Stand of toestand waarin een object of een systeem zich bevindt.",
+      "prefLabel": "Status",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2594"
+    },
+    {
+      "context": "general",
+      "definition": "Current status information relevant to an entity.",
+      "prefLabel": "Status",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/Status"
+    },
+    {
+      "context": "organizational",
+      "definition": "De fase van de levenscyclus van een object waarin het betreffende object zich bevindt.",
+      "prefLabel": "Status",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2595"
+    }
+  ],
+  "switch": [
+    {
+      "context": "regulatory",
+      "definition": "Switch:De wisseling van leverancier, BRP of meetverantwoordelijke op een aansluiting;",
+      "prefLabel": "Switch",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/174"
+    },
+    {
+      "context": "general",
+      "definition": "A generic device designed to close, or open, or both, one or more electric circuits.  All switches are two terminal devices including grounding switches. The ACDCTerminal.connected at the two sides of the switch shall not be considered for assessing switch connectivity, i.e. only Switch.open, .normalOpen and .locked are relevant.",
+      "prefLabel": "Switch",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/Switch"
+    },
+    {
+      "context": "organizational",
+      "definition": "De wisseling van leverancier, programmaverantwoordelijke of meetverantwoordelijke op een aansluiting.",
+      "prefLabel": "Switch",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2658"
+    },
+    {
+      "context": "organizational",
+      "definition": "de wisseling van leverancier, shipper of meetverantwoordelijke op een\naansluiting [ C ]",
+      "prefLabel": "Switch",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2657"
+    },
+    {
+      "context": "general",
+      "definition": "A generic device designed to close, or open, or both, one or more electric circuits.  All switches are two terminal devices including grounding switches. The ACDCTerminal.connected at the two sides of the switch shall not be considered for assessing switch connectivity, i.e. only Switch.open, .normalOpen and .locked are relevant.",
+      "prefLabel": "Switch",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Switch"
+    },
+    {
+      "context": "general",
+      "definition": "A generic device designed to close, or open, or both, one or more electric circuits.  All switches are two terminal devices including grounding switches. The ACDCTerminal.connected at the two sides of the switch shall not be considered for assessing switch connectivity, i.e. only Switch.open, .normalOpen and .locked are relevant.",
+      "prefLabel": "Switch",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/StateVariables-EU/Switch"
+    }
+  ],
+  "syntactisch correct": [
+    {
+      "context": "regulatory",
+      "definition": "Syntactisch correct:Voldoet aan de specificaties, bedoeld in 9.1.1 van de Informatiecode elektriciteit en gas;",
+      "prefLabel": "Syntactisch correct",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/175"
+    },
+    {
+      "context": "organizational",
+      "definition": "Voldoet aan de specificaties, bedoeld in 9.1.1 van de Informatiecode Elektriciteit en Gas.",
+      "prefLabel": "Syntactisch correct",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2662"
+    }
+  ],
+  "systeemdienstentarief": [
+    {
+      "context": "regulatory",
+      "definition": "Systeemdienstentarief",
+      "prefLabel": "Systeemdienstentarief",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/176"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het tarief in rekening gebracht door de netbeheerder van het landelijk hoogspanningsnet bij aangeslotenen op het Nederlandse elektriciteitsnet en programmaverantwoordelijken ter dekking van de kosten van de systeemdiensten.",
+      "prefLabel": "Systeemdienstentarief",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2669"
+    }
+  ],
+  "system operator": [
+    {
+      "context": "organizational",
+      "definition": "De netbeheerder van het landelijk hoogspanningsnet, waar deze verantwoordelijke is voor het leveren van de systeemdiensten.",
+      "prefLabel": "System operator",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2672"
+    },
+    {
+      "context": "regulatory",
+      "definition": "System operator:De netbeheerder van het landelijk hoogspanningsnet, waar deze verantwoordelijke is voor het leveren van de systeemdiensten;",
+      "prefLabel": "System operator",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/177"
+    },
+    {
+      "context": "regulatory",
+      "definition": "A party responsible for operating, ensuring the maintenance of and, if necessary, developing the system in a given area and, where applicable, its interconnections with other systems, and for ensuring the long-term ability of the system to meet reasonable demands for the distribution or transmission of energy.\n**\nBased on:\n**\n[_Consolidated text: Directive (EU) 2019/944_](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02019L0944-20220623).",
+      "prefLabel": "System Operator",
+      "prefix": "hemrm",
+      "uri": "http://vocabs.entsoe.com/terms/SystemOperator"
+    }
+  ],
+  "system state": [
+    {
+      "context": "business_process",
+      "definition": "The operational state of the distribution system in relation to the operational security limits which can be normal state, alert state, emergency state, blackout state and restoration state;",
+      "prefLabel": "System State",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/59"
+    },
+    {
+      "context": "regulatory",
+      "definition": "The operational state of the transmission system in relation to the operational security limits which can be normal state, alert state, emergency state, blackout state and restoration state;",
+      "prefLabel": "System state",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-36"
+    }
+  ],
+  "tariefdrager": [
+    {
+      "context": "regulatory",
+      "definition": "Tariefdrager:Een element om de aan een deelmarkt toegedeelde kosten bij de aan het netvlak aangesloten verbruikers in rekening te brengen;",
+      "prefLabel": "Tariefdrager",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/179"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een element om de aan een deelmarkt toegedeelde kosten bij de aan het netvlak aangesloten verbruikers in rekening te brengen.",
+      "prefLabel": "Tariefdrager",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2683"
+    }
+  ],
+  "tariefzone": [
+    {
+      "context": "regulatory",
+      "definition": "Tariefzone:De aanduiding in het aansluitingenregister van het kenmerk van een telwerk, te weten normaaltelwerk, totaaltelwerk of laagtelwerk. Ingeval van een enkeltelwerk wordt altijd de aanduiding normaaltelwerk gebruikt;",
+      "prefLabel": "Tariefzone",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/181"
+    },
+    {
+      "context": "organizational",
+      "definition": "De tariefzone waarvoor de gemeten hoeveelheid van het betreffende telwerk geldt.",
+      "prefLabel": "Tariefzone",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2685"
+    },
+    {
+      "context": "organizational",
+      "definition": "De aanduiding in het aansluitingenregister van het kenmerk van een telwerk, te weten normaaltelwerk, totaaltelwerk of laagtelwerk. Ingeval van een enkeltelwerk wordt altijd de aanduiding normaaltelwerk gebruikt.",
+      "prefLabel": "Tariefzone",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2686"
+    }
+  ],
+  "telemetriegrootverbruikaansluiting": [
+    {
+      "context": "organizational",
+      "definition": "een grootverbruikaansluiting met de afnamecategorie GXX of GGV, zoals\nbedoeld in paragraaf 4.3.1 van de Allocatievoorwaarden Gas\n[M]",
+      "prefLabel": "Telemetriegrootverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2737"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Telemetriegrootverbruikaansluiting:Een grootverbruikaansluiting die geen profielgrootverbruikaansluiting is;",
+      "prefLabel": "Telemetriegrootverbruikaansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/182"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een grootverbruikaansluiting die geen profielgrootverbruikaansluiting is.",
+      "prefLabel": "Telemetriegrootverbruikaansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2738"
+    }
+  ],
+  "telemetriegrootverbruikmeetinrichting": [
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting die voldoet aan de in 4.3.4 van de\nMeetvoorwaarden Gas - RNB genoemde eisen\n[M]",
+      "prefLabel": "Telemetriegrootverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2741"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meetinrichting die voldoet aan de in 4.3.4 van de Meetcode Elektriciteit genoemde eisen.",
+      "prefLabel": "Telemetriegrootverbruikmeetinrichting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2740"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Telemetriegrootverbruikmeetinrichting:Een meetinrichting die voldoet aan de in 4.3.5 van de Meetcode elektriciteitgenoemde eisen;",
+      "prefLabel": "Telemetriegrootverbruikmeetinrichting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/183"
+    }
+  ],
+  "telwerk": [
+    {
+      "context": "organizational",
+      "definition": "Onderdeel van een meetinstrument waarop meetstanden worden bijgehouden. Een meter kan voorzien zijn van meerdere telwerken om totalen per tariefinstelling en leveringsrichting te registreren.",
+      "prefLabel": "Telwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2742"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Telwerk:Een samenstel van cijferrollen bij een Ferrarismeter dan wel een dataregister van een digitale kWh-meter waarin de gemeten totale hoeveelheid elektrische energie voor een bepaalde energierichting voor normaaluren of laaguren wordt vastgelegd;",
+      "prefLabel": "Telwerk",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/184"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een samenstel van cijferrollen bij een Ferrarismeter dan wel een dataregister van een digitale kWh-meter waarin de gemeten totale hoeveelheid elektrische energie voor een bepaalde energierichting voor normaaluren of laaguren wordt vastgelegd.",
+      "prefLabel": "Telwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2743"
+    },
+    {
+      "context": "general",
+      "definition": "Onderdeel van een meetinstrument waarop meetstanden worden bijgehouden. Een meter kan voorzien zijn van meerdere telwerken om totalen per tariefinstelling en leveringsrichting te registreren. ",
+      "prefLabel": "Telwerk",
+      "prefix": "default7",
+      "uri": "http://vocabs.alliander.com/def/focp/6"
+    }
+  ],
+  "telwerkindicatie": [
+    {
+      "context": "organizational",
+      "definition": "Telwerkindicatie De identificatie van de onderscheiden telwerken op een meetinrichting:\na. Bij een handopgenomen meetinrichting zoals zichtbaar op de meter zelf, en;\nb. Bij een meetinrichting die op afstand uitleesbaar is door middel van de OBIScode155",
+      "prefLabel": "Telwerkindicatie",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2745"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Telwerkindicatie:De identificatie van de onderscheiden telwerken op een meetinrichting: - Bij een handopgenomen meetinrichting zoals zichtbaar op de meter zelf, en; - Bij een meetinrichting die op afstand uitleesbaar is door middel van de OBIS-code;",
+      "prefLabel": "Telwerkindicatie",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/185"
+    }
+  ],
+  "terminal": [
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/Terminal"
+    },
+    {
+      "context": "business_process",
+      "definition": "Conductive part of a device, intended for connection to external circuits.",
+      "prefLabel": "Terminal",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/106"
+    },
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/Terminal"
+    },
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/Operation-EU/Terminal"
+    },
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/StateVariables-EU/Terminal"
+    },
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Terminal"
+    },
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/Topology-EU/Terminal"
+    },
+    {
+      "context": "general",
+      "definition": "An AC electrical connection point to a piece of conducting equipment. Terminals are connected at physical connection points called connectivity nodes.",
+      "prefLabel": "Terminal",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/Terminal"
+    }
+  ],
+  "toegankelijk meetregister": [
+    {
+      "context": "regulatory",
+      "definition": "Toegankelijk meetregister:Een register, bevattende vastgestelde meterstanden en verbruiken betreffende kleinverbruikaansluitingen;",
+      "prefLabel": "Toegankelijk meetregister",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/186"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een register, bevattende vastgestelde meterstanden en verbruiken betreffende kleinverbruikaansluitingen.",
+      "prefLabel": "Toegankelijk meetregister",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2768"
+    }
+  ],
+  "totaaltelwerk": [
+    {
+      "context": "regulatory",
+      "definition": "Totaaltelwerk:Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan worden voor de bepaling van de met het net uitgewisselde energie tijdens normaal- en laaguren tezamen;",
+      "prefLabel": "Totaaltelwerk",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/189"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een telwerk van een kleinverbruikmeetinrichting met twee of meer telwerken dat gebruikt wordt of kan worden voor de bepaling van de met het net uitgewisselde energie tijdens normaal en laaguren tezamen.",
+      "prefLabel": "Totaaltelwerk",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2778"
+    }
+  ],
+  "transactiepartij": [
+    {
+      "context": "organizational",
+      "definition": "Een natuurlijke of rechtspersoon die in het energieprogramma van een erkende programma-verantwoordelijke als bedoeld in 3.2 van de SysteemCode als partij is vermeld op de grond dat die programma-verantwoordelijke in dat programma een energietransactie met die natuurlijke of rechtspersoon verantwoordt.",
+      "prefLabel": "Transactiepartij",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2785"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Transactiepartij:Een natuurlijke of rechtspersoon die in het energieprogramma van een BRP als bedoeld in artikel 10.2 van de Netcode elektriciteitals partij is vermeld op de grond dat die BRP in dat programma een energietransactie met die natuurlijke of rechtspersoon verantwoordt;",
+      "prefLabel": "Transactiepartij",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/190"
+    }
+  ],
+  "transit": [
+    {
+      "context": "regulatory",
+      "definition": "Transit:Elektriciteitstransport door een land als gevolg van een contract tussen partijen in twee andere landen, uitgevoerd door de netbeheerder van het landelijk hoogspanningsnet;",
+      "prefLabel": "Transit",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/191"
+    },
+    {
+      "context": "organizational",
+      "definition": "Elektriciteitstransport door een land als gevolg van een contract tussen partijen in twee andere landen, uitgevoerd door de netbeheerder van het landelijk hoogspanningsnet.",
+      "prefLabel": "Transit",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2794"
+    }
+  ],
+  "transmission capacity allocator": [
+    {
+      "context": "regulatory",
+      "definition": "The entity empowered by TSOs to manage the allocation of cross zonal capacities: De entiteit die door TSB’s is gemachtigd om de toewijzing van zoneoverschrijdende capaciteit te beheren;",
+      "prefLabel": "Transmission capacity allocator",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/543-28"
+    },
+    {
+      "context": "general",
+      "definition": "The Transmission Capacity Allocator manages, on behalf of the System Operators, the allocation of available transmission capacity for a Bidding Zone Border. He offers the available transmission capacity to the market, allocates the available transmission capacity to individual Capacity Traders and calculates the billing amount of already allocated capacities to the Capacity Traders.\n**\nAdditional information\n**\nThe single allocation platform established by all TSOs for Forward Capacity Allocation performs the role of a Transmission Capacity Allocator.",
+      "prefLabel": "Transmission Capacity Allocator",
+      "prefix": "hemrm",
+      "uri": "http://vocabs.entsoe.com/terms/TransmissionCapacityAllocator"
+    }
+  ],
+  "transportdienst": [
+    {
+      "context": "organizational",
+      "definition": "Dienst t.b.v. het distribueren / transporteren van energie.",
+      "prefLabel": "Transportdienst",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2804"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Transportdienst:Het transporteren van elektriciteit van producenten naar verbruikers door gebruik te maken van het net. Hieronder wordt mede verstaan het oplossen van fysieke congestie, het compenseren van netverliezen en het in stand houden van de spannings- en blindvermogenshuishouding;",
+      "prefLabel": "Transportdienst",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/192"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het transporteren van elektriciteit van producenten naar verbruikers door gebruik te maken van het net. Hieronder wordt mede verstaan het oplossen van transportbeperkingen, het compenseren van netverliezen en het instandhouden van de spannings- en blindvermogenshuishouding",
+      "prefLabel": "Transportdienst",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2805"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het transporteren van elektriciteit van producenten naar verbruikers door gebruik te maken van het net. Hieronder wordt mede verstaan het oplossen van transportbeperkingen, het compenseren van netverliezen en het instandhouden van de spannings-en blindvermogenshuishouding.",
+      "prefLabel": "Transportdienst",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2803"
+    }
+  ],
+  "transporttarief": [
+    {
+      "context": "regulatory",
+      "definition": "Transporttarief:Het tarief in rekening gebracht door de netbeheerder bij een aangeslotene ter dekking van de kosten van de transportdienst;",
+      "prefLabel": "Transporttarief",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/193"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het tarief in rekening gebracht door de netbeheerder bij een aangeslotene ter dekking van de kosten van de transportdienst.",
+      "prefLabel": "Transporttarief",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2823"
+    }
+  ],
+  "type aansluiting": [
+    {
+      "context": "organizational",
+      "definition": "De aanduiding in het aansluitingenregister of de aansluiting geschikt is voor:\na. Uitsluitend transport van elektriciteit of gas vanuit het net naar de aangesloten installatie, of;\nb. Uitsluitend transport van elektriciteit of gas vanuit de aangesloten installatie naar het net, of;\nc. Een combinatie van beide.",
+      "prefLabel": "Type aansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2840"
+    },
+    {
+      "context": "regulatory",
+      "definition": "De aanduiding in het aansluitingenregister of de aansluiting geschikt is voor:\n  - Uitsluitend transport van elektriciteit of gas vanuit het net naar de aangesloten installatie, of;\n  - Uitsluitend transport van elektriciteit of gas vanuit de aangesloten installatie naar het net, of;\n  - Een combinatie van beide;",
+      "prefLabel": "Type aansluiting",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/194"
+    },
+    {
+      "context": "organizational",
+      "definition": "De functie die deze aansluiting vervult in het netgebied c.q. vrije marktspel",
+      "prefLabel": "Type aansluiting",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2839"
+    }
+  ],
+  "uitgelezen meterstand": [
+    {
+      "context": "regulatory",
+      "definition": "Uitgelezen meterstand:Een meterstand die met behulp van elektronische hulpmiddelen ter plaatse van de meetinrichting of op afstand is uitgelezen;",
+      "prefLabel": "Uitgelezen meterstand",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/195"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een meterstand die met behulp van elektronische hulpmiddelen ter plaatse van de meetinrichting of op afstand is uitgelezen.",
+      "prefLabel": "Uitgelezen meterstand",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2848"
+    }
+  ],
+  "uithuizing": [
+    {
+      "context": "regulatory",
+      "definition": "Uithuizing:Een verhuizing waarbij een (rechts)persoon een onroerende zaak verlaat en de beschikkingsbevoegdheid over de aansluiting beëindigt;",
+      "prefLabel": "Uithuizing",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/196"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een verhuizing waarbij een (rechts)persoon een onroerende zaak verlaat en de beschikkingsbevoegdheid over de aansluiting beëindigt.",
+      "prefLabel": "Uithuizing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2850"
+    },
+    {
+      "context": "organizational",
+      "definition": "een verhuizing waarbij een (rechts)persoon een onroerende zaak verlaat en\nde beschikkingsbevoegdheid over de aansluiting beëindigt\n[ C ]",
+      "prefLabel": "Uithuizing",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2849"
+    }
+  ],
+  "uitwisseling met het buitenland": [
+    {
+      "context": "regulatory",
+      "definition": "Uitwisseling met het buitenland:De som van alle importen uit het buitenland van elektrische energie verminderd met de som van alle exporten naar het buitenland van elektrische energie;",
+      "prefLabel": "Uitwisseling met het buitenland",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/198"
+    },
+    {
+      "context": "organizational",
+      "definition": "De som van alle importen uit het buitenland van elektrische energie verminderd met de som van alle exporten naar het buitenland van elektrische energie.",
+      "prefLabel": "Uitwisseling met het buitenland",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2864"
+    }
+  ],
+  "vastgestelde meterstand": [
+    {
+      "context": "organizational",
+      "definition": "Een meterstand die na collectie en succesvolle validatie is vastgesteld door:\na. Het meetbedrijf (ingeval deze meterstand betrekking heeft op een kleinverbruikermeetinrichting) of\nb. De meetverantwoordelijke (ingeval de meterstand betrekking heeft op een grootverbruikmeetinrichting)",
+      "prefLabel": "Vastgestelde meterstand",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2887"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Vastgestelde meterstand:Een meterstand die na collectie en succesvolle validatie is vastgesteld door: - Het meetbedrijf (ingeval deze meterstand betrekking heeft op een kleinverbruikmeetinrichting) of - De meetverantwoordelijke (ingeval deze meterstand betrekking heeft op een grootverbruikmeetinrichting);",
+      "prefLabel": "Vastgestelde meterstand",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/201"
+    }
+  ],
+  "verbruiker": [
+    {
+      "context": "regulatory",
+      "definition": "Verbruiker:Een aangeslotene die elektrische energie afneemt van het net;",
+      "prefLabel": "Verbruiker",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/202"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een aangeslotene die elektrische energie afneemt van het net.",
+      "prefLabel": "Verbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2922"
+    },
+    {
+      "context": "organizational",
+      "definition": "",
+      "prefLabel": "verbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2920"
+    },
+    {
+      "context": "organizational",
+      "definition": "een persoon die beschikt over een aansluiting op een gastransportnet, welke\naansluiting bestemd is voor de afname van gas; indien de bedoelde persoon\nover meer dan één aansluiting beschikt, wordt hij voor iedere aansluiting\nbeschouwd als één verbruiker",
+      "prefLabel": "Verbruiker",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2921"
+    }
+  ],
+  "verliesbericht": [
+    {
+      "context": "organizational",
+      "definition": "Het bericht waarmee de netbeheerder aan de oude leverancier, oude programmaverantwoordelijke of oude meetverantwoordelijke aankondigt dat de desbetreffende marktpartij met ingang van de datum in het verliesbericht de rechten en plichten voor de in het verliesbericht vermelde aansluiting zal verliezen.",
+      "prefLabel": "Verliesbericht",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2947"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Verliesbericht:Het bericht waarmee de netbeheerder aan de oude leverancier, oude BRP of oude meetverantwoordelijke aankondigt dat de desbetreffende marktpartij met ingang van de datum in het verliesbericht de rechten en plichten voor de in het verliesbericht vermelde aansluiting zal verliezen;",
+      "prefLabel": "Verliesbericht",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/203"
+    }
+  ],
+  "vermenigvuldigingsfactor": [
+    {
+      "context": "regulatory",
+      "definition": "Vermenigvuldigingsfactor:In geval van elektriciteit het samenstel van alle correctiefactoren met betrekking tot de fysieke meting die nodig zijn om uit de tellerstanden de daadwerkelijke hoeveelheid met het net uitgewisselde energie te kunnen vaststellen; In geval van gas het product van alle specifiek voor de meetinrichting van toepassing zijnde factoren op telwerkniveau met uitzondering van de volumeherleidingsfactor om tot een normaalvolume te komen;",
+      "prefLabel": "Vermenigvuldigingsfactor",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/204"
+    },
+    {
+      "context": "organizational",
+      "definition": "De factor waarmee het getal van het telwerk vermenigvuldigd moet worden om de juiste meetwaarde voor de gedefinieerde meeteenheid te verkrijgen.",
+      "prefLabel": "Vermenigvuldigingsfactor",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2950"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het samenstel van alle correctiefactoren met betrekking tot de fysieke meting die nodig zijn om uit de tellerstanden de daadwerkelijke hoeveelheid met het net uitgewisselde energie te kunnen vaststellen.",
+      "prefLabel": "Vermenigvuldigingsfactor",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2951"
+    },
+    {
+      "context": "organizational",
+      "definition": "In geval van elektriciteit het samenstel van alle correctiefactoren met betrekking tot de fysieke meting die nodig zijn om uit de tellerstanden de daadwerkelijke hoeveelheid met het net uitgewisselde energie te kunnen vaststellen; In geval van gas het product van alle specifiek voor de meetinrichting van toepassing zijnde factoren op telwerkniveau met uitzondering van de volumeherleidingsfactor om tot een normaalvolume te komen.",
+      "prefLabel": "Vermenigvuldigingsfactor",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2952"
+    }
+  ],
+  "verordening": [
+    {
+      "context": "organizational",
+      "definition": "De verordening (EG) nr. 1775/2005 van het Europees Parlement en de Raad\nvan de Europese Unie van 28 september 2005 betreffende de voorwaarden\nvoor de toegang tot aardgastransmissienetten (PbEU L 289)\n [M]",
+      "prefLabel": "Verordening",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2960"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Verordening",
+      "prefLabel": "Verordening",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/207"
+    }
+  ],
+  "verwervingsbericht": [
+    {
+      "context": "organizational",
+      "definition": "Het bericht waarmee de netbeheerder aan de nieuwe leverancier, nieuwe programmaverantwoordelijke of nieuwe meetverantwoordelijke bevestigt dat de desbetreffende marktpartij met ingang van de datum in het verwervingsbericht de rechten en plichten voor de in het verwervingsbericht vermelde aansluiting zal verkrijgen.",
+      "prefLabel": "Verwervingsbericht",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2988"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Verwervingsbericht:Het bericht waarmee de netbeheerder aan de nieuwe leverancier, nieuwe BRP of nieuwe meetverantwoordelijke bevestigt dat de desbetreffende marktpartij met ingang van de datum in het verwervingsbericht de rechten en plichten voor de in het verwervingsbericht vermelde aansluiting zal verkrijgen;",
+      "prefLabel": "Verwervingsbericht",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/217"
+    }
+  ],
+  "verzamelpunt": [
+    {
+      "context": "regulatory",
+      "definition": "Verzamelpunt:Een punt in het net, aan te wijzen door de netbeheerder, dat gebruikt kan worden door de BRP’s voor het opgeven van hun prognoses zijnde de som van de prognoses van de netaansluitpunten van die BRP op lager gelegen spanningsniveaus achter het desbetreffende punt;",
+      "prefLabel": "Verzamelpunt",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/218"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een punt in het net, aan te wijzen door de netbeheerder, dat gebruikt kan worden door de programma-verantwoordelijken voor het opgeven van hun transportprognoses zijnde de som van de transportprognoses van de netaansluitpunten van die programma-verantwoordelijke op lager gelegen spanningsniveaus achter het desbetreffende punt.",
+      "prefLabel": "Verzamelpunt",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/2992"
+    }
+  ],
+  "voltage": [
+    {
+      "context": "general",
+      "definition": "Electrical voltage, can be both AC and DC.",
+      "prefLabel": "Voltage",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/Voltage"
+    },
+    {
+      "context": "general",
+      "definition": "Electrical voltage, can be both AC and DC.",
+      "prefLabel": "Voltage",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/Voltage"
+    },
+    {
+      "context": "general",
+      "definition": "Electrical voltage, can be both AC and DC.",
+      "prefLabel": "Voltage",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/Voltage"
+    },
+    {
+      "context": "regulatory",
+      "definition": "The difference in electrical potential between two points measured as the root-mean-square value of the positive sequence phase-to-phase voltages at fundamental frequency.",
+      "prefLabel": "Voltage",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/631-3"
+    },
+    {
+      "context": "general",
+      "definition": "Electrical voltage, can be both AC and DC.",
+      "prefLabel": "Voltage",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/Voltage"
+    },
+    {
+      "context": "general",
+      "definition": "Electrical voltage, can be both AC and DC.",
+      "prefLabel": "Voltage",
+      "prefix": "",
+      "uri": "http://iec.ch/TC57/ns/CIM/StateVariables-EU/Voltage"
+    }
+  ],
+  "voltage violation": [
+    {
+      "context": "regulatory",
+      "definition": "A situation where the voltage exceeds or falls below specified limits in the transmission system;",
+      "prefLabel": "Voltage violation",
+      "prefix": "elit",
+      "uri": "http://data.europa.eu/eli/terms/1485-145"
+    },
+    {
+      "context": "business_process",
+      "definition": "A situation where the voltage exceeds or falls below specified limits in the distribution system",
+      "prefLabel": "Voltage Violation",
+      "prefix": "default13",
+      "uri": "http://vocabs.alliander.com/terms/78"
+    }
+  ],
+  "voorzieningsgebied": [
+    {
+      "context": "regulatory",
+      "definition": "Voorzieningsgebied:Het gebied of de gebieden zoals genoemd in de aanwijzing van de netbeheerder;",
+      "prefLabel": "Voorzieningsgebied",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/219"
+    },
+    {
+      "context": "organizational",
+      "definition": "Het gebied of de gebieden zoals genoemd in de aanwijzing van de netbeheerder.",
+      "prefLabel": "Voorzieningsgebied",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/3018"
+    }
+  ],
+  "werkdag": [
+    {
+      "context": "regulatory",
+      "definition": "Werkdag:Een dag, niet zijnde een zaterdag of een zondag en niet zijnde een algemeen erkende feestdag als bedoeld in artikel 3, eerste lid, van de algemene Termijnenwet, noch een in het tweede of krachtens het derde lid van genoemd artikel met een algemeen erkende feestdag gelijkgestelde dag;",
+      "prefLabel": "Werkdag",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/221"
+    },
+    {
+      "context": "organizational",
+      "definition": "Een dag, niet zijnde een zaterdag of een zondag en niet zijnde een algemeen erkende feestdag als bedoeld in artikel 3, eerste lid, van de Algemene Termijnenwet, noch een in het tweede of krachtens het derde lid van genoemd artikel met een algemeen erkende feestdag gelijkgestelde dag.",
+      "prefLabel": "Werkdag",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/3039"
+    },
+    {
+      "context": "organizational",
+      "definition": "een dag niet zijnde een zaterdag of een zondag, die niet is een algemeen\nerkende feestdag als bedoeld in artikel 3, eerste lid, van de Algemene\nTermijnenwet, noch een in het tweede of krachtens het derde lid van\ngenoemd artikel met een algemeen erkende feestdag gelijkgestelde dag",
+      "prefLabel": "Werkdag",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/3038"
+    }
+  ],
+  "wet": [
+    {
+      "context": "organizational",
+      "definition": "De Elektriciteitswet 1998.",
+      "prefLabel": "Wet",
+      "prefix": "default4",
+      "uri": "https://vocabs.alliander.com/def/ppt/3049"
+    },
+    {
+      "context": "regulatory",
+      "definition": "Wet:De Elektriciteitswet 1998;",
+      "prefLabel": "Wet",
+      "prefix": "lido",
+      "uri": "http://linkeddata.overheid.nl/terms/222"
+    }
+  ]
+}

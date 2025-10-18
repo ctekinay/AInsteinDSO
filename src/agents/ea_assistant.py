@@ -48,6 +48,25 @@ from src.llm.prompts import EAPromptTemplate
 from src.exceptions.exceptions import UngroundedReplyError, LowConfidenceError, FakeCitationError
 from src.utils.trace import get_tracer
 from src.agents.session_manager import SessionManager, ConversationTurn
+from src.knowledge.homonym_guard import apply_homonym_guard
+# optionally
+try:
+    from src.utils.dedupe_results import dedupe_candidates
+except Exception:
+    dedupe_candidates = None
+
+# Configuration constants - replace all hardcoded values
+from src.config.constants import (
+    CONFIDENCE,
+    SEMANTIC_CONFIG,
+    RANKING_CONFIG,
+    CONTEXT_CONFIG,
+    LANG_CONFIG,
+    PERFORMANCE_CONFIG,
+    COMPARISON_TERM_STOP_WORDS,
+    QUERY_TERM_STOP_WORDS,
+    COMPARISON_PATTERNS,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -63,6 +82,7 @@ except (ImportError, RuntimeError) as e:
     logger.warning("Semantic search disabled. Install sentence-transformers to enable.")
     EmbeddingAgent = None
     EMBEDDING_AVAILABLE = False
+    
 
 def is_definition_query(query_text: str) -> bool:
     """
@@ -406,8 +426,8 @@ class ProductionEAAgent:
                 response = await self.llm_council.primary_llm.generate(
                     prompt=prompt,
                     system_prompt="You are a language detection assistant. Respond with only one word: english, dutch, or unknown.",
-                    temperature=0.1,
-                    max_tokens=10
+                    temperature=LANG_CONFIG.LLM_TEMPERATURE,
+                    max_tokens=LANG_CONFIG.LLM_MAX_TOKENS
                 )
                 
                 language = response.content.strip().lower()
@@ -432,10 +452,10 @@ class ProductionEAAgent:
         
         # Check for Dutch compound words (lots of long words)
         words = text_lower.split()
-        long_words = sum(1 for w in words if len(w) > 12)
+        long_words = sum(1 for w in words if len(w) > LANG_CONFIG.LONG_WORD_MIN_LENGTH)
         
         # Simple heuristic
-        if dutch_chars > 2 or (long_words > len(words) * 0.2 and len(words) > 3):
+        if dutch_chars > LANG_CONFIG.DUTCH_CHAR_THRESHOLD or (long_words > len(words) * LANG_CONFIG.LONG_WORD_PERCENTAGE and len(words) > 3):
             return "nl"
         elif any(word in text_lower for word in ['the ', ' and ', ' for ', ' power', ' grid']):
             return "en"
@@ -501,7 +521,7 @@ class ProductionEAAgent:
             citation = self._extract_citation(candidate)
             if citation != "unknown":
                 citation_set.add(citation)
-        
+
         # Build enriched pool with metadata
         enriched_pool = []
         for citation in citation_set:
@@ -1182,9 +1202,9 @@ class ProductionEAAgent:
                     f"Average of {len(assessment.top_suggestions)} top suggestions: {assessment.confidence:.2f}"
                 )
 
-                if assessment.confidence >= 0.75:
+                if assessment.confidence >= CONFIDENCE.HIGH_CONFIDENCE_THRESHOLD:
                     critic_phase.add_substep("✓ High confidence", f"{assessment.confidence:.2f}")
-                elif assessment.confidence >= 0.50:
+                elif assessment.confidence >= CONFIDENCE.MEDIUM_CONFIDENCE_THRESHOLD:
                     critic_phase.add_substep("⚠ Medium confidence", f"{assessment.confidence:.2f}")
                 else:
                     critic_phase.add_substep("⚠ Low confidence - flagging for review", f"{assessment.confidence:.2f}")
@@ -1348,144 +1368,174 @@ class ProductionEAAgent:
         return citation_pool
 
     async def _retrieve_knowledge(self, query: str, route: str, trace_id: Optional[str] = None) -> Dict:
-        """
-        SIMPLIFIED UNIFIED RETRIEVAL - No complex conditional logic.
-        
-        Priority order (always the same):
-        1. Knowledge Graph (SPARQL) - for definitions and concepts
-        2. ArchiMate Models - for architectural elements
-        3. PDF Documents - for unstructured content
-        
-        Args:
-            query: User query
-            route: Route destination from router
-            trace_id: Optional trace ID for logging
+            """
+            SIMPLIFIED UNIFIED RETRIEVAL - No complex conditional logic.
             
-        Returns:
-            Dictionary with unified retrieval context
-        """
-        retrieval_context = {
-            "route": route,
-            "candidates": [],
-            "kg_results": [],
-            "archimate_elements": [],
-            "togaf_docs": [],
-            "togaf_context": {}
-            # domain_context will be added dynamically in response building
-        }
-        
-        # Extract query terms (simplified)
-        query_terms = self._extract_query_terms(query)
-        logger.info(f"Extracted query terms: {query_terms}")
-        
-            # 🎯 NEW: For comparison queries, extract terms from previous turns
-        if hasattr(self, 'session_manager'):
-            session_history = self.session_manager.get_history(trace_id or 'default')
-            if session_history and len(session_history) >= 2:
-                # Get terms from last 2 queries
-                prev_query_1 = session_history[-1].query if len(session_history) >= 1 else ""
-                prev_query_2 = session_history[-2].query if len(session_history) >= 2 else ""
+            Priority order (always the same):
+            1. Knowledge Graph (SPARQL) - for definitions and concepts
+            2. ArchiMate Models - for architectural elements
+            3. PDF Documents - for unstructured content
+            
+            Args:
+                query: User query
+                route: Route destination from router
+                trace_id: Optional trace ID for logging
                 
-                prev_terms = self._extract_query_terms(prev_query_1 + " " + prev_query_2)
-                
-                # Combine with current terms
-                combined_terms = list(set(query_terms + prev_terms))
-                logger.info(f"🎯 Added {len(prev_terms)} terms from session history")
-                logger.info(f"🎯 Combined terms: {combined_terms[:10]}")
-                
-                query_terms = combined_terms
-        
-        if route == "structured_model":
-            # STEP 1: Query Knowledge Graph (ALWAYS FIRST)
-            kg_candidates = await self._query_knowledge_graph(query_terms, trace_id)
-            logger.info(f"KG returned {len(kg_candidates)} candidates")
-            
-            # Store for citation pool extraction
-            retrieval_context["kg_results"] = kg_candidates
-            
-            # STEP 2: Query ArchiMate Models (ALWAYS SECOND)
-            archimate_candidates = await self._query_archimate_models(query_terms, trace_id)
-            logger.info(f"ArchiMate returned {len(archimate_candidates)} candidates")
-            
-            # Store for citation pool extraction
-            retrieval_context["archimate_elements"] = archimate_candidates
-            
-            # Combine with KG first (higher priority)
-            retrieval_context["candidates"] = kg_candidates + archimate_candidates
-            
-            # Add TOGAF context
-            retrieval_context["togaf_context"] = self._get_togaf_context(query, archimate_candidates)
-            
-        elif route == "togaf_method":
-            # TOGAF methodology guidance
-            phase_context = self._get_togaf_phase_guidance(query)
-            togaf_candidate = {
-                "element": f"TOGAF ADM {phase_context['phase']}",
-                "type": "Methodology",
-                "citation_id": f"togaf:adm:{phase_context['phase_letter']}",
-                "confidence": 0.85,
-                "definition": phase_context["description"],
-                "source": "TOGAF 9.2 Standard",
-                "priority": "togaf"
+            Returns:
+                Dictionary with unified retrieval context
+            """
+            retrieval_context = {
+                "route": route,
+                "candidates": [],
+                "kg_results": [],
+                "archimate_elements": [],
+                "togaf_docs": [],
+                "togaf_context": {}
+                # domain_context will be added dynamically in response building
             }
-            # THESE LINES MUST BE HERE - RIGHT AFTER CREATING togaf_candidate
-            retrieval_context["candidates"] = [togaf_candidate]
-            retrieval_context["togaf_docs"] = [togaf_candidate]
-            retrieval_context["togaf_context"] = phase_context
             
-        elif route == "unstructured_docs":
-            # PDF document search
-            if self.pdf_indexer:
-                doc_candidates = await self._query_documents(query_terms, trace_id)
-                retrieval_context["candidates"] = doc_candidates
-                retrieval_context["document_chunks"] = doc_candidates
-                logger.info(f"Documents returned {len(doc_candidates)} candidates")
-        
-        # SEMANTIC ENHANCEMENT: Add embeddings when structured results are insufficient
-        if self.embedding_agent:
-            total_structured = len(retrieval_context.get("candidates", []))
-            if total_structured < 3:  # Threshold for adding semantic search
-                logger.info(f"Only {total_structured} structured results, adding semantic search...")
+            # Extract query terms (simplified)
+            query_terms = self._extract_query_terms(query)
+            logger.info(f"Extracted query terms: {query_terms}")
+            
+            # 🎯 NEW: For comparison queries, extract terms from previous turns
+            if hasattr(self, 'session_manager'):
+                session_history = self.session_manager.get_history(trace_id or 'default')
+                if session_history and len(session_history) >= 2:
+                    # Get terms from last 2 queries
+                    prev_query_1 = session_history[-1].query if len(session_history) >= 1 else ""
+                    prev_query_2 = session_history[-2].query if len(session_history) >= 2 else ""
+                    
+                    prev_terms = self._extract_query_terms(prev_query_1 + " " + prev_query_2)
+                    
+                    # Combine with current terms
+                    combined_terms = list(set(query_terms + prev_terms))
+                    logger.info(f"🎯 Added {len(prev_terms)} terms from session history")
+                    logger.info(f"🎯 Combined terms: {combined_terms[:10]}")
+                    
+                    query_terms = combined_terms
+            
+            if route == "structured_model":
+                # STEP 1: Query Knowledge Graph (ALWAYS FIRST)
+                kg_candidates = await self._query_knowledge_graph(query_terms, trace_id)
+                logger.info(f"KG returned {len(kg_candidates)} candidates")
                 
+                # Store for citation pool extraction
+                retrieval_context["kg_results"] = kg_candidates
+                
+                # STEP 2: Query ArchiMate Models (ALWAYS SECOND)
+                archimate_candidates = await self._query_archimate_models(query_terms, trace_id)
+                logger.info(f"ArchiMate returned {len(archimate_candidates)} candidates")
+                
+                # Store for citation pool extraction
+                retrieval_context["archimate_elements"] = archimate_candidates
+                
+                # Combine with KG first (higher priority)
+                retrieval_context["candidates"] = kg_candidates + archimate_candidates
+                
+                # Add TOGAF context
+                retrieval_context["togaf_context"] = self._get_togaf_context(query, archimate_candidates)
+                
+            elif route == "togaf_method":
+                # TOGAF methodology guidance
+                phase_context = self._get_togaf_phase_guidance(query)
+                togaf_candidate = {
+                    "element": f"TOGAF ADM {phase_context['phase']}",
+                    "type": "Methodology",
+                    "citation_id": f"togaf:adm:{phase_context['phase_letter']}",
+                    "confidence": CONFIDENCE.TOGAF_DOCUMENTATION,
+                    "definition": phase_context["description"],
+                    "source": "TOGAF 9.2 Standard",
+                    "priority": "togaf"
+                }
+                retrieval_context["candidates"] = [togaf_candidate]
+                retrieval_context["togaf_docs"] = [togaf_candidate]
+                retrieval_context["togaf_context"] = phase_context
+                
+            elif route == "unstructured_docs":
+                # PDF document search
+                if self.pdf_indexer:
+                    doc_candidates = await self._query_documents(query_terms, trace_id)
+                    retrieval_context["candidates"] = doc_candidates
+                    retrieval_context["document_chunks"] = doc_candidates
+                    logger.info(f"Documents returned {len(doc_candidates)} candidates")
+            
+            # PHASE 2: SEMANTIC ENHANCEMENT (NEW - always run when available)
+            enable_semantic = os.getenv("ENABLE_SEMANTIC_ENHANCEMENT", "true").lower() == "true"
+            if self.embedding_agent and enable_semantic:
+                semantic_start = time.time()
                 try:
-                    semantic_results = self.embedding_agent.semantic_search(
+                    semantic_candidates = await self._semantic_enhancement(
                         query,
-                        top_k=5,
-                        min_score=0.4
+                        retrieval_context["candidates"]
                     )
-                    
-                    # Convert to candidates format
-                    for result in semantic_results:
-                        candidate = {
-                            "element": result.text[:100],  # Truncate for display
-                            "type": "Semantic Match",
-                            "citation": result.citation or "semantic:context",
-                            "citation_id": result.citation or "semantic:context",
-                            "confidence": result.score,
-                            "definition": result.text,
-                            "source": f"Embedding Search ({result.source})",
-                            "priority": "semantic"
-                        }
-                        retrieval_context["candidates"].append(candidate)
-                    
-                    logger.info(f"Added {len(semantic_results)} semantic results to candidates")
+                    retrieval_context["candidates"].extend(semantic_candidates)
                     retrieval_context["semantic_enhanced"] = True
+
+                    semantic_duration = (time.time() - semantic_start) * 1000
+                    logger.info(f"Added {len(semantic_candidates)} semantic candidates")
+                    logger.info(f"Semantic enhancement took {semantic_duration:.2f}ms")
                 except Exception as e:
-                    logger.warning(f"Semantic search failed: {e}")
-                    # Continue without semantic results
-        
-        # Log final candidate count - MOVED OUTSIDE of semantic block
-        total_candidates = len(retrieval_context.get("candidates", []))
-        logger.info(f"Total candidates for refinement: {total_candidates}")
-        
-        if trace_id:
-            tracer.trace_info(trace_id, "ea_assistant", "retrieve_complete",
-                            total_candidates=total_candidates,
-                            kg_count=len(retrieval_context.get("kg_results", [])),
-                            archimate_count=len(retrieval_context.get("archimate_elements", [])))
-        
-        # ALWAYS return retrieval_context
-        return retrieval_context
+                    logger.warning(f"Semantic enhancement failed: {e}")
+                    retrieval_context["semantic_enhanced"] = False
+
+            # PHASE 3: Context expansion for follow-ups
+            session_id = trace_id or 'default'
+            if hasattr(self, 'session_manager') and len(self.session_manager.get_history(session_id)) > 0:
+                context_start = time.time()
+                try:
+                    context_candidates = await self._context_expansion(query, session_id)
+                    retrieval_context["candidates"].extend(context_candidates)
+
+                    context_duration = (time.time() - context_start) * 1000
+                    logger.info(f"Added {len(context_candidates)} context candidates")
+                    logger.info(f"Context expansion took {context_duration:.2f}ms")
+                except Exception as e:
+                    logger.warning(f"Context expansion failed: {e}")
+
+            # PHASE 4: Apply homonym guard
+            primary_category = (
+                "architectural_guidance" if route == "structured_model"
+                else "knowledge_retrieval" if route == "togaf_method"
+                else "analytical_task"
+            )
+            intent_confidence = 0.9
+
+            try:
+                guarded = apply_homonym_guard(
+                    query=query,
+                    primary_category=primary_category,
+                    candidates=retrieval_context["candidates"],
+                    intent_confidence=intent_confidence,
+                )
+                retrieval_context["candidates"] = guarded
+                logger.info("Applied homonym guard (%s)", primary_category)
+            except Exception as e:
+                logger.warning("Homonym guard failed: %s", e)
+
+            # PHASE 5: Rank and deduplicate
+            rank_start = time.time()
+            original_count = len(retrieval_context["candidates"])
+            retrieval_context["candidates"] = self._rank_and_deduplicate(
+                retrieval_context["candidates"],
+                query
+            )
+            final_count = len(retrieval_context["candidates"])
+            rank_duration = (time.time() - rank_start) * 1000
+            logger.info(f"Ranking and deduplication: {original_count} → {final_count} candidates in {rank_duration:.2f}ms")
+            
+            # Log final candidate count
+            total_candidates = len(retrieval_context.get("candidates", []))
+            logger.info(f"Total candidates for refinement: {total_candidates}")
+            
+            if trace_id:
+                tracer.trace_info(trace_id, "ea_assistant", "retrieve_complete",
+                                total_candidates=total_candidates,
+                                kg_count=len(retrieval_context.get("kg_results", [])),
+                                archimate_count=len(retrieval_context.get("archimate_elements", [])))
+            
+            # ALWAYS return retrieval_context
+            return retrieval_context
 
     def _extract_query_terms(self, query: str) -> List[str]:
         """
@@ -1497,10 +1547,7 @@ class ProductionEAAgent:
         query_lower = query.lower()
         
         # Stop words to filter out
-        stop_words = {
-            'what', 'is', 'the', 'a', 'an', 'of', 'for', 'in', 'on', 'at', 
-            'to', 'how', 'why', 'when', 'where', 'are', 'do', 'does'
-        }
+        stop_words = QUERY_TERM_STOP_WORDS
         
         words = query_lower.split()
         terms = []
@@ -1613,7 +1660,7 @@ class ProductionEAAgent:
                 
                 # Calculate confidence based on match quality and definition presence
                 has_definition = bool(kg_result.get("definition"))
-                base_confidence = 0.95 if has_definition else 0.75
+                base_confidence = CONFIDENCE.KG_WITH_DEFINITION if has_definition else CONFIDENCE.KG_WITHOUT_DEFINITION
                 relevance = kg_result.get("score", 75) / 100.0
 
                 candidate = {
@@ -1693,7 +1740,7 @@ class ProductionEAAgent:
                         "doc_id": chunk.doc_id,
                         "citation": citation_id,
                         "citation_id": citation_id,
-                        "confidence": 0.70,
+                        "confidence": CONFIDENCE.DOCUMENT_CHUNKS,
                         "definition": chunk.content[:200] + "...",
                         "source": "PDF Documents",
                         "priority": "document"
@@ -1707,21 +1754,21 @@ class ProductionEAAgent:
 
     def _calculate_element_confidence(self, element: ArchiMateElement, query_terms: List[str]) -> float:
         """Calculate confidence score for an ArchiMate element based on query relevance."""
-        base_confidence = 0.75
+        base_confidence = CONFIDENCE.ARCHIMATE_ELEMENTS
         element_name_lower = element.name.lower()
 
         # Boost for exact matches
         for term in query_terms:
             if term in element_name_lower:
-                base_confidence += 0.10
+                base_confidence += CONFIDENCE.EXACT_TERM_MATCH_BONUS
 
         # Boost for energy domain terms
         energy_terms = ["congestion", "grid", "scada", "monitoring", "management", "power", "reactive", "capability"]
         for term in energy_terms:
             if term in element_name_lower:
-                base_confidence += 0.05
+                base_confidence += CONFIDENCE.PARTIAL_TERM_MATCH_BONUS
 
-        return min(base_confidence, 0.95)
+        return min(base_confidence, CONFIDENCE.KG_WITH_DEFINITION)
 
     def _get_togaf_phase_for_layer(self, layer: str) -> str:
         """Get appropriate TOGAF phase for ArchiMate layer."""
@@ -1883,7 +1930,7 @@ class ProductionEAAgent:
             print(f"🔍       citation: {c.get('citation', 'N/A')}")
             print(f"🔍       definition: {c.get('definition', 'N/A')[:80]}...")
         
-        # Build structured comparison at all times
+        # ✅ FIXED: Proper indentation — now both branches are at same level
         if len(candidates) >= 2:
             logger.info("🎯 Building comparison for 2+ candidates")
             
@@ -1931,7 +1978,7 @@ class ProductionEAAgent:
             
             return response, candidates
         
-        elif len(candidates) == 1:  # ← This must be at same level as 'if'
+        elif len(candidates) == 1:  # ← Now at correct level
             logger.info("🎯 Building comparison for 1 candidate")
             
             c = candidates[0]
@@ -1986,17 +2033,17 @@ class ProductionEAAgent:
 
             # Assign priority scores
             if priority == "knowledge_graph" and has_definition:
-                priority_score = 1000
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_DEFINITION * 10  # Scale up for this function
             elif priority == "knowledge_graph":
-                priority_score = 800
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_NORMAL * 10
             elif priority == "archimate":
-                priority_score = 600
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_CONTEXT * 10
             elif priority == "togaf":
-                priority_score = 700
+                priority_score = (RANKING_CONFIG.PRIORITY_SCORE_NORMAL + RANKING_CONFIG.PRIORITY_SCORE_CONTEXT) * 5  # 700 equivalent
             elif priority == "document":
-                priority_score = 400
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_CONTEXT * 7  # 420 equivalent
             else:
-                priority_score = 200
+                priority_score = RANKING_CONFIG.PRIORITY_SCORE_FALLBACK * 4  # 200 equivalent
 
             # Return Tuple for sorting (higher priority first, then higher confidence)
             return (priority_score + confidence, confidence)
@@ -2467,6 +2514,292 @@ class ProductionEAAgent:
 
         return stats
 
+    def _extract_comparison_terms(self, query: str) -> List[str]:
+        """Extract comparison terms from a query."""
+        if not query:
+            return []
+
+        # Common comparison patterns - fixed to be non-greedy and more specific
+        comparison_patterns = COMPARISON_PATTERNS
+
+        terms = []
+        query_lower = query.lower().strip()
+
+        for pattern in comparison_patterns:
+            matches = re.findall(pattern, query_lower, re.IGNORECASE)
+            for match in matches:
+                if isinstance(match, tuple):
+                    for term in match:
+                        if term and term.strip():
+                            cleaned_term = self._clean_comparison_term(term.strip())
+                            if cleaned_term:
+                                terms.append(cleaned_term)
+                elif match and match.strip():
+                    cleaned_term = self._clean_comparison_term(match.strip())
+                    if cleaned_term:
+                        terms.append(cleaned_term)
+
+        # Remove duplicates while preserving order
+        unique_terms = []
+        seen = set()
+        for term in terms:
+            if term.lower() not in seen:
+                seen.add(term.lower())
+                unique_terms.append(term)
+
+        return unique_terms
+
+    def _clean_comparison_term(self, term: str) -> str:
+        """Clean up extracted comparison term."""
+        if not term:
+            return ""
+
+        # Remove common stop words
+        stop_words = COMPARISON_TERM_STOP_WORDS
+        words = term.split()
+        cleaned_words = [w for w in words if w.lower() not in stop_words]
+        cleaned = ' '.join(cleaned_words)
+
+        # Remove extra whitespace and punctuation
+        cleaned = re.sub(r'\s+', ' ', cleaned)
+        cleaned = re.sub(r'[^\w\s\-]', '', cleaned)
+
+        return cleaned.strip()
+
+    async def _validate_comparison_candidates(self, candidates: List[Dict], query: str) -> Tuple[Dict, Dict]:
+        """Ensure we have two distinct concepts for comparison."""
+        if len(candidates) < 2:
+            # Not enough candidates for comparison
+            return candidates[0] if candidates else {}, {}
+
+        comparison_terms = self._extract_comparison_terms(query)
+
+        if len(comparison_terms) != 2:
+            # Fallback to first two candidates
+            return candidates[0], candidates[1]
+
+        term1_candidates = []
+        term2_candidates = []
+
+        for candidate in candidates:
+            element_lower = candidate.get('element', '').lower()
+            definition_lower = candidate.get('definition', '').lower()
+
+            # Check which term this candidate matches
+            term1_match = (comparison_terms[0].lower() in element_lower or
+                          comparison_terms[0].lower() in definition_lower)
+            term2_match = (comparison_terms[1].lower() in element_lower or
+                          comparison_terms[1].lower() in definition_lower)
+
+            # Only add to one list, prioritizing exact match in element name
+            if term1_match and not term2_match:
+                term1_candidates.append(candidate)
+            elif term2_match and not term1_match:
+                term2_candidates.append(candidate)
+            elif term1_match and term2_match:
+                # If both match, skip ambiguous candidates
+                continue
+
+        # Return best matches or fallback to semantic search
+        if term1_candidates and term2_candidates:
+            return term1_candidates[0], term2_candidates[0]
+        else:
+            # Use semantic fallback if available
+            if self.embedding_agent:
+                return await self._semantic_comparison_fallback(query, candidates)
+            else:
+                # Final fallback to first two distinct candidates
+                return candidates[0], candidates[1] if len(candidates) > 1 else candidates[0]
+
+    async def _semantic_comparison_fallback(self, query: str, existing_candidates: List[Dict]) -> Tuple[Dict, Dict]:
+        """Use semantic search to find distinct concepts for comparison."""
+
+        comparison_terms = self._extract_comparison_terms(query)
+
+        if len(comparison_terms) != 2:
+            return existing_candidates[0], existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0]
+
+        # Search for each term separately using embedding agent
+        try:
+            concept1_results = self.embedding_agent.semantic_search(
+                comparison_terms[0],
+                top_k=SEMANTIC_CONFIG.TOP_K_COMPARISON,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON
+            )
+            concept2_results = self.embedding_agent.semantic_search(
+                comparison_terms[1],
+                top_k=SEMANTIC_CONFIG.TOP_K_COMPARISON,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON
+            )
+
+            # Convert to candidate format
+            candidate1 = self._semantic_result_to_candidate(concept1_results[0]) if concept1_results else existing_candidates[0]
+            candidate2 = self._semantic_result_to_candidate(concept2_results[0]) if concept2_results else (existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0])
+
+            return candidate1, candidate2
+
+        except Exception as e:
+            logger.warning(f"Semantic comparison fallback failed: {e}")
+            # Final fallback to existing candidates
+            return existing_candidates[0], existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0]
+
+    def _semantic_result_to_candidate(self, result) -> Dict:
+        """Convert EmbeddingResult to candidate format."""
+        if not result:
+            return {}
+
+        return {
+            "element": result.text[:100] if hasattr(result, 'text') else "Semantic Match",
+            "type": "Semantic Match",
+            "citation": getattr(result, 'citation', None) or f"semantic:{getattr(result, 'source', 'unknown')}",
+            "confidence": getattr(result, 'score', 0.5),
+            "definition": getattr(result, 'text', ''),
+            "source": f"Semantic Search ({getattr(result, 'source', 'unknown')})",
+            "priority": "normal",
+            "semantic_score": getattr(result, 'score', 0.5)
+        }
+
+    async def _semantic_enhancement(self, query: str, structured_results: List[Dict]) -> List[Dict]:
+        """Use embeddings to find semantically related concepts."""
+
+        semantic_candidates = []
+
+        # Get semantic matches with quality threshold
+        semantic_results = self.embedding_agent.semantic_search(
+            query,
+            top_k=SEMANTIC_CONFIG.TOP_K_PRIMARY,
+            min_score=SEMANTIC_CONFIG.MIN_SCORE_PRIMARY
+        )
+
+        # Track seen concepts to avoid duplicates
+        seen_citations = {c.get('citation') for c in structured_results if c.get('citation')}
+
+        for result in semantic_results:
+            # Skip if duplicate of structured result
+            result_citation = getattr(result, 'citation', None) or f"semantic:{getattr(result, 'source', 'unknown')}"
+            if result_citation in seen_citations:
+                continue
+
+            # Only add high-quality semantic results
+            result_score = getattr(result, 'score', 0.0)
+            if result_score >= SEMANTIC_CONFIG.MIN_SCORE_PRIMARY:
+                candidate = {
+                    "element": getattr(result, 'text', '')[:100],
+                    "type": "Semantic Enhancement",
+                    "citation": result_citation,
+                    "confidence": result_score,
+                    "definition": getattr(result, 'text', ''),
+                    "source": f"Semantic ({result_score:.2f})",
+                    "priority": "context",  # Lower priority than structured
+                    "semantic_score": result_score
+                }
+                semantic_candidates.append(candidate)
+
+        # Limit to top 3 semantic enhancements to avoid overwhelming
+        return semantic_candidates[:SEMANTIC_CONFIG.MAX_SEMANTIC_CANDIDATES]
+
+    async def _context_expansion(self, query: str, session_id: str) -> List[Dict]:
+        """Expand context using conversation history."""
+
+        context_candidates = []
+
+        # Get recent conversation history
+        session_data = self.session_manager.get_session_data(session_id)
+        if not session_data or len(session_data.get("messages", [])) < 2:
+            return context_candidates
+
+        # Extract concepts from last 3 turns (not 4 - reduce noise)
+        previous_concepts = []
+        for message in session_data["messages"][-3:]:
+            if message["type"] == "user":
+                concepts = self._extract_query_terms(message["content"])
+                previous_concepts.extend(concepts)
+
+        # Deduplicate and limit
+        previous_concepts = list(set(previous_concepts))[:5]
+
+        if previous_concepts and self.embedding_agent:
+            # Create context-enhanced query
+            enhanced_query = f"{query} {' '.join(previous_concepts[:3])}"
+
+            related_results = self.embedding_agent.semantic_search(
+                enhanced_query,
+                top_k=SEMANTIC_CONFIG.TOP_K_CONTEXT,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_CONTEXT
+            )
+
+            for result in related_results:
+                candidate = {
+                    "element": getattr(result, 'text', '')[:100],
+                    "type": "Context Enhancement",
+                    "citation": getattr(result, 'citation', None) or "context:history",
+                    "confidence": getattr(result, 'score', 0.5),
+                    "definition": getattr(result, 'text', ''),
+                    "source": f"History ({getattr(result, 'source', 'unknown')})",
+                    "priority": "context"
+                }
+                context_candidates.append(candidate)
+
+        return context_candidates
+
+    def _rank_and_deduplicate(self, candidates: List[Dict], query: str) -> List[Dict]:
+            """Rank and deduplicate candidates by relevance and source priority."""
+            
+            # Use the new canonical deduplication
+            if dedupe_candidates is not None:
+                try:
+                    unique_candidates = dedupe_candidates(candidates)
+                    logger.debug(f"Deduplicated: {len(candidates)} → {len(unique_candidates)} candidates")
+                except Exception as e:
+                    logger.warning(f"Deduplication failed: {e}, falling back to basic dedupe")
+                    # Fallback to basic dedupe
+                    seen_citations = set()
+                    unique_candidates = []
+                    for candidate in candidates:
+                        citation = candidate.get('citation')
+                        if citation and citation not in seen_citations:
+                            seen_citations.add(citation)
+                            unique_candidates.append(candidate)
+                        elif not citation:
+                            unique_candidates.append(candidate)
+            else:
+                # Fallback if dedupe_candidates not available
+                seen_citations = set()
+                unique_candidates = []
+                for candidate in candidates:
+                    citation = candidate.get('citation')
+                    if citation and citation not in seen_citations:
+                        seen_citations.add(citation)
+                        unique_candidates.append(candidate)
+                    elif not citation:
+                        unique_candidates.append(candidate)
+            
+            # Assign priority scores (keep existing logic)
+            def get_priority_score(candidate):
+                priority = candidate.get('priority', 'normal')
+                type_name = candidate.get('type', '')
+                confidence = candidate.get('confidence', 0.5)
+                semantic_score = candidate.get('semantic_score', 0)
+                
+                # Priority scoring
+                priority_map = {
+                    'definition': RANKING_CONFIG.PRIORITY_SCORE_DEFINITION,
+                    'normal': RANKING_CONFIG.PRIORITY_SCORE_NORMAL,
+                    'context': RANKING_CONFIG.PRIORITY_SCORE_CONTEXT
+                }
+                base_score = priority_map.get(priority, RANKING_CONFIG.PRIORITY_SCORE_FALLBACK)
+                
+                # Add confidence/semantic bonus
+                bonus = (confidence * RANKING_CONFIG.CONFIDENCE_BONUS_MULTIPLIER) if confidence > RANKING_CONFIG.CONFIDENCE_BONUS_THRESHOLD else (semantic_score * RANKING_CONFIG.CONFIDENCE_BONUS_MULTIPLIER)
+                
+                return base_score + bonus
+            
+            # Sort by priority score
+            ranked = sorted(unique_candidates, key=get_priority_score, reverse=True)
+            
+            # Limit total candidates to prevent overwhelming LLM
+            return ranked[:RANKING_CONFIG.MAX_TOTAL_CANDIDATES]
+        
     async def cleanup(self):
         """Cleanup async resources."""
         if self.llm_provider:

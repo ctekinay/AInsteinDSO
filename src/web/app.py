@@ -14,19 +14,27 @@ import asyncio
 import json
 import logging
 import uuid
+import uvicorn
+import importlib
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import uvicorn
+
 
 # Import EA Assistant components FIRST
 import sys
-sys.path.append(str(Path(__file__).parent.parent.parent))
+PROJECT_ROOT = Path(__file__).resolve().parents[2]  # repo root
+SRC_DIR = PROJECT_ROOT / "src"
+WEB_DIR = Path(__file__).resolve().parent
+sys.path.append(str(PROJECT_ROOT))
 
 try:
     from src.agents.ea_assistant import ProductionEAAgent
@@ -36,13 +44,17 @@ except ImportError as e:
     print(f"Warning: EA Agent not available: {e}")
     EA_AGENT_AVAILABLE = False
 
-# NOW force reload after first import
-import importlib
+
+# Optional: live-reload the module (fix: correct module key)
 if EA_AGENT_AVAILABLE:
-    importlib.reload(sys.modules['src.agent.ea_assistant'])
-    print("✅ Reloaded ea_assistant module with fixes")
-    # Re-import after reload
-    from src.agents.ea_assistant import ProductionEAAgent
+    try:
+        # ✅ FIX: module key is 'src.agents.ea_assistant' (plural)
+        importlib.reload(sys.modules['src.agents.ea_assistant'])
+        from src.agents.ea_assistant import ProductionEAAgent
+        print("✅ Reloaded ea_assistant module with fixes")
+    except KeyError:
+        # If module wasn't previously loaded, ignore reload
+        pass
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -58,8 +70,68 @@ app = FastAPI(
 )
 
 # Static files and templates
-app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
-templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
+WEB_DIR = Path(__file__).resolve().parent
+TEMPLATES_DIR = WEB_DIR / "templates"          # /src/web/templates
+STATIC_DIR = WEB_DIR / "static"                 # /src/web/static (optional)
+
+if not TEMPLATES_DIR.exists():
+    raise RuntimeError(f"Templates directory not found: {TEMPLATES_DIR} "
+                       f"(expected chat.html at {TEMPLATES_DIR / 'chat.html'})")
+
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
+
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+else:
+    logging.getLogger(__name__).info(f"No static dir at {STATIC_DIR} (that's fine).")
+
+# Helper function for homonym initialization
+def _init_canonicalization_and_lexicon(agent: "ProductionEAAgent"):
+    """
+    Set up prefix mapping and homonym lexicon.
+    Requires:
+      - src/utils/citation_ids.configure_prefixes
+      - src/knowledge/homonym_detector.detect_ambiguous_terms_in_rdf
+      - tools/build_homonym_lexicon.generate_lexicon / merge_overrides
+      - src/knowledge/homonym_guard.set_homonym_lexicon
+    """
+    try:
+        from src.utils.citation_ids import configure_prefixes
+        from src.knowledge.homonym_detector import detect_ambiguous_terms_in_rdf
+        # tools/ is imported as a namespace package (PEP 420) because repo root is on sys.path
+        from tools.build_homonym_lexicon import generate_lexicon, merge_overrides
+        from src.knowledge.homonym_guard import set_homonym_lexicon
+
+        # 1) Configure prefixes from graph + extras
+        graph_prefixes = {p: str(ns) for p, ns in agent.kg_loader.graph.namespace_manager.namespaces()}
+        extra_prefixes = {
+            "lido": "http://platform.regulatoryreporting.com/lido/",
+            "archi": "http://www.archimatetool.com/archimate/",
+            "default4": "http://vocab.alliander.com/default4/",
+            "default6": "http://iec.ch/TC57/CIM/CoreEquipment/",
+            "default11": "http://iec.ch/TC57/CIM/SteadyState/",
+            "default13": "http://vocab.alliander.com/default13/",
+            "togaf": "http://pubs.opengroup.org/architecture/togaf/",
+        }
+        configure_prefixes(graph_prefixes, extra_prefixes=extra_prefixes)
+
+        # 2) Detect ambiguous terms from the loaded KG
+        ambiguous = detect_ambiguous_terms_in_rdf(agent.kg_loader)
+
+        # 3) (Optional) pass Archi terms set() if you have them extracted
+        auto_lex = generate_lexicon(ambiguous, archi_terms=set())
+
+        # 4) Merge manual overrides if present
+        overrides_path = PROJECT_ROOT / "config" / "homonym_overrides.json"
+        lexicon = merge_overrides(auto_lex, overrides_path if overrides_path.exists() else None)
+
+        # 5) Set live lexicon in homonym_guard
+        set_homonym_lexicon(lexicon)
+        logger.info(f"✅ Homonym guard loaded: {len(lexicon)} terms")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Homonym guard setup failed: {e}")
+
 
 # Global EA Assistant instance - INITIALIZE ONLY ONCE
 ea_agent: Optional[ProductionEAAgent] = None
@@ -67,6 +139,12 @@ if EA_AGENT_AVAILABLE:
     try:
         ea_agent = ProductionEAAgent()
         logger.info("✅ EA Assistant initialized successfully with trace support")
+        logger.info("EmbeddingAgent auto-refresh status: {agent.auto_refresh}")
+        
+        # Initialize homonym systems
+        if ea_agent:
+            _init_canonicalization_and_lexicon(ea_agent)
+            
     except Exception as e:
         logger.error(f"❌ Failed to initialize EA Assistant: {e}")
         ea_agent = None

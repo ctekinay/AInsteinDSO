@@ -25,30 +25,67 @@ You are working with AInstein, an advanced Enterprise Architecture AI Assistant 
 - **Human review triggers**: Automatic when confidence < 0.75
 - **Real-time web interface**: FastAPI with trace visualization
 
-## File Structure to Maintain
+## Current File Structure
 ```
-alliander-ea-assistant/
+AInsteinAlliander/
 ├── src/
+│   ├── agents/             # Main AI agents and session management
+│   │   ├── ea_assistant.py      # Production EA Agent with 4R+G+C pipeline
+│   │   ├── embedding_agent.py   # Embedding-based agent
+│   │   ├── llm_council.py       # Multi-LLM coordination
+│   │   └── session_manager.py   # Conversation state management
+│   ├── llm/                # LLM providers and prompts
+│   │   ├── factory.py           # LLM provider factory
+│   │   ├── groq_provider.py     # Groq integration (primary)
+│   │   ├── openai_provider.py   # OpenAI integration
+│   │   ├── ollama_provider.py   # Local Ollama support
+│   │   └── prompts.py           # EA-specific prompt templates
 │   ├── knowledge/          # Knowledge graph and SPARQL
-│   ├── safety/             # Grounding and validation
-│   ├── routing/            # Query router
-│   ├── archimate/          # ArchiMate parsing
-│   ├── validation/         # Critic and TOGAF compliance
-│   ├── agent/              # Main pipeline
-│   ├── api/                # FastAPI interface
-│   └── evaluation/         # Quality metrics
+│   │   └── kg_loader.py         # RDF graph loader and SPARQL
+│   ├── safety/             # Grounding and citation validation
+│   │   ├── grounding.py         # Citation validation
+│   │   └── citation_validator.py # Authentic citation checking
+│   ├── routing/            # Query routing and disambiguation
+│   │   ├── query_router.py      # Domain-aware query routing
+│   │   ├── homonym_detector.py  # Homonym detection system
+│   │   └── homonym_guard.py     # Disambiguation protection
+│   ├── archimate/          # ArchiMate parsing and TOGAF
+│   │   └── parser.py            # ArchiMate XML parsing
+│   ├── validation/         # Critic and quality assessment
+│   │   ├── critic.py            # Response quality assessment
+│   │   └── togaf_rules.py       # TOGAF compliance validation
+│   ├── documents/          # Document processing
+│   │   └── pdf_indexer.py       # PDF indexing and chunking
+│   ├── web/                # Web interface
+│   │   ├── app.py               # FastAPI web application
+│   │   ├── static/              # CSS, JS assets
+│   │   └── templates/           # HTML templates
+│   ├── api/                # API endpoints (future)
+│   ├── monitoring/         # Performance monitoring
+│   │   └── performance_slos.py  # SLA monitoring
+│   ├── evaluation/         # Quality metrics and testing
+│   ├── utils/              # Utilities
+│   │   ├── trace.py             # Execution tracing
+│   │   ├── citation_ids.py      # Citation ID management
+│   │   └── dedupe_results.py    # Result deduplication
+│   ├── exceptions/         # Custom exceptions
+│   │   └── exceptions.py        # Domain-specific errors
+│   └── config/             # Configuration
+│       └── constants.py         # System constants
 ├── data/
-│   ├── energy_knowledge_graph.ttl  # DO NOT MODIFY - source of truth
-│   ├── models/             # ArchiMate XML files
-│   └── test_cases.json    # Evaluation test cases
-├── config/
-│   └── vocabularies.json   # Extracted terms for routing
+│   ├── docs/               # PDF documents for indexing
+│   ├── embeddings/         # Vector embeddings cache
+│   └── models/             # ArchiMate XML models
+├── config/                 # Configuration files
 ├── tests/
-│   ├── unit/              # Component tests
-│   └── integration/       # Full pipeline tests
-└── scripts/
-    ├── validate_kg.py     # Knowledge graph validation
-    └── run_evaluation.py  # Quality gate checks
+│   ├── unit/               # Unit tests with archive
+│   ├── integration/        # Integration tests
+│   └── conftest.py         # Test configuration
+├── tools/                  # Build and maintenance tools
+│   └── build_homonym_lexicon.py # Homonym detection tools
+├── pyproject.toml          # Poetry project configuration
+├── run_web_demo.py         # Web interface launcher
+└── test_conversation.py    # CLI testing interface
 ```
 
 ## Code Standards
@@ -66,27 +103,38 @@ alliander-ea-assistant/
 - Mock external dependencies in unit tests
 - Test coverage > 80%
 
-### Critical Classes to Implement
+### Current Architecture Components
 
-1. **GroundingCheck** (src/safety/grounding.py)
-   - Must validate ALL responses have citations
-   - Suggest citations if missing
-   - Raise exception if cannot ground
+1. **Multi-LLM Integration** (src/llm/)
+   - **Primary**: Groq with Llama 3.3, Qwen 3, Kimi K2 models
+   - **Secondary**: OpenAI GPT-4/5 support
+   - **Local**: Ollama integration for offline use
+   - **Factory Pattern**: Unified LLM provider interface
 
-2. **QueryRouter** (src/routing/query_router.py)
-   - Check domain terms FIRST
-   - Route to: structured_model | togaf_method | unstructured_docs
-   - Load vocabularies from config/
+2. **ProductionEAAgent** (src/agents/ea_assistant.py) ✅ IMPLEMENTED
+   - Complete 4R+G+C pipeline implementation
+   - Embedding-based retrieval with homonym disambiguation
+   - Citation validation with authentic source checking
+   - Full audit trail and session management
+   - Confidence assessment with human review triggers
 
-3. **Critic** (src/validation/critic.py)
-   - Rank top-3 suggestions
-   - Mark irrelevant items (max 18%)
-   - Force human review if confidence < 0.75
+3. **Homonym Disambiguation System** (src/routing/) ✅ IMPLEMENTED
+   - **HomonymDetector**: Identifies ambiguous terms in queries
+   - **HomonymGuard**: Prevents incorrect interpretations
+   - **QueryRouter**: Domain-aware routing with embedding fallback
+   - **Pre-loaded lexicons**: Energy domain terminology
 
-4. **ProductionEAAgent** (src/agent/ea_assistant.py)
-   - Implement full pipeline
-   - Store audit trail in context_store
-   - Generate PR drafts for changes
+4. **Advanced Safety System** (src/safety/) ✅ IMPLEMENTED
+   - **GroundingCheck**: Validates ALL responses have citations
+   - **CitationValidator**: Prevents fake citation generation
+   - **Pre-loaded citation pools**: Constrains LLM to authentic sources
+   - **Fingerprint validation**: Vector optimization for accuracy
+
+5. **Web Interface** (src/web/) ✅ IMPLEMENTED
+   - Real-time chat interface with trace visualization
+   - FastAPI backend with async handling
+   - Session persistence and conversation history
+   - Response quality indicators
 
 ## Quality Gates (MUST PASS)
 - **Grounding failures**: 0 (absolutely no ungrounded responses)
@@ -264,3 +312,56 @@ The system is production-ready with:
 - Comprehensive test coverage with `pytest`
 - Performance SLOs monitoring
 - Citation authenticity validation
+
+## Current Technology Stack
+
+### Core Technologies
+- **Python 3.11+** with Poetry dependency management
+- **FastAPI** for web interface and API endpoints
+- **RDFLib** for knowledge graph processing (39K+ triples)
+- **Sentence Transformers** for embedding generation
+- **PyTorch** for neural network operations
+
+### LLM Providers (Multi-LLM Architecture)
+```python
+# Primary: Groq (fast, cost-effective)
+GROQ_MODELS = ["llama-3.3-70b-versatile", "qwen2.5-72b-instruct", "deepseek-r1-distill-llama-70b"]
+
+# Secondary: OpenAI (high quality)
+OPENAI_MODELS = ["gpt-4", "gpt-5"]
+
+# Local: Ollama (offline capability)
+OLLAMA_MODELS = ["llama3.1", "qwen2.5"]
+```
+
+### Key Features in Production
+1. **Homonym Detection**: Identifies ambiguous terms like "power" (electrical vs. authority)
+2. **Citation Validation**: Prevents hallucinated citations with pre-loaded pools
+3. **Session Management**: Persistent conversation state with audit trails
+4. **Trace Visualization**: Real-time pipeline execution tracking
+5. **Performance SLOs**: Response time and accuracy monitoring
+
+## How to Use the Current System
+
+### Web Interface (Recommended)
+```bash
+python run_web_demo.py
+# Open http://localhost:8000
+```
+
+### CLI Testing
+```bash
+python test_conversation.py
+```
+
+### Running Tests
+```bash
+# Unit tests
+pytest tests/unit/ -v
+
+# Integration tests
+pytest tests/integration/ -v
+
+# Full test suite with coverage
+pytest --cov=src tests/
+```

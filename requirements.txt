@@ -13,6 +13,7 @@ httpx==0.25.2
 # Knowledge Graph Processing
 rdflib==7.0.0
 SPARQLWrapper==2.0.0
+lxml==4.9.3   # XML parsing for ArchiMate models
 
 # Machine Learning & Text Processing
 sentence-transformers==2.2.2
@@ -28,11 +29,13 @@ python-dotenv==1.0.0
 pydantic==2.5.0
 
 # Data Processing
-pandas==2.1.4
-requests==2.31.0
+pandas==2.2.2
+requests==2.32.3
+fsspec[http]==2024.5.0
 
 # Async Support
 aiofiles==23.2.1
 
 # Logging
 colorama==0.4.6
+

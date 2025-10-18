@@ -1,0 +1,29 @@
+"""Configuration module for AInstein EA Assistant."""
+
+from .constants import (
+    CONFIDENCE,
+    SEMANTIC_CONFIG,
+    RANKING_CONFIG,
+    CONTEXT_CONFIG,
+    LANG_CONFIG,
+    PERFORMANCE_CONFIG,
+    COMPARISON_TERM_STOP_WORDS,
+    QUERY_TERM_STOP_WORDS,
+    REQUIRED_CITATION_PREFIXES,
+    COMPARISON_PATTERNS,
+    get_config_summary,
+)
+
+__all__ = [
+    'CONFIDENCE',
+    'SEMANTIC_CONFIG',
+    'RANKING_CONFIG',
+    'CONTEXT_CONFIG',
+    'LANG_CONFIG',
+    'PERFORMANCE_CONFIG',
+    'COMPARISON_TERM_STOP_WORDS',
+    'QUERY_TERM_STOP_WORDS',
+    'REQUIRED_CITATION_PREFIXES',
+    'COMPARISON_PATTERNS',
+    'get_config_summary',
+]

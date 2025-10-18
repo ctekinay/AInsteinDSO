@@ -18,6 +18,7 @@ from typing import Dict, List, Set, Optional, TYPE_CHECKING
 
 from src.exceptions.exceptions import UngroundedReplyError
 from src.utils.trace import get_tracer
+from src.config.constants import REQUIRED_CITATION_PREFIXES
 
 # TYPE_CHECKING import to avoid circular dependencies
 if TYPE_CHECKING:
@@ -26,19 +27,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 tracer = get_tracer()
 
-# REQUIRED citation prefixes - NO RESPONSE without at least one of these
-REQUIRED_CITATION_PREFIXES = [
-    "archi:id-",
-    "skos:",
-    "iec:",
-    "togaf:adm:",
-    "togaf:concepts:",
-    "archimate:research:",
-    "entsoe:",
-    "lido:",
-    "doc:",
-    "external:"
-]
+# REQUIRED citation prefixes imported from config/constants.py
 
 # Comprehensive regex patterns for citation detection
 CITATION_PATTERNS = {
@@ -53,6 +42,14 @@ CITATION_PATTERNS = {
     "doc:": r"doc:[a-zA-Z0-9\-_]+:[0-9]{3}",
     "external:": r"external:[a-zA-Z0-9\-_]+:[a-zA-Z0-9\-_]+"
 }
+
+# Enhanced patterns for comparison responses and edge cases
+ENHANCED_CITATION_PATTERNS = [
+    r'\[([a-zA-Z0-9\-:]+)\]',  # Square bracket format: [archi:id-cap-001]
+    r'\*\*.*?\*\*\s*\[([a-zA-Z0-9\-:]+)\]',  # Bold text with citation: **Concept** [citation]
+    r'`([a-zA-Z0-9\-:]+)`',  # Backtick format: `archi:id-cap-001`
+    r'(?:citation|ref|source):\s*([a-zA-Z0-9\-:]+)',  # Labeled citations: citation: archi:id-cap-001
+]
 
 
 class GroundingCheck:
@@ -298,6 +295,14 @@ class GroundingCheck:
         for prefix, pattern in self.citation_patterns.items():
             matches = re.findall(pattern, text, re.IGNORECASE)
             citations.extend(matches)
+
+        # Apply enhanced patterns for comparison responses and edge cases
+        for pattern in ENHANCED_CITATION_PATTERNS:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            # Filter matches to only include valid citation prefixes
+            for match in matches:
+                if any(match.lower().startswith(prefix) for prefix in REQUIRED_CITATION_PREFIXES):
+                    citations.append(match)
 
         # Remove duplicates while preserving order
         seen = set()
