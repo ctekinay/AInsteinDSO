@@ -33,7 +33,7 @@ import re
 from dataclasses import dataclass, asdict, field
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any, Tuple, Set
 from uuid import uuid4
 from rdflib import URIRef, Graph, Namespace
 from src.knowledge.kg_loader import KnowledgeGraphLoader
@@ -49,7 +49,8 @@ from src.exceptions.exceptions import UngroundedReplyError, LowConfidenceError, 
 from src.utils.trace import get_tracer
 from src.agents.session_manager import SessionManager, ConversationTurn
 from src.knowledge.homonym_guard import apply_homonym_guard
-# optionally
+
+
 try:
     from src.utils.dedupe_results import dedupe_candidates
 except Exception:
@@ -957,13 +958,16 @@ class ProductionEAAgent:
                 )
                 
                 candidates = retrieval_context.get("candidates", [])
-                candidates, info_message = await self._handle_duplicate_definitions(
-                    query,
+                candidates, info_message, duplicate_citations = await self._handle_duplicate_definitions(
+                    query, 
                     candidates
                 )
                 # ✅ NEW UX: Don't block - just prepend info to response
                 # Continue processing normally, add info message later
                 duplicate_info = info_message  # Save for later
+
+                # ✅ NEW: Store duplicate_citations in retrieval_context so it's available later
+                retrieval_context["duplicate_citations"] = duplicate_citations
                 
                 # Add conversation context to retrieval context
                 if is_followup:
@@ -1839,27 +1843,41 @@ class ProductionEAAgent:
         self, 
         query: str, 
         candidates: List[Dict]
-    ) -> Tuple[List[Dict], Optional[str]]:
+    ) -> Tuple[List[Dict], Optional[str], Set[str]]:
         """
         Detect if multiple vocabularies have the same term.
-        Return candidates + optional informational message (NOT blocking).
-        
-        IMPROVED UX: Show all definitions immediately, don't force user to choose.
+        Uses LLM to understand user intent for semantic matching.
         
         Returns:
-            (candidates, info_message)
+            (candidates, info_message, duplicate_citations_set)
         """
         
-        # Group candidates by term (case-insensitive)
-        term_groups = {}
-        for candidate in candidates:
-            term = candidate.get('element', '').lower().strip()
-            if term:
-                if term not in term_groups:
-                    term_groups[term] = []
-                term_groups[term].append(candidate)
+        if not candidates:
+            return candidates, None, set()
         
-        # Check for duplicates (same term in multiple vocabularies)
+        # ✅ USE LLM TO EXTRACT THE ACTUAL SEARCH TERM(S)
+        search_terms = await self._extract_search_terms_with_llm(query, candidates)
+        
+        if not search_terms:
+            # Fallback: no duplicates detected
+            return candidates, None, set()
+        
+        # Group candidates by term using LLM-extracted terms
+        term_groups = {}
+        
+        for candidate in candidates:
+            element = candidate.get('element', '').strip()
+            
+            # Check if this candidate matches any of the search terms
+            for search_term in search_terms:
+                if self._is_semantic_match(element, search_term):
+                    term_key = element.lower()  # Use actual element name as key
+                    if term_key not in term_groups:
+                        term_groups[term_key] = []
+                    term_groups[term_key].append(candidate)
+                    break  # Only add to one group
+        
+        # Find terms with multiple definitions
         duplicates = {
             term: group 
             for term, group in term_groups.items() 
@@ -1867,40 +1885,43 @@ class ProductionEAAgent:
         }
         
         if not duplicates:
-            return candidates, None
+            return candidates, None, set()
         
-        # Build informational message (NOT blocking)
+        # Build informational message
         info_lines = []
         info_lines.append("ℹ️  **Multiple definitions found:**\n")
         
         for term, group in duplicates.items():
-            info_lines.append(f"The term **'{term.title()}'** has {len(group)} definitions in our knowledge base:\n")
+            # Use the original capitalization from first candidate
+            display_term = group[0].get('element', term)
+            info_lines.append(f"The term **'{display_term}'** has {len(group)} definitions in our knowledge base:\n")
             
             for idx, candidate in enumerate(group, 1):
                 citation = candidate.get('citation', 'unknown')
-                
-                #Get vocabulary name from citation
                 vocab_name = self._get_vocabulary_name_from_citation(citation)
-                 
-                #Get actual concept label
-                concept_label = candidate.get('element', term.title())
+                concept_label = candidate.get('element', display_term)
                 definition = candidate.get('definition', 'No definition available')
                 
-                # Format long definitions with line breaks for readability
+                # Format long definitions with line breaks
                 if len(definition) > 500:
-                    # Add paragraph breaks every 250 characters at sentence boundaries
                     formatted_def = self._format_long_definition(definition)
                 else:
                     formatted_def = definition
                 
-                # ✅ FIX: Consistent formatting with backticks
                 info_lines.append(f"{idx}. **{concept_label}** `[{citation}]` — *{vocab_name}*")
                 info_lines.append(f"   {formatted_def}\n")
             
             info_lines.append("All definitions are shown above. If you need more details about a specific one, just ask!\n")
         
-        # The user can see all definitions and continue naturally
-        return candidates, "\n".join(info_lines)
+        # Collect all duplicate citations
+        all_duplicate_citations = set()
+        for term, group in duplicates.items():
+            for candidate in group:
+                citation = candidate.get('citation', 'unknown')
+                if citation != "unknown":
+                    all_duplicate_citations.add(citation)
+        
+        return candidates, "\n".join(info_lines), all_duplicate_citations
 
     def _get_vocabulary_name_from_citation(self, citation: str) -> str:
         """Extract vocabulary name from citation - COMPLETE VERSION."""
@@ -1955,6 +1976,116 @@ class ProductionEAAgent:
 
         else:
             return "Unknown Vocabulary"
+    
+    async def _extract_search_terms_with_llm(self, query: str, candidates: List[Dict]) -> List[str]:
+        """
+        Use LLM to extract the actual search term(s) from the query.
+        
+        This handles complex queries like:
+        - "I am curious to know the definition of Asset in Alliander context"
+        - "What's the difference between Asset and Asset Management?"
+        - "Tell me about reactive power"
+        
+        Args:
+            query: User's original query
+            candidates: List of retrieved candidates
+            
+        Returns:
+            List of search terms (usually 1-2 terms)
+        """
+        if not self.llm_council:
+            # Fallback: simple extraction
+            return self._extract_search_terms_simple(query)
+        
+        # Get candidate labels for context
+        candidate_labels = [c.get('element', '') for c in candidates[:10]]
+        
+        prompt = f"""Extract the main concept(s) the user is asking about.
+
+    User Query: "{query}"
+
+    Available Concepts:
+    {chr(10).join(f"- {label}" for label in candidate_labels if label)}
+
+    TASK: What concept(s) is the user asking about?
+
+    RULES:
+    1. Return ONLY the concept name(s), nothing else
+    2. Use the EXACT capitalization from Available Concepts if it matches
+    3. If asking about ONE concept, return just that one
+    4. If comparing TWO concepts, return both separated by newline
+    5. Ignore context words like "in Alliander", "definition of", etc.
+
+    Examples:
+    Query: "What is Asset?"
+    Response: Asset
+
+    Query: "I'm curious about Asset Management in the energy context"
+    Response: Asset Management
+
+    Query: "What's the difference between Asset and Asset Management?"
+    Response: Asset
+    Asset Management
+
+    Query: "Tell me about reactive power"
+    Response: reactive power
+
+    Your response (concept name(s) only):"""
+        
+        try:
+            response = await self.llm_council.primary_llm.generate(
+                prompt=prompt,
+                system_prompt="You extract search terms from queries. Respond with ONLY the concept name(s), one per line.",
+                temperature=0.1,
+                max_tokens=50
+            )
+            
+            # Parse response
+            content = response.content.strip()
+            terms = [line.strip() for line in content.split('\n') if line.strip()]
+            
+            logger.info(f"🧠 LLM extracted search terms: {terms}")
+            return terms[:3]  # Max 3 terms
+            
+        except Exception as e:
+            logger.warning(f"LLM term extraction failed: {e}, using fallback")
+            return self._extract_search_terms_simple(query)
+
+    def _extract_search_terms_simple(self, query: str) -> List[str]:
+        """Fallback: Simple term extraction without LLM."""
+        query_lower = query.lower().strip()
+        
+        # Remove common question patterns
+        for pattern in ['what is ', 'what are ', 'define ', 'explain ', 'tell me about ', 
+                        'i am curious to know ', 'the definition of ', 'in alliander context',
+                        'in the energy context', 'in dutch context']:
+            query_lower = query_lower.replace(pattern, '')
+        
+        query_term = query_lower.replace('?', '').strip()
+        query_term = ' '.join(query_term.split())  # Normalize spaces
+        
+        return [query_term] if query_term else []
+
+    def _is_semantic_match(self, element: str, search_term: str) -> bool:
+        """
+        Check if element matches search term semantically.
+        
+        Uses case-insensitive comparison with normalization.
+        """
+        element_normalized = ' '.join(element.lower().strip().split())
+        search_normalized = ' '.join(search_term.lower().strip().split())
+        
+        # Exact match
+        if element_normalized == search_normalized:
+            return True
+        
+        # Check if search term is a complete word/phrase in element
+        # This prevents "Asset" matching "Asset Management"
+        element_words = set(element_normalized.split())
+        search_words = set(search_normalized.split())
+        
+        # Search term must be complete (all words present, no extra words)
+        return element_words == search_words
 
     async def _query_documents(self, query_terms: List[str], trace_id: Optional[str] = None) -> List[Dict]:
         """
@@ -2146,7 +2277,12 @@ class ProductionEAAgent:
             logger.warning(f"LLM generation failed: {e}. Using template fallback.")
 
         # Fall back to enhanced template
-        response = await self._generate_enhanced_template_response(query, retrieval_context, sorted_candidates)
+        response = await self._generate_enhanced_template_response(
+            query, 
+            retrieval_context, 
+            sorted_candidates,
+            duplicate_citations=retrieval_context.get("duplicate_citations", set())  # ✅ Get from context
+        )
         return response, self._prepare_critic_candidates(sorted_candidates)
 
     async def _refine_response_for_comparison(
@@ -2411,9 +2547,14 @@ class ProductionEAAgent:
 
         return cleaned_response
 
-    async def _generate_enhanced_template_response(self, query: str, retrieval_context: Dict,
-                                                sorted_candidates: List[Dict]) -> str:
-
+    async def _generate_enhanced_template_response(
+        self, 
+        query: str, 
+        retrieval_context: Dict,
+        sorted_candidates: List[Dict],
+        duplicate_citations: Set[str] = None  # ✅ NEW parameter
+    ) -> str:
+        
         """
         ENHANCED template response generation.
 
@@ -2429,30 +2570,30 @@ class ProductionEAAgent:
         is_definition = is_definition_query(query)
 
         if is_definition:
-            return await self._build_definition_response(sorted_candidates, retrieval_context)
+            # Pass duplicate citations to avoid showing them in "Other Results"
+            return await self._build_definition_response(
+                sorted_candidates, 
+                retrieval_context,
+                duplicate_citations=duplicate_citations or set()  # ✅ Simpler
+            )
         else:
             return await self._build_recommendation_response(sorted_candidates, retrieval_context, query)  # ← Add await
 
-    async def _build_definition_response(self, candidates: List[Dict], context: Dict) -> str:
-        """
-        Build comprehensive definition response.
-
-        SIMPLIFIED:
-        - Shows only: definition, URI, vocabulary name
-        - No assumptions about metadata fields
-        - Distinguishes "Related Concepts" from "Other Results"
-        """
+    async def _build_definition_response(
+        self, 
+        candidates: List[Dict], 
+        context: Dict,
+        duplicate_citations: Set[str] = None  # ✅ NEW parameter
+    ) -> str:
+        """Build comprehensive definition response."""
         primary = candidates[0]
-
+        
         lines = []
-
+        
         # Primary definition
         element = primary.get("element", "Unknown")
         definition = primary.get("definition", "")
-
-        # Better citation extraction
         citation = self._extract_citation(primary, fallback="unknown")
-
         
         lines.append(f"**{element}**")
         lines.append("")
@@ -2466,41 +2607,47 @@ class ProductionEAAgent:
             metadata = self.kg_loader.get_citation_metadata(citation)
             if metadata:
                 uri = metadata.get("uri", "")
-                
-                # Get vocabulary name
                 vocab_name = self.kg_loader.get_vocabulary_membership(citation)
                 if not vocab_name:
                     vocab_name = self.kg_loader._extract_vocabulary_name_from_uri(uri)
                 
-                # Show simple reference section
                 lines.append("---")
-                lines.append("")
                 lines.append("**Reference:**")
-                
                 if vocab_name:
                     lines.append(f"• **Vocabulary:** {vocab_name}")
-                
                 if uri:
                     lines.append(f"• **URI:** {uri}")
-                
                 lines.append(f"• **Citation:** `{citation}`")
-                lines.append("")
         else:
-            # Fallback if no metadata
             source = primary.get("source", "")
             if source:
                 lines.append(f"*Source: {source} `{citation}`*")
-                lines.append("")
         
-        # ✅ Track citations shown in multiple definitions (if any)
-        shown_in_multiple_defs = set()
-        # The primary definition
-        shown_in_multiple_defs.add(citation)
+        # ✅ NEW: Build "other results" EXCLUDING citations that will appear in multiple defs
+        # Track ALL citations that will be shown in multiple definitions section
+        shown_citations = {citation}  # Primary is always shown
+        if duplicate_citations:
+            shown_citations.update(duplicate_citations)
+            
+        # Check if there are duplicate definitions (will be shown in info message)
+        term = element.lower().strip()
+        duplicate_citations = set()
+        
+        for c in candidates:
+            candidate_term = c.get("element", "").lower().strip()
+            if candidate_term == term:
+                cit = self._extract_citation(c, fallback="unknown")
+                if cit != citation:  # Not the primary
+                    duplicate_citations.add(cit)
+        
+        # If duplicates exist, they'll be shown in the info message, so exclude them
+        if duplicate_citations:
+            shown_citations.update(duplicate_citations)
         
         # Detect query language
         query_language = await self._detect_language_with_llm(element + " " + definition)
         
-        # Check for explicit SKOS relations (skos:related, skos:broader, skos:narrower)
+        # Check for explicit SKOS relations
         has_explicit_relations = self._has_explicit_relations(primary, citation)
         
         if has_explicit_relations:
@@ -2509,27 +2656,29 @@ class ProductionEAAgent:
             lines.append("**Related Concepts:**")
             lines.append("*Concepts explicitly linked in the vocabulary*")
             lines.append("")
-
+            
             for relation in has_explicit_relations[:3]:
+                rel_citation = relation['citation']
+                if rel_citation:
+                    shown_citations.add(rel_citation)  # ✅ Track these too
                 lines.append(f"• **{relation['label']}**: {relation.get('definition', 'No definition available')} `{relation['citation']}`")
-
+            
             lines.append("")
-
-        # ✅ FIXED: Proper filtering and deduplication
-        primary_term = primary.get("element", "").lower()
-        main_words = primary_term.split()[:2]  # Get first 2 words, e.g., ["reactive", "power"]
         
-        seen_citations = {citation}  # ✅ Don't duplicate primary
-        seen_citations.update(shown_in_multiple_defs)  # ✅ Don't duplicate from multiple defs
+        # ✅ NOW build "Other Results" excluding ALL shown citations
+        primary_term = primary.get("element", "").lower()
+        main_words = primary_term.split()[:2]
+        
         other_results = []
-
+        
         for c in candidates[1:10]:
             if not c.get("definition"):
                 continue
-
+            
             candidate_citation = self._extract_citation(c, fallback="unknown")
-            # ✅ Skip duplicates by citation
-            if candidate_citation in seen_citations:
+            
+            # ✅ Skip if already shown anywhere
+            if candidate_citation in shown_citations:
                 continue
             
             candidate_term = c.get("element", "").lower()
@@ -2542,34 +2691,27 @@ class ProductionEAAgent:
             
             # ✅ Add to results
             other_results.append(c)
-            seen_citations.add(candidate_citation)
+            shown_citations.add(candidate_citation)
             
-            if len(other_results) >= 2:  # ✅ Limit to 2
+            if len(other_results) >= 2:
                 break
-
+        
         if other_results:
             lines.append("---")
             lines.append("")
             lines.append("**Other Results Found:**")
             lines.append("*Additional entries matching your search*")
             lines.append("")
-
+            
             for other in other_results:
                 other_name = other.get("element", "Unknown")
                 other_def = other.get("definition", "")
-                
-                # Format long definitions with line breaks for readability
-                if len(other_def) > 500:
-                    # Add paragraph breaks every 250 characters at sentence boundaries
-                    formatted_def = self._format_long_definition(other_def)
-                else:
-                    formatted_def = other_def
-                
                 other_cit = self._extract_citation(other, fallback="unknown")
+                
                 lines.append(f"• **{other_name}**: {other_def} **`[{other_cit}]`**")
-
+            
             lines.append("")
-
+        
         return "\n".join(lines)
 
     def _has_explicit_relations(self, primary: Dict, citation: Optional[str] = None) -> List[Dict]:

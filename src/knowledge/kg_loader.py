@@ -720,9 +720,13 @@ class KnowledgeGraphLoader:
         # Sort by score (exact matches first) and label
         all_results.sort(key=lambda x: (-x['score'], x['label']))
 
-        # Return top 10 results
-        top_results = all_results[:10]
-        logger.info(f"Returning top {len(top_results)} results for terms: {filtered_terms}")
+        # Separate exact matches from partial matches
+        exact_matches = [r for r in all_results if r['score'] == 100.0]
+        partial_matches = [r for r in all_results if r['score'] < 100.0]
+
+        # Return all exact matches + top 10 partials
+        top_results = exact_matches + partial_matches[:max(10, 20 - len(exact_matches))]
+        logger.info(f"Returning {len(top_results)} results: {len(exact_matches)} exact, {len(partial_matches[:10])} partial")
         
         return top_results
 

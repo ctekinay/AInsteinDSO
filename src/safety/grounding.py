@@ -300,41 +300,55 @@ class GroundingCheck:
     def _extract_existing_citations(self, text: str) -> List[str]:
         """
         Extract all valid citations from text using regex patterns.
-
+        
+        ENHANCED: Prioritizes bracket format [citation:id] which is the standard.
+        
         Args:
             text: Text to search for citations
-
+            
         Returns:
             List of found citation strings
         """
         if not text:
             return []
-
-        citations = []
-
-        # Apply each pattern to find citations
-        for prefix, pattern in self.citation_patterns.items():
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            citations.extend(matches)
-
-        # Apply enhanced patterns for comparison responses and edge cases
-        for pattern in ENHANCED_CITATION_PATTERNS:
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            # Filter matches to only include valid citation prefixes
-            for match in matches:
-                if any(match.lower().startswith(prefix) for prefix in REQUIRED_CITATION_PREFIXES):
-                    citations.append(match)
-
-        # Remove duplicates while preserving order
-        seen = set()
-        unique_citations = []
-        for citation in citations:
-            if citation.lower() not in seen:
-                seen.add(citation.lower())
-                unique_citations.append(citation)
-
+        
+        citations = set()  # Use set to avoid duplicates
+        
+        # ✅ PRIMARY PATTERN: Standard bracket format [namespace:id]
+        # This matches: [eurlex:631-28], [iec:Asset], [skos:123], etc.
+        bracket_pattern = r'\[\s*([a-zA-Z0-9]+:[a-zA-Z0-9\-_\.]+)\s*\]'
+        bracket_matches = re.findall(bracket_pattern, text, re.IGNORECASE)
+        
+        logger.debug(f"Bracket pattern found {len(bracket_matches)} citations: {bracket_matches[:5]}")
+        
+        for match in bracket_matches:
+            cleaned = match.strip()
+            if cleaned:
+                citations.add(cleaned)
+        
+        # ✅ SECONDARY PATTERNS: Fallback for other formats
+        # Only use these if bracket pattern didn't find anything
+        if not citations:
+            # Try the old patterns (without brackets)
+            for prefix, pattern in self.citation_patterns.items():
+                matches = re.findall(pattern, text, re.IGNORECASE)
+                citations.update(matches)
+            
+            # Try enhanced patterns
+            for pattern in ENHANCED_CITATION_PATTERNS:
+                matches = re.findall(pattern, text, re.IGNORECASE)
+                for match in matches:
+                    # Accept any citation with colon format
+                    if ':' in match:
+                        citations.add(match.strip())
+        
+        # Convert to list and preserve order
+        unique_citations = list(citations)
+        
+        logger.debug(f"Total extracted citations: {len(unique_citations)}")
+        
         return unique_citations
-
+    
     def validate_citation_format(self, citation: str) -> bool:
         """
         Validate that a citation follows the correct format.

@@ -253,19 +253,245 @@ QUERY_TERM_STOP_WORDS: Set[str] = {
 }
 
 # Citation pattern prefixes
-# Based on: All supported citation namespaces
+# ============================================================================
+# CITATION PREFIXES - Complete List
+# ============================================================================
+# All valid citation prefixes used across the knowledge base.
+# These are checked during grounding validation to ensure responses
+# are properly cited from authoritative sources.
+#
+# Last Updated: 2025-10-20 (expanded from prototype)
+# Citation Counts: 3,970 total (skos: 3249, eurlex: 562, entsoe: 58, iec: 19, archi: 82)
+
+# Primary citation prefixes (required for grounding validation)
 REQUIRED_CITATION_PREFIXES: List[str] = [
-    "archi:id-",
-    "skos:",
-    "iec:",
-    "togaf:adm:",
-    "togaf:concepts:",
-    "archimate:research:",
-    "entsoe:",
-    "lido:",
-    "doc:",
-    "external:"
+    # ─────────────────────────────────────────────────────────────────────
+    # ALLIANDER VOCABULARIES (3,249+ citations)
+    # ─────────────────────────────────────────────────────────────────────
+    "skos:",              # Alliander SKOS Vocabulary (PRIMARY - 3,249 citations)
+    "aiontology:",        # Alliander Artificial Intelligence Ontology
+    "modulair:",          # Alliander Modulair Station Building Blocks
+    "msb:",              # Modulair Station Building (alternative prefix)
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # IEC STANDARDS - International Electrotechnical Commission (19+ citations)
+    # ─────────────────────────────────────────────────────────────────────
+    "iec:",              # Generic IEC (19 citations)
+    "iec61968:",         # IEC 61968 - Meters, Assets and Work
+    "iec61970:",         # IEC 61970 - Common Information Model (CIM/CGMES)
+    "iec62325:",         # IEC 62325 - Market Model
+    "iec62746:",         # IEC 62746 - Demand Site Resource
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # EUROPEAN STANDARDS & REGULATION (620+ citations)
+    # ─────────────────────────────────────────────────────────────────────
+    "eurlex:",           # EUR-Lex Regulation (PRIMARY - 562 citations) ⚠️ CRITICAL
+    "acer:",             # EUR Energy Regulators (ACER)
+    "entsoe:",           # Harmonized Electricity Market Role Model (ENTSO-E - 58 citations)
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # DUTCH GOVERNMENT & REGULATION
+    # ─────────────────────────────────────────────────────────────────────
+    "dutch:",            # Dutch Regulation Electricity
+    "lido:",             # Linked Data Overheid (Dutch Government - 0 citations currently)
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # BRITISH STANDARDS
+    # ─────────────────────────────────────────────────────────────────────
+    "pas1879:",          # PAS1879 - Energy smart appliances (BSI)
+    "bsi:",              # British Standards Institution (alternative prefix)
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # ARCHITECTURE & METHODOLOGY (82+ citations)
+    # ─────────────────────────────────────────────────────────────────────
+    "archi:",            # ArchiMate Model elements (82 citations)
+    "archi:id-",         # ArchiMate element IDs (specific format)
+    "togaf:adm:",        # TOGAF Architecture Development Method
+    "togaf:concepts:",   # TOGAF Concepts (format: togaf:concepts:001)
+    "archimate:research:", # ArchiMate Research (format: archimate:research:001)
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # DOCUMENTS & EXTERNAL SOURCES
+    # ─────────────────────────────────────────────────────────────────────
+    "doc:",              # PDF Documents (format: doc:filename:page123)
+    "external:",         # External sources (format: external:source:identifier)
+    
+    # ─────────────────────────────────────────────────────────────────────
+    # LEGACY (Deprecated but still in knowledge base)
+    # ─────────────────────────────────────────────────────────────────────
+    "confluence:",       # Alliander Confluence - Glossary (Out of Date)
+    "poolparty:",        # Alliander Poolparty - Glossary (Out of Date)
 ]
+
+# ============================================================================
+# CITATION PREFIX CATEGORIES (for reporting and validation)
+# ============================================================================
+
+CITATION_PREFIX_CATEGORIES: Dict[str, List[str]] = {
+    "alliander": ["skos:", "aiontology:", "modulair:", "msb:"],
+    "iec_standards": ["iec:", "iec61968:", "iec61970:", "iec62325:", "iec62746:"],
+    "european_regulation": ["eurlex:", "acer:", "entsoe:"],
+    "dutch_regulation": ["dutch:", "lido:"],
+    "british_standards": ["pas1879:", "bsi:"],
+    "architecture": ["archi:", "archi:id-", "togaf:adm:", "togaf:concepts:", "archimate:research:"],
+    "documents": ["doc:", "external:"],
+    "legacy": ["confluence:", "poolparty:"]
+}
+
+# ============================================================================
+# HIGH-PRIORITY PREFIXES (for ranking/sorting)
+# ============================================================================
+# Prefixes that should be prioritized in responses (most authoritative)
+
+HIGH_PRIORITY_PREFIXES: List[str] = [
+    "skos:",        # Alliander primary vocabulary (3,249 citations)
+    "eurlex:",      # EU Regulation (562 citations)
+    "iec61968:",    # IEC Meters & Assets
+    "iec61970:",    # IEC CIM/CGMES
+    "entsoe:",      # European grid standards (58 citations)
+    "archi:",       # ArchiMate models (82 citations)
+]
+
+# ============================================================================
+# CITATION VALIDATION HELPERS
+# ============================================================================
+
+def is_valid_citation_prefix(citation: str) -> bool:
+    """
+    Check if citation has a valid prefix.
+    
+    Args:
+        citation: Citation string to validate (e.g., "eurlex:631-28")
+        
+    Returns:
+        True if citation starts with a valid prefix
+        
+    Example:
+        >>> is_valid_citation_prefix("eurlex:631-28")
+        True
+        >>> is_valid_citation_prefix("fake:123")
+        False
+    """
+    if not citation or not isinstance(citation, str):
+        return False
+    
+    citation_lower = citation.lower()
+    return any(citation_lower.startswith(prefix.lower()) 
+               for prefix in REQUIRED_CITATION_PREFIXES)
+
+def get_citation_category(citation: str) -> str:
+    """
+    Get category for a citation prefix.
+    
+    Args:
+        citation: Citation string (e.g., "iec61968:Asset")
+        
+    Returns:
+        Category name or "unknown" if not found
+        
+    Example:
+        >>> get_citation_category("iec61968:Asset")
+        'iec_standards'
+        >>> get_citation_category("eurlex:631-28")
+        'european_regulation'
+    """
+    if not citation or not isinstance(citation, str):
+        return "unknown"
+    
+    citation_lower = citation.lower()
+    for category, prefixes in CITATION_PREFIX_CATEGORIES.items():
+        if any(citation_lower.startswith(prefix.lower()) for prefix in prefixes):
+            return category
+    
+    return "unknown"
+
+def is_high_priority_citation(citation: str) -> bool:
+    """
+    Check if citation is from a high-priority source.
+    
+    High-priority sources are the most authoritative and should be
+    preferred when multiple sources are available.
+    
+    Args:
+        citation: Citation string (e.g., "skos:220")
+        
+    Returns:
+        True if citation is from a high-priority source
+        
+    Example:
+        >>> is_high_priority_citation("skos:220")
+        True
+        >>> is_high_priority_citation("poolparty:x")
+        False
+    """
+    if not citation or not isinstance(citation, str):
+        return False
+    
+    citation_lower = citation.lower()
+    return any(citation_lower.startswith(prefix.lower()) 
+               for prefix in HIGH_PRIORITY_PREFIXES)
+
+def get_citation_source_name(citation: str) -> str:
+    """
+    Get human-readable source name for a citation.
+    
+    Args:
+        citation: Citation string (e.g., "eurlex:631-28")
+        
+    Returns:
+        Human-readable source name
+        
+    Example:
+        >>> get_citation_source_name("eurlex:631-28")
+        'EUR-Lex Regulation'
+        >>> get_citation_source_name("skos:220")
+        'Alliander SKOS Vocabulary'
+    """
+    if not citation or not isinstance(citation, str):
+        return "Unknown Source"
+    
+    citation_lower = citation.lower()
+    
+    # Map prefixes to human-readable names
+    source_names = {
+        "skos:": "Alliander SKOS Vocabulary",
+        "eurlex:": "EUR-Lex Regulation",
+        "entsoe:": "ENTSO-E Harmonized Market Model",
+        "iec61968:": "IEC 61968 - Meters, Assets and Work",
+        "iec61970:": "IEC 61970 - Common Information Model",
+        "iec62325:": "IEC 62325 - Market Model",
+        "iec62746:": "IEC 62746 - Demand Site Resource",
+        "iec:": "IEC Standards",
+        "archi:": "ArchiMate Model",
+        "togaf:adm:": "TOGAF ADM",
+        "dutch:": "Dutch Regulation",
+        "acer:": "ACER (EU Energy Regulators)",
+        "pas1879:": "PAS1879 - Energy Smart Appliances",
+        "doc:": "PDF Document",
+        "confluence:": "Alliander Confluence (Legacy)",
+        "poolparty:": "Alliander Poolparty (Legacy)",
+    }
+    
+    for prefix, name in source_names.items():
+        if citation_lower.startswith(prefix):
+            return name
+    
+    return "Unknown Source"
+
+# ============================================================================
+# CITATION STATISTICS
+# ============================================================================
+# NOTE: Based on system initialization logs (2025-10-20)
+
+CITATION_STATISTICS: Dict[str, int] = {
+    "skos": 3249,        # Alliander SKOS Vocabulary
+    "eurlex": 562,       # EUR-Lex Regulation
+    "entsoe": 58,        # ENTSO-E Market Model
+    "iec": 19,           # IEC Generic
+    "archi": 82,         # ArchiMate Models
+    "lido": 0,           # Dutch Government (empty)
+    "total": 3970        # Total citations
+}
 
 # ============================================================================
 # PERFORMANCE CONSTANTS
@@ -441,7 +667,7 @@ def validate_all_constants() -> bool:
         CONTEXT_CONFIG.__post_init__()
 
         # Validate API reranking config
-        API_RERANKING_CONFIG.__post_init__()  # ← ADD THIS LINE
+        API_RERANKING_CONFIG.__post_init__()
 
         # Additional cross-validation
         assert SEMANTIC_CONFIG.MIN_SCORE_CONTEXT >= SEMANTIC_CONFIG.MIN_SCORE_PRIMARY, \
@@ -449,6 +675,23 @@ def validate_all_constants() -> bool:
         
         assert RANKING_CONFIG.PRIORITY_SCORE_DEFINITION > RANKING_CONFIG.PRIORITY_SCORE_CONTEXT, \
             "Definition priority should be > context priority"
+        
+        # ✅ NEW: Validate citation prefixes
+        assert len(REQUIRED_CITATION_PREFIXES) > 0, \
+            "REQUIRED_CITATION_PREFIXES cannot be empty"
+        
+        assert "eurlex:" in REQUIRED_CITATION_PREFIXES, \
+            "eurlex: prefix must be in REQUIRED_CITATION_PREFIXES (562 citations)"
+        
+        assert "skos:" in REQUIRED_CITATION_PREFIXES, \
+            "skos: prefix must be in REQUIRED_CITATION_PREFIXES (3249 citations)"
+        
+        # Validate helper functions work
+        assert is_valid_citation_prefix("eurlex:631-28") == True, \
+            "Citation validation helper failed"
+        
+        assert get_citation_category("eurlex:631-28") == "european_regulation", \
+            "Citation category helper failed"
         
         return True
         

@@ -210,14 +210,29 @@ Instructions:
 Response:"""
         
         try:
+            logger.info(f"📝 Generating primary response with {len(citation_pool)} citations")
+            logger.info(f"📝 Context has {len(context.get('candidates', []))} candidates")
+    
             # Use the LLMProvider's generate method
             response = await self.primary_llm.generate(
                 prompt=user_prompt,
                 system_prompt=system_prompt,
                 temperature=temperature,
-                max_tokens=1024
+                max_tokens=2048
             )
             
+            logger.info(f"✅ Primary LLM generated {len(response.content)} chars, {response.tokens_used} tokens")
+            logger.info(f"📄 Preview: {response.content[:200]}")
+            # ✅ ADD: Deep inspection
+            logger.info(f"✅ Primary LLM raw response object: {type(response)}")
+            logger.info(f"   response.content type: {type(response.content)}")
+            logger.info(f"   response.content value: {repr(response.content)}")
+            logger.info(f"   response.content length: {len(response.content) if response.content else 0}")
+            logger.info(f"   response.tokens_used: {response.tokens_used}")
+
+            if hasattr(response, '__dict__'):
+                logger.info(f"   response attributes: {response.__dict__}")
+
             return response.content, response.tokens_used
                 
         except Exception as e:
@@ -393,7 +408,7 @@ Respond in JSON format:
                 prompt=reconciliation_prompt,
                 system_prompt="You must create an accurate, well-grounded response.",
                 temperature=0.2,
-                max_tokens=1024
+                max_tokens=2048  # ✅ Double it
             )
             
             reconciled = response.content
