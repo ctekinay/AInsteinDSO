@@ -342,6 +342,76 @@ COMPARISON_PATTERNS: List[str] = [
 ]
 
 # ============================================================================
+# API RERANKING CONFIGURATION
+# ============================================================================
+# NOTE: API reranking using OpenAI text-embedding-3-small
+# Can be disabled via ENABLE_API_RERANKING=false environment variable
+
+@dataclass
+class APIRerankingConfig:
+    """
+    Configuration for API-based reranking.
+
+    Usage in code:
+        from src.config.constants import API_RERANKING_CONFIG
+        if API_RERANKING_CONFIG.ENABLED:
+            # Use API reranking
+
+    Calibration Notes:
+        - Model: text-embedding-3-small (OpenAI, Jan 2024)
+        - Cost: ~$0.00004 per reranked query
+        - Expected rerank rate: 20-30% of queries
+        - Monthly cost (500 queries): ~$0.006-0.012
+    """
+
+    # Feature flag
+    ENABLED: bool = True  # Can be overridden by env var
+
+    # Model configuration
+    MODEL: str = "text-embedding-3-small"
+
+    # When to trigger reranking (SelectiveAPIReranker thresholds)
+    MIN_CANDIDATES_FOR_RERANKING: int = 2
+
+    # Score variance threshold (trigger if variance < this)
+    SIMILAR_SCORES_VARIANCE_THRESHOLD: float = 0.01
+
+    # Confidence thresholds for triggering
+    MEDIUM_CONFIDENCE_MIN: float = 0.50
+    MEDIUM_CONFIDENCE_MAX: float = 0.75
+    LOW_QUALITY_THRESHOLD: float = 0.60
+    CLOSE_TOP_TWO_THRESHOLD: float = 0.05
+
+    # Caching
+    CACHE_EMBEDDINGS: bool = True
+
+    # Comparison query indicators (case-insensitive)
+    COMPARISON_INDICATORS: List[str] = field(default_factory=lambda: [
+        'difference', 'compare', 'comparison', 'vs', 'versus',
+        'better', 'worse', 'which', 'between', 'or'
+    ])
+
+    def __post_init__(self):
+        """Validate configuration and check environment overrides."""
+        import os
+
+        # Check environment variable override
+        env_enabled = os.environ.get('ENABLE_API_RERANKING', '').lower()
+        if env_enabled in ('false', '0', 'no', 'off'):
+            self.ENABLED = False
+        elif env_enabled in ('true', '1', 'yes', 'on'):
+            self.ENABLED = True
+
+        # Validate thresholds
+        assert 0 <= self.SIMILAR_SCORES_VARIANCE_THRESHOLD <= 1
+        assert 0 <= self.MEDIUM_CONFIDENCE_MIN < self.MEDIUM_CONFIDENCE_MAX <= 1
+        assert 0 <= self.LOW_QUALITY_THRESHOLD <= 1
+        assert 0 <= self.CLOSE_TOP_TWO_THRESHOLD <= 1
+
+# Global instance
+API_RERANKING_CONFIG = APIRerankingConfig()
+
+# ============================================================================
 # VALIDATION FUNCTIONS
 # ============================================================================
 
@@ -369,7 +439,10 @@ def validate_all_constants() -> bool:
         
         # Validate context config
         CONTEXT_CONFIG.__post_init__()
-        
+
+        # Validate API reranking config
+        API_RERANKING_CONFIG.__post_init__()  # ← ADD THIS LINE
+
         # Additional cross-validation
         assert SEMANTIC_CONFIG.MIN_SCORE_CONTEXT >= SEMANTIC_CONFIG.MIN_SCORE_PRIMARY, \
             "Context threshold should be >= primary threshold"
