@@ -13,6 +13,7 @@ httpx==0.25.2
 # Knowledge Graph Processing
 rdflib==7.0.0
 SPARQLWrapper==2.0.0
+pyparsing==3.0.9  # Fixed version for SPARQL parsing compatibility
 lxml==4.9.3   # XML parsing for ArchiMate models
 
 # Machine Learning & Text Processing

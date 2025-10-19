@@ -274,7 +274,8 @@ class ProductionEAAgent:
                     archimate_parser=self.archimate_parser,
                     pdf_indexer=self.pdf_indexer,
                     embedding_model="all-MiniLM-L6-v2",  # Fast, good quality
-                    cache_dir="data/embeddings"
+                    cache_dir="data/embeddings",
+                    lazy_load=True  # Enable lazy loading for faster startup
                 )
                 logger.info("Embedding agent initialized for semantic search fallback")
             except Exception as e:
@@ -716,11 +717,11 @@ class ProductionEAAgent:
         return context
 
     async def process_query(
-        self, 
-        query: str, 
+        self,
+        query: str,
         session_id: str = None,
         use_conversation_context: bool = True
-    ) -> Tuple[PipelineResponse, PipelineTrace]:
+    ) -> PipelineResponse:
         """
         Process a query through the full 4R+G+C pipeline with complete tracing.
 
@@ -745,7 +746,7 @@ class ProductionEAAgent:
             use_conversation_context: Whether to use conversation history for follow-ups
 
         Returns:
-            Tuple of (PipelineResponse, PipelineTrace)
+            PipelineResponse: Response with confidence, citations, and metadata
         """
         start_time = time.perf_counter()
 
@@ -1360,7 +1361,7 @@ class ProductionEAAgent:
                     f"citations: {len(citations)}, "
                     f"followup: {is_followup})")
 
-            return pipeline_response, trace
+            return pipeline_response
 
         except UngroundedReplyError as e:
             logger.error(f"Grounding violation: {e}")
@@ -2165,7 +2166,37 @@ class ProductionEAAgent:
             context=retrieval_context,
             citation_pool=citation_pool
         )
-        return council_response.content
+
+        # Handle empty or invalid LLM responses
+        if not council_response or not council_response.content:
+            logger.warning("⚠️  LLM Council returned empty response")
+            logger.info("Falling back to template-based response...")
+            raise Exception("Empty LLM response - using template fallback")
+
+        llm_content = council_response.content.strip()
+
+        # Check for very short responses
+        if len(llm_content) < 10:
+            logger.warning("⚠️  LLM returned very short response")
+            logger.info("Falling back to template-based response...")
+            raise Exception("Very short LLM response - using template fallback")
+
+        # Remove markdown artifacts and clean response
+        import re
+        cleaned_response = re.sub(r'\n\s*\n\s*\n+', '\n\n', llm_content)
+
+        # Check if response has actual content (not just headers)
+        content_lines = [
+            line for line in cleaned_response.split('\n')
+            if line.strip() and not line.strip().startswith('#')
+        ]
+
+        if len(content_lines) == 0:
+            logger.warning("⚠️  LLM response has no content (only headers)")
+            logger.info("Using template fallback...")
+            raise Exception("No content in LLM response - using template fallback")
+
+        return cleaned_response
 
     async def _generate_enhanced_template_response(self, query: str, retrieval_context: Dict,
                                                 sorted_candidates: List[Dict]) -> str:

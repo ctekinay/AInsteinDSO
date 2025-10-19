@@ -148,7 +148,7 @@ class LLMFactory:
                 else:
                     logger.info("Using legacy Groq API key (GROQ_API_KEY)")
             
-            # FIXED: Correct parameter order
+            # FIXED: Correct parameter order for LLMConfig constructor
             config_data = {
                 "api_key": api_key,    # FIRST - required
                 "model": model,        # SECOND - required
@@ -161,7 +161,7 @@ class LLMFactory:
             }
         else:
             # Standard configuration for other providers
-            # FIXED: Correct parameter order
+            # FIXED: Correct parameter order for LLMConfig constructor
             config_data = {
                 "api_key": os.getenv(f"{provider_upper}_API_KEY"),    # FIRST - required
                 "model": os.getenv(f"{provider_upper}_MODEL", defaults.get("model")),  # SECOND - required
@@ -182,7 +182,12 @@ class LLMFactory:
             logger.warning(f"No model specified for {provider} provider")
             return None
 
-        # Filter out None values before creating LLMConfig
+        # Special handling for Ollama - set empty API key if none provided
+        if provider == "ollama" and not config_data["api_key"]:
+            config_data["api_key"] = ""  # Ollama doesn't require API key
+            logger.info("Using empty API key for Ollama (local deployment)")
+
+        # Filter out None values before creating LLMConfig (but keep empty strings)
         return LLMConfig(**{k: v for k, v in config_data.items() if v is not None})
 
     async def create_provider(self, provider: str, config: Optional[LLMConfig] = None) -> LLMProvider:

@@ -112,6 +112,7 @@ class EmbeddingAgent:
         use_openai: bool = False,
         openai_api_key: Optional[str] = None,
         auto_refresh: Optional[bool] = None,
+        lazy_load: bool = True,
     ):
         """
         Initialize embedding agent.
@@ -120,12 +121,14 @@ class EmbeddingAgent:
             auto_refresh: If True, automatically refresh embeddings when source files change.
                           If None, uses EMBEDDING_AUTO_REFRESH env var.
                           Defaults to False for production safety.
+            lazy_load: If True, delay embedding loading until first use (faster startup).
         """
         self.kg_loader = kg_loader
         self.archimate_parser = archimate_parser
         self.pdf_indexer = pdf_indexer
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self.lazy_load = lazy_load
 
         if auto_refresh is None:
             auto_refresh_env = os.getenv("EMBEDDING_AUTO_REFRESH", "false").strip().lower()
@@ -139,44 +142,75 @@ class EmbeddingAgent:
         self.use_openai = use_openai and OPENAI_AVAILABLE
         self.openai_embedding_model = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
         self.openai_client = None
+        self.embedding_model = embedding_model
 
         # NEW (A): Track backend and model for fingerprint validation
         self.backend = "openai" if self.use_openai else "sentence-transformers"
         self.model_name = self.openai_embedding_model if self.use_openai else embedding_model
         self.vector_dim = None  # Will be set after first encoding
 
+        # Add lazy loading state
+        self.model = None
+        self._embeddings_loaded = False
+        self.embeddings = {
+            'texts': [],
+            'vectors': [],
+            'citations': [],
+            'metadata': [],
+            'fingerprint': None
+        }
+
+        # OpenAI setup (lightweight)
         if self.use_openai:
-            # Initialize OpenAI client (v1.0+ syntax)
             api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
             if not api_key:
                 raise ValueError("OpenAI API key required when use_openai=True")
             self.openai_client = OpenAI(api_key=api_key)
-            self.model = None
             logger.info(f"✅ Using OpenAI embeddings ({self.openai_embedding_model})")
-        else:
-            logger.info("Attempting to load sentence-transformers...")
-            _lazy_load_sentence_transformers()
-            if SENTENCE_TRANSFORMERS_AVAILABLE and SentenceTransformer is not None:
-                try:
-                    logger.info(f"Initializing sentence-transformers model: {embedding_model}")
-                    self.model = SentenceTransformer(embedding_model)
-                    logger.info(f"✅ Embedding agent initialized with sentence-transformers ({embedding_model})")
-                except Exception as e:
-                    logger.error(f"Failed to load sentence-transformers model: {e}")
-                    raise RuntimeError(f"Failed to load sentence-transformers: {e}")
-            else:
-                error_msg = "No embedding backend available. Install sentence-transformers or openai"
-                logger.error(error_msg)
-                logger.error("Install with: pip install sentence-transformers torch")
-                raise RuntimeError(error_msg)
 
         logger.info(f"Auto-refresh: {'ENABLED' if self.auto_refresh else 'DISABLED'}")
         logger.info(f"Embedding backend: {self.backend}, model: {self.model_name}")
 
-        # Load or create embeddings
-        logger.info("Loading or creating embeddings...")
-        self.embeddings = self._load_or_create_embeddings()
-        logger.info("✅ Embedding agent fully initialized")
+        # Model loading - LAZY or EAGER
+        if not self.lazy_load:
+            # Original behavior - load immediately
+            logger.info("Loading embedding model immediately...")
+            self._load_model()
+            self._load_or_create_embeddings()
+            logger.info("✅ Embedding agent fully initialized")
+        else:
+            # New behavior - defer loading
+            logger.info("✅ Embedding agent initialized (lazy loading enabled)")
+            logger.info("   Model will load on first semantic_search() call")
+
+    def _ensure_loaded(self):
+        """Ensure embeddings are loaded (lazy loading helper)."""
+        if not self._embeddings_loaded:
+            logger.info("📦 Loading embeddings on first use...")
+            start_time = time.time()
+
+            self._load_model()
+            self._load_or_create_embeddings()
+
+            self._embeddings_loaded = True
+            load_time = (time.time() - start_time) * 1000
+            logger.info(f"✅ Embeddings loaded in {load_time:.0f}ms")
+
+    def _load_model(self):
+        """Load the sentence transformer model."""
+        if self.use_openai:
+            return  # OpenAI doesn't need local model
+
+        if self.model is None:
+            logger.info(f"Loading embedding model: {self.embedding_model}")
+            _lazy_load_sentence_transformers()
+            if not SENTENCE_TRANSFORMERS_AVAILABLE:
+                error_msg = "No embedding backend available. Install sentence-transformers"
+                logger.error(error_msg)
+                logger.error("Install with: pip install sentence-transformers torch")
+                raise RuntimeError(error_msg)
+            self.model = SentenceTransformer(self.embedding_model)
+            logger.info("✅ Model loaded")
 
     # ---------- Caching / refresh ----------
 
@@ -595,10 +629,14 @@ class EmbeddingAgent:
     ) -> List[EmbeddingResult]:
         """
         Perform semantic search across all embedded content.
-        
+
+        OPTIMIZED: Lazy loads embeddings on first call.
         NEW (B): Faster similarity with pre-normalized vectors.
         NEW (C): Retry logic for OpenAI query embedding.
         """
+        # LAZY LOADING: Ensure embeddings are loaded
+        self._ensure_loaded()
+
         # Create query embedding
         if self.use_openai:
             if not self.openai_client:

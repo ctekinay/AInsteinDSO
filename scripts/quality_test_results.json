@@ -1,0 +1,334 @@
+{
+  "timestamp": "2025-10-19T15:15:00.514874",
+  "total_tests": 21,
+  "passed": 1,
+  "failed": 20,
+  "results": [
+    {
+      "query": "What is the difference between active power and reactive power?",
+      "test_type": "comparison",
+      "difficulty": "medium",
+      "passed": false,
+      "response_time_ms": 6520.713090896606,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "active power",
+        "reactive power"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['active power', 'reactive power']"
+    },
+    {
+      "query": "active power vs reactive power",
+      "test_type": "comparison",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 1250.4236698150635,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "active",
+        "reactive"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['active', 'reactive']"
+    },
+    {
+      "query": "Compare active power with reactive power in electrical systems",
+      "test_type": "comparison",
+      "difficulty": "medium",
+      "passed": false,
+      "response_time_ms": 936.3458156585693,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "active power",
+        "reactive power"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['active power', 'reactive power']"
+    },
+    {
+      "query": "What's better: active power or reactive power for measuring consumption?",
+      "test_type": "comparison",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 414.9618148803711,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "active",
+        "reactive"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['active', 'reactive']"
+    },
+    {
+      "query": "voltage versus current",
+      "test_type": "comparison",
+      "difficulty": "medium",
+      "passed": false,
+      "response_time_ms": 806.2527179718018,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "voltage",
+        "current"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['voltage', 'current']"
+    },
+    {
+      "query": "What is reactive power?",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 4390.862703323364,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "reactive power"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['reactive power']"
+    },
+    {
+      "query": "Define active power",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 3733.0219745635986,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "active power"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['active power']"
+    },
+    {
+      "query": "What does IEC 61968 mean?",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 611.3190650939941,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "iec 61968",
+        "iec",
+        "61968"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['iec 61968', 'iec', '61968']"
+    },
+    {
+      "query": "Explain voltage in electrical systems",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 335.50000190734863,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "voltage"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['voltage']"
+    },
+    {
+      "query": "How do business capabilities relate to grid congestion management?",
+      "test_type": "complex",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 1061.6817474365234,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "business capability",
+        "grid congestion"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['business capability', 'grid congestion']"
+    },
+    {
+      "query": "What are the implications of power quality on distribution systems?",
+      "test_type": "complex",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 5411.921977996826,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "power quality",
+        "distribution"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['power quality', 'distribution']"
+    },
+    {
+      "query": "Relationship between voltage regulation and reactive power compensation",
+      "test_type": "complex",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 429.61573600769043,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "voltage",
+        "reactive power"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['voltage', 'reactive power']"
+    },
+    {
+      "query": "How does TOGAF Phase B relate to business architecture for energy systems?",
+      "test_type": "complex",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 978.7187576293945,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "togaf",
+        "phase b",
+        "business"
+      ],
+      "error_message": "Expected 2+ citations, got 0; Expected concepts not found: ['togaf', 'phase b', 'business']"
+    },
+    {
+      "query": "power",
+      "test_type": "edge_case",
+      "difficulty": "medium",
+      "passed": false,
+      "response_time_ms": 677.0741939544678,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "power"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['power']"
+    },
+    {
+      "query": "What is the difference between X and Y?",
+      "test_type": "edge_case",
+      "difficulty": "hard",
+      "passed": true,
+      "response_time_ms": 15.836238861083984,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [],
+      "error_message": ""
+    },
+    {
+      "query": "active power active power active power",
+      "test_type": "edge_case",
+      "difficulty": "medium",
+      "passed": false,
+      "response_time_ms": 413.49005699157715,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "active power"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['active power']"
+    },
+    {
+      "query": "transformer vs transformer - which is better?",
+      "test_type": "edge_case",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 932.1937561035156,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "transformer"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['transformer']"
+    },
+    {
+      "query": "Tell me everything about electrical engineering",
+      "test_type": "edge_case",
+      "difficulty": "hard",
+      "passed": false,
+      "response_time_ms": 1340.37184715271,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "electrical"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['electrical']"
+    },
+    {
+      "query": "What is apparent power?",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 4400.148153305054,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "apparent power"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['apparent power']"
+    },
+    {
+      "query": "grid congestion management",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 739.326000213623,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "grid congestion"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['grid congestion']"
+    },
+    {
+      "query": "IEC 61970 standard",
+      "test_type": "definition",
+      "difficulty": "easy",
+      "passed": false,
+      "response_time_ms": 626.9350051879883,
+      "confidence": 0.0,
+      "citations": [],
+      "citations_distinct": true,
+      "concepts_found": [],
+      "concepts_missing": [
+        "iec 61970",
+        "iec"
+      ],
+      "error_message": "Expected 1+ citations, got 0; Expected concepts not found: ['iec 61970', 'iec']"
+    }
+  ]
+}

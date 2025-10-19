@@ -84,6 +84,7 @@ class KnowledgeGraphLoader:
         self.entsoe_terms: Dict[str, str] = {}
         self.eurlex_terms: Dict[str, str] = {}
         self.load_time_ms: float = 0
+        self._query_cache: Dict[str, Any] = {}  # Query result cache
         self._loading = False
         self._load_lock = threading.Lock()
         self._full_graph_loaded = False
@@ -92,9 +93,29 @@ class KnowledgeGraphLoader:
         """
         Initialize lazy loading - start background load of full graph.
         Returns immediately with basic graph for immediate queries.
+
+        OPTIMIZED: Adds KG caching for faster subsequent loads.
         """
         if not self.kg_path.exists():
             raise KnowledgeGraphError(f"Knowledge graph not found at {self.kg_path}")
+
+        # Check cache first
+        cache_file = Path('data/.kg_cache.pkl')
+        if cache_file.exists():
+            try:
+                import pickle
+                with open(cache_file, 'rb') as f:
+                    cache_data = pickle.load(f)
+                    if cache_data.get('kg_path') == str(self.kg_path):
+                        self.graph = cache_data.get('graph')
+                        self.iec_terms = cache_data.get('iec_terms', {})
+                        self.entsoe_terms = cache_data.get('entsoe_terms', {})
+                        self.eurlex_terms = cache_data.get('eurlex_terms', {})
+                        self._full_graph_loaded = True
+                        logger.info(f"✅ Loaded KG from cache (instant) - {len(self.graph)} triples")
+                        return
+            except Exception as e:
+                logger.debug(f"Cache load failed: {e}")
 
         # Initialize basic graph for immediate use
         if RDFLIB_AVAILABLE and RDFGraph:
@@ -136,6 +157,23 @@ class KnowledgeGraphLoader:
 
             # Extract terms after full load
             self._extract_terms()
+
+            # Save to cache for faster future loads
+            try:
+                import pickle
+                cache_file = Path('data/.kg_cache.pkl')
+                cache_file.parent.mkdir(exist_ok=True)
+                with open(cache_file, 'wb') as f:
+                    pickle.dump({
+                        'kg_path': str(self.kg_path),
+                        'graph': self.graph,
+                        'iec_terms': self.iec_terms,
+                        'entsoe_terms': self.entsoe_terms,
+                        'eurlex_terms': self.eurlex_terms
+                    }, f)
+                logger.info("✅ KG cached for fast future loads")
+            except Exception as e:
+                logger.debug(f"Cache save failed: {e}")
 
         except Exception as e:
             logger.error(f"Failed to load full knowledge graph: {e}")
