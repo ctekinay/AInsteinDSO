@@ -2567,81 +2567,232 @@ class ProductionEAAgent:
         return cleaned.strip()
 
     async def _validate_comparison_candidates(self, candidates: List[Dict], query: str) -> Tuple[Dict, Dict]:
-        """Ensure we have two distinct concepts for comparison."""
-        if len(candidates) < 2:
-            # Not enough candidates for comparison
-            return candidates[0] if candidates else {}, {}
+        """
+        Ensure we have two distinct concepts for comparison.
 
+        CRITICAL: This method MUST return two candidates with DIFFERENT citations.
+        If we cannot find distinct concepts, we raise an error rather than
+        returning duplicates.
+
+        Args:
+            candidates: List of retrieved candidates
+            query: Original comparison query
+
+        Returns:
+            Tuple of (concept1, concept2) with distinct citations
+
+        Raises:
+            ValueError: If cannot find two distinct concepts
+        """
+        if len(candidates) < 2:
+            # Not enough candidates - need semantic fallback
+            logger.warning(f"Only {len(candidates)} candidate(s), need semantic search")
+            if self.embedding_agent:
+                return await self._semantic_comparison_fallback(query, candidates)
+            else:
+                raise ValueError(f"Insufficient candidates for comparison: {len(candidates)}")
+
+        # Extract comparison terms from query
         comparison_terms = self._extract_comparison_terms(query)
 
         if len(comparison_terms) != 2:
-            # Fallback to first two candidates
-            return candidates[0], candidates[1]
+            logger.warning(f"Could not extract exactly 2 terms from query: {comparison_terms}")
+            # Fallback: try to use first two distinct candidates
+            return self._get_first_two_distinct(candidates)
 
+        logger.info(f"Comparing: '{comparison_terms[0]}' vs '{comparison_terms[1]}'")
+
+        # Collect candidates matching each term
         term1_candidates = []
         term2_candidates = []
 
         for candidate in candidates:
             element_lower = candidate.get('element', '').lower()
             definition_lower = candidate.get('definition', '').lower()
+            citation = candidate.get('citation', '')
 
             # Check which term this candidate matches
-            term1_match = (comparison_terms[0].lower() in element_lower or
-                          comparison_terms[0].lower() in definition_lower)
-            term2_match = (comparison_terms[1].lower() in element_lower or
-                          comparison_terms[1].lower() in definition_lower)
+            term1_lower = comparison_terms[0].lower()
+            term2_lower = comparison_terms[1].lower()
 
-            # Only add to one list, prioritizing exact match in element name
+            term1_match = (term1_lower in element_lower or term1_lower in definition_lower)
+            term2_match = (term2_lower in element_lower or term2_lower in definition_lower)
+
+            # Only add to ONE list - avoid ambiguous candidates
             if term1_match and not term2_match:
-                term1_candidates.append(candidate)
+                # Check if citation already used
+                if not any(c.get('citation') == citation for c in term1_candidates):
+                    term1_candidates.append(candidate)
+                    logger.debug(f"  Term1 match: {element_lower} [{citation}]")
             elif term2_match and not term1_match:
-                term2_candidates.append(candidate)
+                # Check if citation already used
+                if not any(c.get('citation') == citation for c in term2_candidates):
+                    term2_candidates.append(candidate)
+                    logger.debug(f"  Term2 match: {element_lower} [{citation}]")
             elif term1_match and term2_match:
-                # If both match, skip ambiguous candidates
-                continue
+                # Ambiguous - skip
+                logger.debug(f"  Skipping ambiguous candidate: {element_lower}")
 
-        # Return best matches or fallback to semantic search
+        # Validate we found distinct matches
         if term1_candidates and term2_candidates:
-            return term1_candidates[0], term2_candidates[0]
+            c1 = term1_candidates[0]
+            c2 = term2_candidates[0]
+
+            # CRITICAL CHECK: Ensure citations are different
+            if c1.get('citation') == c2.get('citation'):
+                logger.error(f"DUPLICATE CITATION DETECTED: {c1.get('citation')}")
+                logger.error("Falling back to semantic search for distinct concepts")
+
+                if self.embedding_agent:
+                    return await self._semantic_comparison_fallback(query, candidates)
+                else:
+                    raise ValueError("Cannot find distinct concepts without semantic search")
+
+            # SUCCESS: Found distinct concepts
+            logger.info(f"✅ Distinct concepts found:")
+            logger.info(f"   Concept 1: {c1.get('element')} [{c1.get('citation')}]")
+            logger.info(f"   Concept 2: {c2.get('element')} [{c2.get('citation')}]")
+
+            return c1, c2
+
+        # Could not match both terms - try semantic fallback
+        logger.warning(f"Could not match both terms. Term1 matches: {len(term1_candidates)}, Term2 matches: {len(term2_candidates)}")
+
+        if self.embedding_agent:
+            logger.info("Attempting semantic comparison fallback...")
+            return await self._semantic_comparison_fallback(query, candidates)
         else:
-            # Use semantic fallback if available
-            if self.embedding_agent:
-                return await self._semantic_comparison_fallback(query, candidates)
-            else:
-                # Final fallback to first two distinct candidates
-                return candidates[0], candidates[1] if len(candidates) > 1 else candidates[0]
+            # Last resort: try first two distinct candidates
+            logger.warning("No semantic search available, using first two distinct candidates")
+            return self._get_first_two_distinct(candidates)
+
+    def _get_first_two_distinct(self, candidates: List[Dict]) -> Tuple[Dict, Dict]:
+        """
+        Get first two candidates with distinct citations.
+
+        This is a last-resort fallback when term matching fails.
+
+        Raises:
+            ValueError: If cannot find two distinct candidates
+        """
+        if len(candidates) < 2:
+            raise ValueError(f"Need at least 2 candidates, got {len(candidates)}")
+
+        seen_citations = set()
+        distinct_candidates = []
+
+        for candidate in candidates:
+            citation = candidate.get('citation')
+            if citation and citation not in seen_citations:
+                distinct_candidates.append(candidate)
+                seen_citations.add(citation)
+
+                if len(distinct_candidates) == 2:
+                    logger.warning(f"Using fallback distinct candidates:")
+                    logger.warning(f"  1. {distinct_candidates[0].get('element')} [{distinct_candidates[0].get('citation')}]")
+                    logger.warning(f"  2. {distinct_candidates[1].get('element')} [{distinct_candidates[1].get('citation')}]")
+                    return distinct_candidates[0], distinct_candidates[1]
+
+        # Still couldn't find two distinct
+        raise ValueError(f"Could not find 2 candidates with distinct citations from {len(candidates)} candidates")
 
     async def _semantic_comparison_fallback(self, query: str, existing_candidates: List[Dict]) -> Tuple[Dict, Dict]:
-        """Use semantic search to find distinct concepts for comparison."""
+        """
+        Use semantic search to find distinct concepts for comparison.
 
+        This is called when structured retrieval fails to find distinct concepts.
+        We search separately for each comparison term to maximize chance of
+        finding different concepts.
+
+        Args:
+            query: Original comparison query
+            existing_candidates: Candidates from structured retrieval (may be duplicates)
+
+        Returns:
+            Tuple of (concept1, concept2) with GUARANTEED distinct citations
+
+        Raises:
+            ValueError: If cannot find two distinct concepts even with semantic search
+        """
+        logger.info("🔍 Semantic comparison fallback activated")
+
+        # Extract comparison terms
         comparison_terms = self._extract_comparison_terms(query)
 
         if len(comparison_terms) != 2:
-            return existing_candidates[0], existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0]
+            logger.error(f"Cannot extract comparison terms from: {query}")
+            raise ValueError(f"Could not identify two concepts to compare in query: {query}")
 
-        # Search for each term separately using embedding agent
+        logger.info(f"Searching separately for: '{comparison_terms[0]}' and '{comparison_terms[1]}'")
+
+        # Search for each term INDEPENDENTLY
         try:
-            concept1_results = self.embedding_agent.semantic_search(
+            # Search for first term
+            results_term1 = self.embedding_agent.semantic_search(
                 comparison_terms[0],
-                top_k=SEMANTIC_CONFIG.TOP_K_COMPARISON,
-                min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON
+                top_k=5,
+                min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON  # Higher threshold for comparison
             )
-            concept2_results = self.embedding_agent.semantic_search(
+            logger.info(f"  Term 1 '{comparison_terms[0]}': {len(results_term1)} results")
+
+            # Search for second term
+            results_term2 = self.embedding_agent.semantic_search(
                 comparison_terms[1],
-                top_k=SEMANTIC_CONFIG.TOP_K_COMPARISON,
+                top_k=5,
                 min_score=SEMANTIC_CONFIG.MIN_SCORE_COMPARISON
             )
-
-            # Convert to candidate format
-            candidate1 = self._semantic_result_to_candidate(concept1_results[0]) if concept1_results else existing_candidates[0]
-            candidate2 = self._semantic_result_to_candidate(concept2_results[0]) if concept2_results else (existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0])
-
-            return candidate1, candidate2
+            logger.info(f"  Term 2 '{comparison_terms[1]}': {len(results_term2)} results")
 
         except Exception as e:
-            logger.warning(f"Semantic comparison fallback failed: {e}")
-            # Final fallback to existing candidates
-            return existing_candidates[0], existing_candidates[1] if len(existing_candidates) > 1 else existing_candidates[0]
+            logger.error(f"Semantic search failed: {e}")
+            raise ValueError(f"Semantic search error: {e}")
+
+        # Track used citations to ensure distinctness
+        seen_citations = set()
+        candidate1 = None
+        candidate2 = None
+
+        # Find best match for term 1 with unique citation
+        for result in results_term1:
+            citation = getattr(result, 'citation', None)
+            if citation and citation not in seen_citations:
+                candidate1 = self._semantic_result_to_candidate(result)
+                seen_citations.add(citation)
+                logger.info(f"  ✅ Selected for term 1: {candidate1.get('element')} [{citation}]")
+                break
+
+        # Find best match for term 2 with unique citation
+        for result in results_term2:
+            citation = getattr(result, 'citation', None)
+            if citation and citation not in seen_citations:
+                candidate2 = self._semantic_result_to_candidate(result)
+                seen_citations.add(citation)
+                logger.info(f"  ✅ Selected for term 2: {candidate2.get('element')} [{citation}]")
+                break
+
+        # Validate we found both with distinct citations
+        if not candidate1:
+            logger.error(f"Could not find semantic match for: {comparison_terms[0]}")
+            raise ValueError(f"No semantic results for '{comparison_terms[0]}'")
+
+        if not candidate2:
+            logger.error(f"Could not find semantic match for: {comparison_terms[1]}")
+            raise ValueError(f"No semantic results for '{comparison_terms[1]}'")
+
+        # FINAL VALIDATION: Ensure citations are distinct
+        citation1 = candidate1.get('citation')
+        citation2 = candidate2.get('citation')
+
+        if citation1 == citation2:
+            logger.error(f"CRITICAL: Semantic search returned same citation for both terms: {citation1}")
+            logger.error("This should not happen - terms are too similar or index has issues")
+            raise ValueError(f"Cannot distinguish between '{comparison_terms[0]}' and '{comparison_terms[1]}' - concepts may be too similar")
+
+        logger.info(f"✅ Semantic fallback succeeded:")
+        logger.info(f"   Concept 1: {candidate1.get('element')} [{citation1}]")
+        logger.info(f"   Concept 2: {candidate2.get('element')} [{citation2}]")
+
+        return candidate1, candidate2
 
     def _semantic_result_to_candidate(self, result) -> Dict:
         """Convert EmbeddingResult to candidate format."""
