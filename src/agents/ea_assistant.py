@@ -269,12 +269,25 @@ class ProductionEAAgent:
         self.embedding_agent = None
         if EMBEDDING_AVAILABLE and not os.environ.get('DISABLE_EMBEDDING_AGENT'):
             try:
+                # Check for OpenAI API key to enable better embeddings
+                openai_key = os.getenv('OPENAI_API_KEY')
+                use_openai_embeddings = openai_key is not None
+                
+                if use_openai_embeddings:
+                    logger.info("✅ Using OpenAI embeddings (text-embedding-3-small) for semantic search")
+                    logger.info("   Better quality (62.3 MTEB) + query caching enabled")
+                else:
+                    logger.warning("⚠️  No OpenAI API key - using local model (all-MiniLM-L6-v2)")
+                    logger.warning("   Consider setting OPENAI_API_KEY for better quality")
+                
                 self.embedding_agent = EmbeddingAgent(
                     kg_loader=self.kg_loader,
                     archimate_parser=self.archimate_parser,
                     pdf_indexer=self.pdf_indexer,
-                    embedding_model="all-MiniLM-L6-v2",  # Fast, good quality
+                    embedding_model="all-MiniLM-L6-v2",  # Fallback if no API key
                     cache_dir="data/embeddings",
+                    use_openai=use_openai_embeddings,  # ✅ ENABLE OPENAI
+                    openai_api_key=openai_key,          # ✅ PASS API KEY
                     lazy_load=True  # Enable lazy loading for faster startup
                 )
                 logger.info("Embedding agent initialized for semantic search fallback")
@@ -353,14 +366,18 @@ class ProductionEAAgent:
                 # KG citation
                 kg_metadata = self.kg_loader.get_citation_metadata(citation)
                 if kg_metadata:
-                    definition = kg_metadata.get('definition', '')
-                    if definition and len(definition) > 100:
-                        definition = definition[:100] + '...'
+                    # ✅ FIX: Handle None definitions safely
+                    definition = kg_metadata.get('definition')
+                    
+                    # ✅ Only process if definition exists and is not None
+                    if definition is None:
+                        definition = ''  # Convert None to empty string
+                    # ✅ NEVER truncate - users need complete definitions
                     
                     metadata = {
                         "citation": citation,
                         "label": kg_metadata.get('label'),
-                        "definition": definition,
+                        "definition": definition,  # Full definition, never truncated
                         "source": "knowledge_graph"
                     }
             
@@ -939,6 +956,15 @@ class ProductionEAAgent:
                     trace_id
                 )
                 
+                candidates = retrieval_context.get("candidates", [])
+                candidates, info_message = await self._handle_duplicate_definitions(
+                    query,
+                    candidates
+                )
+                # ✅ NEW UX: Don't block - just prepend info to response
+                # Continue processing normally, add info message later
+                duplicate_info = info_message  # Save for later
+                
                 # Add conversation context to retrieval context
                 if is_followup:
                     retrieval_context["conversation_context"] = conversation_context
@@ -999,9 +1025,18 @@ class ProductionEAAgent:
             # Out-of-scope guard (early return with trace finalization)
             if route == "unstructured_docs" and not retrieval_context.get("candidates"):
                 polite = (
-                    "This question appears outside the Alliander energy/enterprise architecture scope. "
-                    "I answer domain questions grounded in our SKOS dictionary, IEC standards, and ArchiMate models. "
-                    "Try asking, for example: 'What is reactive power?' or 'Show capabilities related to congestion management.'"
+                    f"❌ **Term not found in Alliander ontology:** '{query}'\n\n"
+                    f"I couldn't find '{query}' in our internal knowledge bases:\n"
+                    f"• Alliander SKOS Vocabulary\n"
+                    f"• IEC Standards (61968, 61970, 62325, 62746)\n"
+                    f"• EUR-Lex Regulations\n"
+                    f"• ENTSO-E Market Models\n"
+                    f"• ArchiMate Models\n\n"
+                    f"**Would you like me to:**\n"
+                    f"1. Search external sources (web search)?\n"
+                    f"2. Try a different term?\n"
+                    f"3. Browse available vocabularies?\n\n"
+                    f"*Examples of terms I know: 'reactive power', 'congestion management', 'asset'*"
                 )
                 
                 # Add to audit trail
@@ -1315,6 +1350,11 @@ class ProductionEAAgent:
             })
             assembly_phase.add_substep("Assembled final response", f"{processing_time_ms:.0f}ms total")
             
+            # ✅ ADD: Prepend duplicate info if present
+            if duplicate_info:
+                response = f"{duplicate_info}\n---\n\n{response}"
+                assembly_phase.add_substep("Added duplicate term info", "Multiple definitions found")
+
             # Build final response
             pipeline_response = PipelineResponse(
                 query=query,
@@ -1794,6 +1834,127 @@ class ProductionEAAgent:
             logger.error(f"ArchiMate query failed: {e}", exc_info=True)
 
         return archimate_candidates
+    
+    async def _handle_duplicate_definitions(
+        self, 
+        query: str, 
+        candidates: List[Dict]
+    ) -> Tuple[List[Dict], Optional[str]]:
+        """
+        Detect if multiple vocabularies have the same term.
+        Return candidates + optional informational message (NOT blocking).
+        
+        IMPROVED UX: Show all definitions immediately, don't force user to choose.
+        
+        Returns:
+            (candidates, info_message)
+        """
+        
+        # Group candidates by term (case-insensitive)
+        term_groups = {}
+        for candidate in candidates:
+            term = candidate.get('element', '').lower().strip()
+            if term:
+                if term not in term_groups:
+                    term_groups[term] = []
+                term_groups[term].append(candidate)
+        
+        # Check for duplicates (same term in multiple vocabularies)
+        duplicates = {
+            term: group 
+            for term, group in term_groups.items() 
+            if len(group) > 1
+        }
+        
+        if not duplicates:
+            return candidates, None
+        
+        # Build informational message (NOT blocking)
+        info_lines = []
+        info_lines.append("ℹ️  **Multiple definitions found:**\n")
+        
+        for term, group in duplicates.items():
+            info_lines.append(f"The term **'{term.title()}'** has {len(group)} definitions in our knowledge base:\n")
+            
+            for idx, candidate in enumerate(group, 1):
+                citation = candidate.get('citation', 'unknown')
+                
+                #Get vocabulary name from citation
+                vocab_name = self._get_vocabulary_name_from_citation(citation)
+                 
+                #Get actual concept label
+                concept_label = candidate.get('element', term.title())
+                definition = candidate.get('definition', 'No definition available')
+                
+                # Format long definitions with line breaks for readability
+                if len(definition) > 500:
+                    # Add paragraph breaks every 250 characters at sentence boundaries
+                    formatted_def = self._format_long_definition(definition)
+                else:
+                    formatted_def = definition
+                
+                # ✅ FIX: Consistent formatting with backticks
+                info_lines.append(f"{idx}. **{concept_label}** `[{citation}]` — *{vocab_name}*")
+                info_lines.append(f"   {formatted_def}\n")
+            
+            info_lines.append("All definitions are shown above. If you need more details about a specific one, just ask!\n")
+        
+        # The user can see all definitions and continue naturally
+        return candidates, "\n".join(info_lines)
+
+    def _get_vocabulary_name_from_citation(self, citation: str) -> str:
+        """Extract vocabulary name from citation - COMPLETE VERSION."""
+        # EUR-LEX & REGULATION
+        if citation.startswith('eurlex:'):
+            return "EUR-Lex Regulation"
+        elif citation.startswith('acer:'):
+            return "EUR Energy Regulators (ACER)"
+        elif citation.startswith('dutch:'):
+            return "Dutch Regulation Electricity"
+        
+        # IEC STANDARDS
+        elif citation.startswith('iec61968:'):
+            return "IEC 61968 - Meters, Assets and Work"
+        elif citation.startswith('iec61970:'):
+            return "IEC 61970 - Common Information Model"
+        elif citation.startswith('iec62325:'):
+            return "IEC 62325 - Market Model"
+        elif citation.startswith('iec62746:'):
+            return "IEC 62746 - Demand Site Resource"
+        
+        # ENERGY MANAGEMENT
+        elif citation.startswith('entsoe:'):
+            return "Harmonized Electricity Market Role Model (ENTSO-E)"
+        elif citation.startswith('modulair:'):
+            return "Alliander Modulair Station Building Blocks"
+        elif citation.startswith('pas1879:'):
+            return "PAS1879 - Energy smart appliances (BSI)"
+        
+        # ALLIANDER
+        elif citation.startswith('skos:'):
+            return "Alliander SKOS Vocabulary"
+        elif citation.startswith('aiontology:'):
+            return "Alliander Artificial Intelligence Ontology"
+        
+        # ARCHITECTURE
+        elif citation.startswith('archi:'):
+            return "ArchiMate Model"
+        
+        # LEGACY
+        elif citation.startswith('confluence:'):
+            return "Alliander Found on Confluence - Glossary (Out of Date)"
+        elif citation.startswith('poolparty:'):
+            return "Alliander Poolparty - Glossary (Out of Date)"
+        
+        # DUTCH GOVERNMENT
+        elif citation.startswith('lido:'):
+            return "Linked Data Overheid (Dutch Government)"
+        
+        elif citation.startswith('pas1879:'):
+            return "PAS1879 - Energy smart appliances (BSI)"
+
+        else:
+            return "Unknown Vocabulary"
 
     async def _query_documents(self, query_terms: List[str], trace_id: Optional[str] = None) -> List[Dict]:
         """
@@ -1821,7 +1982,7 @@ class ProductionEAAgent:
                         "citation": citation_id,
                         "citation_id": citation_id,
                         "confidence": CONFIDENCE.DOCUMENT_CHUNKS,
-                        "definition": chunk.content[:200] + "...",
+                        "definition": chunk.content,
                         "source": "PDF Documents",
                         "priority": "document"
                     }
@@ -2110,6 +2271,40 @@ class ProductionEAAgent:
         # Absolute last resort
         return "Unable to generate comparison with available data.", []
 
+    def _format_long_definition(self, text: str, max_paragraph_length: int = 250) -> str:
+        """
+        Format long definitions with paragraph breaks for readability.
+        Does NOT truncate - just adds formatting.
+        """
+        if not text or len(text) <= max_paragraph_length:
+            return text
+        
+        # Split into sentences
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        
+        paragraphs = []
+        current_paragraph = []
+        current_length = 0
+        
+        for sentence in sentences:
+            sentence_length = len(sentence)
+            
+            if current_length + sentence_length > max_paragraph_length and current_paragraph:
+                # Start new paragraph
+                paragraphs.append(' '.join(current_paragraph))
+                current_paragraph = [sentence]
+                current_length = sentence_length
+            else:
+                current_paragraph.append(sentence)
+                current_length += sentence_length
+        
+        # Add remaining sentences
+        if current_paragraph:
+            paragraphs.append(' '.join(current_paragraph))
+        
+        # Join with double line breaks
+        return '\n\n'.join(paragraphs)
+    
     def _sort_candidates(self, candidates: List[Dict], query: str) -> List[Dict]:
         """
         UNIFIED candidate sorting - same logic for all query types.
@@ -2176,8 +2371,26 @@ class ProductionEAAgent:
         llm_content = council_response.content.strip()
 
         # Check for very short responses
-        if len(llm_content) < 10:
-            logger.warning("⚠️  LLM returned very short response")
+        # Handle empty or invalid LLM responses
+        if not council_response:
+            logger.warning("⚠️  LLM Council returned None")
+            logger.info("Falling back to template-based response...")
+            raise Exception("Null LLM response - using template fallback")
+
+        if not council_response.content:
+            logger.warning("⚠️  LLM Council returned empty content")
+            logger.warning(f"   Validation status: {council_response.validation.status}")
+            logger.warning(f"   Validation confidence: {council_response.validation.confidence}")
+            logger.warning(f"   Reconciled: {council_response.reconciled}")
+            logger.info("Falling back to template-based response...")
+            raise Exception("Empty LLM response - using template fallback")
+
+        llm_content = council_response.content.strip()
+
+        # Check for very short responses
+        if len(llm_content) < 50:  # Changed from 10 to 50
+            logger.warning(f"⚠️  LLM returned very short response: {len(llm_content)} chars")
+            logger.warning(f"   Content: {llm_content}")
             logger.info("Falling back to template-based response...")
             raise Exception("Very short LLM response - using template fallback")
 
@@ -2279,6 +2492,11 @@ class ProductionEAAgent:
                 lines.append(f"*Source: {source} `{citation}`*")
                 lines.append("")
         
+        # ✅ Track citations shown in multiple definitions (if any)
+        shown_in_multiple_defs = set()
+        # The primary definition
+        shown_in_multiple_defs.add(citation)
+        
         # Detect query language
         query_language = await self._detect_language_with_llm(element + " " + definition)
         
@@ -2302,14 +2520,14 @@ class ProductionEAAgent:
         main_words = primary_term.split()[:2]  # Get first 2 words, e.g., ["reactive", "power"]
         
         seen_citations = {citation}  # ✅ Don't duplicate primary
+        seen_citations.update(shown_in_multiple_defs)  # ✅ Don't duplicate from multiple defs
         other_results = []
-        
+
         for c in candidates[1:10]:
             if not c.get("definition"):
                 continue
-            
+
             candidate_citation = self._extract_citation(c, fallback="unknown")
-            
             # ✅ Skip duplicates by citation
             if candidate_citation in seen_citations:
                 continue
@@ -2320,13 +2538,6 @@ class ProductionEAAgent:
             is_related = any(word in candidate_term for word in main_words if len(word) > 3)
             
             if not is_related:
-                continue
-            
-            # ✅ Check language match
-            candidate_text = c.get("element", "") + " " + c.get("definition", "")
-            candidate_lang = await self._detect_language_with_llm(candidate_text)
-            
-            if candidate_lang != query_language and candidate_lang != "unknown":
                 continue
             
             # ✅ Add to results
@@ -2346,13 +2557,16 @@ class ProductionEAAgent:
             for other in other_results:
                 other_name = other.get("element", "Unknown")
                 other_def = other.get("definition", "")
+                
+                # Format long definitions with line breaks for readability
+                if len(other_def) > 500:
+                    # Add paragraph breaks every 250 characters at sentence boundaries
+                    formatted_def = self._format_long_definition(other_def)
+                else:
+                    formatted_def = other_def
+                
                 other_cit = self._extract_citation(other, fallback="unknown")
-
-                # Truncate long definitions
-                if len(other_def) > 100:
-                    other_def = other_def[:100] + "..."
-
-                lines.append(f"• **{other_name}**: {other_def} `{other_cit}`")
+                lines.append(f"• **{other_name}**: {other_def} **`[{other_cit}]`**")
 
             lines.append("")
 

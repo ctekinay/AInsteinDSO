@@ -8,6 +8,8 @@ HARDENED VERSION with:
 - A) Model fingerprint validation (auto-rebuild on model change)
 - B) Vector normalization (faster similarity search)
 - C) OpenAI retry logic with exponential backoff
+- D) Query caching for repeated searches (NEW - October 2025)
+- E) Offline mode for local models (NEW - October 2025)
 """
 from __future__ import annotations
 
@@ -16,6 +18,7 @@ import pickle
 import json
 import logging
 import time
+import hashlib
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 import numpy as np
@@ -100,6 +103,8 @@ class EmbeddingAgent:
     - Auto-rebuilds cache when model changes (fingerprint validation)
     - Normalized vectors for faster similarity search
     - Retry logic for API calls
+    - Query caching for repeated searches (NEW)
+    - Offline mode for local models (NEW)
     """
 
     def __init__(
@@ -160,6 +165,16 @@ class EmbeddingAgent:
             'fingerprint': None
         }
 
+        # NEW (D): Query cache for repeated queries
+        self.query_cache = {}
+        self.query_cache_path = self.cache_dir / "query_cache.pkl"
+        self.cache_stats = {
+            'hits': 0,
+            'misses': 0,
+            'api_calls': 0,
+            'local_calls': 0
+        }
+
         # OpenAI setup (lightweight)
         if self.use_openai:
             api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
@@ -170,6 +185,16 @@ class EmbeddingAgent:
 
         logger.info(f"Auto-refresh: {'ENABLED' if self.auto_refresh else 'DISABLED'}")
         logger.info(f"Embedding backend: {self.backend}, model: {self.model_name}")
+
+        # NEW (D): Load query cache if exists
+        if self.query_cache_path.exists():
+            try:
+                with open(self.query_cache_path, 'rb') as f:
+                    self.query_cache = pickle.load(f)
+                logger.info(f"✅ Loaded {len(self.query_cache)} cached queries")
+            except Exception as e:
+                logger.warning(f"Failed to load query cache: {e}")
+                self.query_cache = {}
 
         # Model loading - LAZY or EAGER
         if not self.lazy_load:
@@ -197,20 +222,35 @@ class EmbeddingAgent:
             logger.info(f"✅ Embeddings loaded in {load_time:.0f}ms")
 
     def _load_model(self):
-        """Load the sentence transformer model."""
+        """Load the sentence transformer model (OFFLINE MODE - NEW E)."""
         if self.use_openai:
             return  # OpenAI doesn't need local model
 
         if self.model is None:
-            logger.info(f"Loading embedding model: {self.embedding_model}")
+            # NEW (E): FORCE OFFLINE MODE
+            os.environ['TRANSFORMERS_OFFLINE'] = '1'
+            os.environ['HF_HUB_OFFLINE'] = '1'
+            
+            logger.info(f"Loading embedding model: {self.embedding_model} (offline mode)")
             _lazy_load_sentence_transformers()
             if not SENTENCE_TRANSFORMERS_AVAILABLE:
                 error_msg = "No embedding backend available. Install sentence-transformers"
                 logger.error(error_msg)
-                logger.error("Install with: pip install sentence-transformers torch")
+                logger.error("Install with: pip3 install sentence-transformers torch")
                 raise RuntimeError(error_msg)
-            self.model = SentenceTransformer(self.embedding_model)
-            logger.info("✅ Model loaded")
+            
+            try:
+                self.model = SentenceTransformer(
+                    self.embedding_model,
+                    cache_folder=os.path.expanduser('~/.cache/huggingface/hub'),
+                    local_files_only=True  # CRITICAL: Only use local cache
+                )
+                logger.info("✅ Model loaded from local cache")
+            except Exception as e:
+                logger.error(f"❌ Failed to load model from local cache: {e}")
+                logger.error("Model not cached. Download once with internet connection:")
+                logger.error(f"  python3 -c \"from sentence_transformers import SentenceTransformer; SentenceTransformer('{self.embedding_model}')\"")
+                raise
 
     # ---------- Caching / refresh ----------
 
@@ -306,6 +346,8 @@ class EmbeddingAgent:
                     logger.info("Source files changed, rebuilding embeddings...")
                     return self._rebuild_embeddings(cache_file, metadata_file)
                 
+                # Store loaded embeddings
+                self.embeddings = embeddings
                 logger.info(f"✅ Loaded {len(embeddings.get('texts', []))} cached embeddings")
                 return embeddings
                 
@@ -343,6 +385,8 @@ class EmbeddingAgent:
         except Exception as e:
             logger.warning(f"Failed to cache embeddings: {e}")
         
+        # Store embeddings
+        self.embeddings = embeddings
         return embeddings
 
     def refresh_embeddings(self):
@@ -633,35 +677,60 @@ class EmbeddingAgent:
         OPTIMIZED: Lazy loads embeddings on first call.
         NEW (B): Faster similarity with pre-normalized vectors.
         NEW (C): Retry logic for OpenAI query embedding.
+        NEW (D): Query caching for repeated searches.
         """
         # LAZY LOADING: Ensure embeddings are loaded
         self._ensure_loaded()
 
-        # Create query embedding
-        if self.use_openai:
-            if not self.openai_client:
-                raise RuntimeError("OpenAI client not initialized")
-            try:
-                # NEW (C): Wrap in retry logic
-                response = _with_backoff(
-                    lambda: self.openai_client.embeddings.create(
-                        model=self.openai_embedding_model,
-                        input=[query]
-                    ),
-                    max_retries=5,
-                    base_delay=0.5
-                )
-                query_vector = np.asarray(response.data[0].embedding, dtype=np.float32)
-            except Exception as e:
-                logger.error(f"OpenAI query embedding failed: {e}")
-                raise
+        # NEW (D): Check query cache first
+        query_hash = hashlib.md5(query.encode('utf-8')).hexdigest()
+        
+        if query_hash in self.query_cache:
+            self.cache_stats['hits'] += 1
+            logger.debug(f"✅ Query cache hit: {query[:50]}...")
+            query_vector = self.query_cache[query_hash]
         else:
-            query_vector = self.model.encode([query], convert_to_numpy=True)[0]  # type: ignore
-            query_vector = np.asarray(query_vector, dtype=np.float32)
+            self.cache_stats['misses'] += 1
+            
+            # Create query embedding
+            if self.use_openai:
+                if not self.openai_client:
+                    raise RuntimeError("OpenAI client not initialized")
+                try:
+                    # NEW (C): Wrap in retry logic
+                    response = _with_backoff(
+                        lambda: self.openai_client.embeddings.create(
+                            model=self.openai_embedding_model,
+                            input=[query]
+                        ),
+                        max_retries=5,
+                        base_delay=0.5
+                    )
+                    query_vector = np.asarray(response.data[0].embedding, dtype=np.float32)
+                    self.cache_stats['api_calls'] += 1
+                except Exception as e:
+                    logger.error(f"OpenAI query embedding failed: {e}")
+                    raise
+            else:
+                query_vector = self.model.encode([query], convert_to_numpy=True)[0]  # type: ignore
+                query_vector = np.asarray(query_vector, dtype=np.float32)
+                self.cache_stats['local_calls'] += 1
 
-        # NEW (B): Normalize query vector
-        query_norm = np.linalg.norm(query_vector)
-        query_vector = query_vector / (query_norm if query_norm != 0.0 else 1e-12)
+            # NEW (B): Normalize query vector
+            query_norm = np.linalg.norm(query_vector)
+            query_vector = query_vector / (query_norm if query_norm != 0.0 else 1e-12)
+            
+            # NEW (D): Cache the query vector
+            self.query_cache[query_hash] = query_vector
+            
+            # Save cache every 10 queries
+            if len(self.query_cache) % 10 == 0:
+                try:
+                    with open(self.query_cache_path, 'wb') as f:
+                        pickle.dump(self.query_cache, f)
+                    logger.debug(f"💾 Query cache saved ({len(self.query_cache)} entries)")
+                except Exception as e:
+                    logger.error(f"Failed to save query cache: {e}")
 
         vectors = self.embeddings['vectors']
         if isinstance(vectors, list):
@@ -747,6 +816,20 @@ class EmbeddingAgent:
 
     # ---------- Stats ----------
 
+    def get_cache_stats(self) -> Dict:
+        """Get query caching statistics (NEW D)."""
+        total = self.cache_stats['hits'] + self.cache_stats['misses']
+        hit_rate = (self.cache_stats['hits'] / total * 100) if total > 0 else 0
+        
+        return {
+            'cache_hits': self.cache_stats['hits'],
+            'cache_misses': self.cache_stats['misses'],
+            'cache_hit_rate': hit_rate,
+            'queries_cached': len(self.query_cache),
+            'api_calls': self.cache_stats['api_calls'],
+            'local_calls': self.cache_stats['local_calls'],
+        }
+
     def stats(self) -> Dict:
         """Return simple stats for monitoring."""
         return {
@@ -761,4 +844,5 @@ class EmbeddingAgent:
             "created_at": self.embeddings.get("created_at"),
             "fingerprint": self.embeddings.get("fingerprint", {}),
             "vector_dim": self.vector_dim,
+            "cache_stats": self.get_cache_stats(),
         }

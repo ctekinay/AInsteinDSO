@@ -257,9 +257,9 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
                     try:
                         # ============================================
-                        # CRITICAL: Unpack tuple return
+                        # Process query - returns PipelineResponse object
                         # ============================================
-                        response, trace = await ea_agent.process_query(user_query, session_id)
+                        response = await ea_agent.process_query(user_query, session_id)
                         
                         # Build response message
                         response_message = {
@@ -280,21 +280,34 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                         await manager.send_message(websocket, response_message)
                         
                         # ============================================
-                        # NEW: Send trace data separately
+                        # Send trace data separately (if available)
                         # ============================================
-                        trace_message = {
-                            "type": "trace",
-                            "trace": trace.to_dict(),
-                            "timestamp": datetime.now().isoformat()
-                        }
-                        await manager.send_message(websocket, trace_message)
+                        if hasattr(response, 'trace_id') and response.trace_id:
+                            trace_message = {
+                                "type": "trace",
+                                "trace_id": response.trace_id,
+                                "timestamp": datetime.now().isoformat(),
+                                "phases": getattr(response, 'trace_phases', []),
+                                "duration_ms": response.processing_time_ms
+                            }
+                            await manager.send_message(websocket, trace_message)
+                            
+                            # Store trace info
+                            if session_id in manager.session_data:
+                                if "traces" not in manager.session_data[session_id]:
+                                    manager.session_data[session_id]["traces"] = []
+                                manager.session_data[session_id]["traces"].append({
+                                    "trace_id": response.trace_id,
+                                    "query": user_query,
+                                    "duration_ms": response.processing_time_ms,
+                                    "timestamp": datetime.now().isoformat()
+                                })
                         
-                        # Store both response and trace
+                        # Store response
                         manager.session_data[session_id]["messages"].append(response_message)
-                        manager.session_data[session_id]["traces"].append(trace.to_dict())
                         
                         logger.info(f"✅ Query processed successfully in {response.processing_time_ms:.0f}ms")
-                        logger.info(f"   Phases: {len(trace.phases)}, Citations: {len(response.citations)}, Confidence: {response.confidence:.2f}")
+                        logger.info(f"   Citations: {len(response.citations)}, Confidence: {response.confidence:.2f}")
 
                     except FakeCitationError as e:
                         # Handle fake citation detection
@@ -419,10 +432,11 @@ async def export_conversation(session_id: str, format: str = "markdown"):
                     md_content += f"⚠️ **Human Review Required**\n\n"
                 
                 # Add trace summary if available
-                if idx < len(traces):
+                if traces and idx < len(traces):
                     trace = traces[idx]
                     md_content += f"### Pipeline Trace\n\n"
-                    md_content += f"Total Duration: {trace.get('total_duration_ms', 0):.0f}ms\n\n"
+                    md_content += f"Trace ID: {trace.get('trace_id', 'N/A')}\n"
+                    md_content += f"Total Duration: {trace.get('duration_ms', 0):.0f}ms\n\n"
                     for phase in trace.get('phases', []):
                         md_content += f"- **{phase['name']}**: {phase['duration_ms']:.0f}ms [{phase['status']}]\n"
                     md_content += "\n"

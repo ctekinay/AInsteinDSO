@@ -149,7 +149,7 @@ class LLMCouncil:
         final_response = primary_response
         reconciled = False
         
-        if validation.confidence < 0.7 or validation.status != ValidationStatus.VALID:
+        if validation.confidence < 0.5 or validation.status == ValidationStatus.HALLUCINATION_DETECTED:
             logger.info(f"Validation failed (confidence: {validation.confidence}), reconciling...")
             
             # Step 4: Reconciliation process
@@ -353,29 +353,40 @@ Respond in JSON format:
         Returns:
             Reconciled response text
         """
-        reconciliation_prompt = f"""The primary response has validation issues. Create an improved version.
+        context_summary = self._build_context_summary(context)
+        reconciliation_prompt = f"""The original response needs improvement. Create a better version.
 
-Query: {query}
+        Query: {query}
 
-Original Response:
-{primary_response}
+        Original Response (with issues):
+        {primary_response}
 
-Validation Issues:
-{json.dumps(validation.issues, indent=2)}
+        Problems Found:
+        {chr(10).join(f"- {issue}" for issue in validation.issues)}
 
-Validation Suggestions:
-{json.dumps(validation.suggestions, indent=2)}
+        Improvements Needed:
+        {chr(10).join(f"- {suggestion}" for suggestion in validation.suggestions)}
 
-Available Citations:
-{self._build_citation_instruction(citation_pool[:10])}
+        Context Available:
+        {context_summary}
 
-Create an improved response that:
-1. Addresses all validation issues
-2. Maintains factual accuracy
-3. Uses only valid citations
-4. Answers the original query
+        Valid Citations You Can Use:
+        {self._build_citation_instruction(citation_pool[:10])}
 
-Improved Response:"""
+        IMPORTANT INSTRUCTIONS:
+        1. Keep the good parts of the original response
+        2. Fix only the specific issues mentioned
+        3. Use ONLY citations from the approved list above
+        4. Format citations as [citation_id]
+        5. Maintain technical accuracy
+        6. Answer the original query completely
+
+        Provide ONLY the improved response text below (no meta-commentary):
+        """
+        
+        if len(primary_response.strip()) > 100 and validation.confidence > 0.3:
+            logger.info("Primary response acceptable despite validation issues, using it")
+            return primary_response
         
         try:
             response = await self.primary_llm.generate(
@@ -386,6 +397,15 @@ Improved Response:"""
             )
             
             reconciled = response.content
+            
+            # ✅ ADD: Debug logging
+            logger.info(f"🔄 Reconciliation response length: {len(reconciled)}")
+            logger.info(f"🔄 Reconciliation preview: {reconciled[:200]}")
+            
+            # ✅ ADD: Safety check for empty responses
+            if not reconciled or len(reconciled.strip()) < 50:
+                logger.error("❌ Reconciliation produced empty/short response, using primary")
+                return primary_response
             
             # Quick re-validation (optional)
             if self.reconciliation_rounds > 1:

@@ -240,6 +240,7 @@ class KnowledgeGraphLoader:
             f"{len(self.eurlex_terms)} EUR-LEX terms"
         )
 
+
     def _extract_vocabulary_name_from_uri(self, uri: str) -> Optional[str]:
         """
         Extract vocabulary name from a URI using pattern matching.
@@ -255,34 +256,30 @@ class KnowledgeGraphLoader:
         uri_lower = uri.lower()
         
         # LEGAL & REGULATION
-        if 'dutch' in uri_lower and 'regulation' in uri_lower:
-            return "Dutch Regulation Electricity"
+        if 'eurlex' in uri_lower or 'europa.eu/eli' in uri_lower:
+            return "EUR-Lex Regulation"
         elif 'acer' in uri_lower:
             return "EUR Energy Regulators (ACER)"
-        elif 'eurlex' in uri_lower or 'europa.eu/eli' in uri_lower:
-            return "EUR-Lex Regulation"
+        elif 'wetten.nl' in uri_lower or ('dutch' in uri_lower and 'regulation' in uri_lower):
+            return "Dutch Regulation Electricity"
         
         # ENERGY MANAGEMENT SYSTEM
         elif 'modulair' in uri_lower or 'msb' in uri_lower:
             return "Alliander Modulair Station Building Blocks"
         elif 'pas1879' in uri_lower or ('bsi' in uri_lower and 'energy' in uri_lower):
             return "PAS1879 - Energy smart appliances (BSI)"
-        elif 'alliander' in uri_lower and 'energy' in uri_lower:
-            return "Alliander Energy System"
-        
-        # Harmonized Market
         elif 'entso-e' in uri_lower or 'entsoe' in uri_lower:
             if 'market' in uri_lower or 'role' in uri_lower:
                 return "Harmonized Electricity Market Role Model (ENTSO-E)"
             return "ENTSO-E Standards"
+        elif 'alliander' in uri_lower and 'energy' in uri_lower:
+            return "Alliander Energy System"
         
         # IEC STANDARDS (most detailed mapping)
         elif '61968' in uri_lower or '/iec61968/' in uri_lower:
             return "IEC 61968 - Meters, Assets and Work"
         
         elif '61970' in uri_lower or '/iec61970/' in uri_lower or 'tc57/ns/cim' in uri_lower:
-            # CRITICAL FIX: Check URI path segments for CGMES sub-standards
-            
             # Check for specific CGMES packages in URI
             if 'coreequipment' in uri_lower or '/equipment-eu' in uri_lower:
                 return "IEC 61970 - Core Equipment (CGMES)"
@@ -314,8 +311,16 @@ class KnowledgeGraphLoader:
         # ARCHITECTURE
         elif 'ai' in uri_lower and ('ontology' in uri_lower or 'artificial' in uri_lower):
             return "Alliander Artificial Intelligence Ontology"
+        elif 'archimate' in uri_lower or 'archi:' in uri_lower:
+            return "ArchiMate Model"
         
-        # Generic IEC
+        # LEGACY / OUT OF DATE
+        elif 'confluence' in uri_lower:
+            return "Alliander Found on Confluence - Glossary (Out of Date)"
+        elif 'poolparty' in uri_lower:
+            return "Alliander Poolparty - Glossary (Out of Date)"
+        
+        # Generic IEC fallback
         elif 'iec' in uri_lower:
             return "IEC Standards"
         
@@ -755,26 +760,62 @@ class KnowledgeGraphLoader:
         
         # CORRECTED: Use actual namespace patterns from the graph
         namespace_patterns = {
+            # Alliander SKOS
             "skos": [
                 "https://vocabs.alliander.com/def/ppt/",
                 "http://vocabs.alliander.com/terms/"
             ],
-            "iec": [
-                "http://iec.ch/TC57/ns/CIM/",
-                "http://iec.ch/TC57/IEC61968/",
-                "http://iec.ch/TC57/IEC61970/"
+            # IEC Standards (split by series for correct citation format)
+            "iec61968": [
+                "http://iec.ch/TC57/IEC61968/"
             ],
+            "iec61970": [
+                "http://iec.ch/TC57/IEC61970/",
+                "http://iec.ch/TC57/ns/CIM/"
+            ],
+            "iec62325": [
+                "http://iec.ch/TC57/IEC62325/"
+            ],
+            "iec62746": [
+                "http://iec.ch/TC57/IEC62746/"
+            ],
+            # ENTSO-E
             "entsoe": [
-                "http://vocabs.entsoe.com/terms/"
+                "http://vocabs.entsoe.com/terms/",
+                "http://entsoe.eu/"
             ],
+            # EUR-LEX Regulation
             "eurlex": [
                 "http://data.europa.eu/eli/terms/"
             ],
+            # Dutch Government
             "lido": [
                 "http://linkeddata.overheid.nl/terms/"
+            ],
+            "dutch": [
+                "http://wetten.nl/terms/"
+            ],
+            # ACER
+            "acer": [
+                "http://acer.europa.eu/terms/"
+            ],
+            # Alliander specific
+            "modulair": [
+                "http://vocabs.alliander.com/modulair/"
+            ],
+            "aiontology": [
+                "http://vocabs.alliander.com/ai/"
+            ],
+            # ArchiMate
+            "archi": [
+                "http://www.archimatetool.com/"
+            ],
+            # BSI / PAS1879
+            "pas1879": [
+            "http://linkeddata.bsigroup.com/pas/1879/",
+            "http://bsi-group.com/pas1879/"
             ]
         }
-
         patterns = namespace_patterns.get(namespace)
         if not patterns:
             logger.debug(f"Unknown namespace: {namespace}")
@@ -966,75 +1007,156 @@ class KnowledgeGraphLoader:
 
     def _extract_citation_id(self, uri: str) -> Optional[str]:
         """
-        Extract citation ID from a URI.
-
-        CORRECTED VERSION: Uses actual namespace patterns.
-
+        Extract citation ID EXACTLY as it appears in Turtle syntax.
+        
+        This preserves the format from your RDF files:
+        - eurlex:631-20 (not eurlex:ActivePower)
+        - iec61968:Asset (not iec:Asset)
+        - etc.
+        
         Examples:
+            http://data.europa.eu/eli/terms/631-20 -> eurlex:631-20
+            http://iec.ch/TC57/IEC61968/Asset -> iec61968:Asset
+            http://iec.ch/TC57/IEC61970/CIM/CoreEquipment-EU/DCLine -> iec61970:DCLine
             https://vocabs.alliander.com/def/ppt/1502 -> skos:1502
-            http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/DCLine -> iec:DCLine
-            http://data.europa.eu/eli/terms/1485-10 -> eurlex:1485-10
-
+        
         Args:
             uri: Full URI string
-
+        
         Returns:
-            Citation ID in format "namespace:term" or None
+            Citation ID in format matching Turtle syntax or None
         """
-        # CORRECTED: Namespace patterns with multiple possible URIs per namespace
-        patterns = [
-            # SKOS - Alliander vocabulary
-            ("skos", [
-                "https://vocabs.alliander.com/def/ppt/",
-                "http://vocabs.alliander.com/terms/"
-            ]),
-            # IEC standards
-            ("iec", [
-                "http://iec.ch/TC57/ns/CIM/",
-                "http://iec.ch/TC57/IEC61968/",
-                "http://iec.ch/TC57/IEC61970/"
-            ]),
-            # ENTSOE grid operator standards
-            ("entsoe", [
-                "http://vocabs.entsoe.com/terms/"
-            ]),
-            # EUR-LEX European legislation
-            ("eurlex", [
-                "http://data.europa.eu/eli/terms/"
-            ]),
-            # LIDO Dutch government data
-            ("lido", [
-                "http://linkeddata.overheid.nl/terms/"
-            ])
-        ]
         
-        for prefix, base_uris in patterns:
-            for base_uri in base_uris:
-                if uri.startswith(base_uri):
-                    # Extract local part after the base URI
-                    local_part = uri[len(base_uri):]
-                    
-                    # For IEC URIs with nested paths, get the last segment
-                    if '/' in local_part:
-                        local_part = local_part.split('/')[-1]
-                    
-                    # Clean up any fragments
-                    local_part = local_part.split('#')[-1]
-                    
-                    if local_part:
-                        return f"{prefix}:{local_part}"
+        # ============= EUR-LEX REGULATION =============
+        if "data.europa.eu/eli/terms/" in uri:
+            # Format: http://data.europa.eu/eli/terms/631-20
+            local_part = uri.split("/terms/")[-1]
+            return f"eurlex:{local_part}"
         
-        return None
+        # ============= IEC STANDARDS (Multiple Series) =============
+        # IEC 61968 - Meters, Assets and Work
+        elif "iec.ch/TC57/IEC61968/" in uri:
+            # Format: http://iec.ch/TC57/IEC61968/Asset
+            local_part = uri.split("/IEC61968/")[-1]
+            # Handle nested paths
+            if '/' in local_part:
+                local_part = local_part.split('/')[-1]
+            local_part = local_part.split('#')[-1]
+            return f"iec61968:{local_part}"
+        
+        # IEC 61970 - Common Information Model (CGMES sub-standards)
+        elif "iec.ch/TC57/IEC61970/" in uri or "iec.ch/TC57/ns/CIM/" in uri:
+            # Format: http://iec.ch/TC57/IEC61970/CIM/CoreEquipment-EU/DCLine
+            # or: http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/DCLine
+            if "/IEC61970/" in uri:
+                local_part = uri.split("/IEC61970/")[-1]
+            else:
+                local_part = uri.split("/CIM/")[-1]
+            
+            # Handle nested paths (get last segment)
+            if '/' in local_part:
+                local_part = local_part.split('/')[-1]
+            local_part = local_part.split('#')[-1]
+            return f"iec61970:{local_part}"
+        
+        # IEC 62325 - Market Model
+        elif "iec.ch/TC57/IEC62325/" in uri:
+            local_part = uri.split("/IEC62325/")[-1]
+            if '/' in local_part:
+                local_part = local_part.split('/')[-1]
+            local_part = local_part.split('#')[-1]
+            return f"iec62325:{local_part}"
+        
+        # IEC 62746 - Demand Site Resource
+        elif "iec.ch/TC57/IEC62746/" in uri:
+            local_part = uri.split("/IEC62746/")[-1]
+            if '/' in local_part:
+                local_part = local_part.split('/')[-1]
+            local_part = local_part.split('#')[-1]
+            return f"iec62746:{local_part}"
+        
+        # ============= ENTSO-E =============
+        elif "entsoe.eu" in uri.lower() or "entso-e" in uri.lower() or "vocabs.entsoe.com" in uri:
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"entsoe:{local_part}"
+        
+        # ============= ALLIANDER VOCABULARIES =============
+        elif "vocabs.alliander.com" in uri:
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            
+            # Detect specific Alliander sub-vocabularies
+            if "modulair" in uri.lower() or "msb" in uri.lower():
+                return f"modulair:{local_part}"
+            elif "ai" in uri.lower() and "ontology" in uri.lower():
+                return f"aiontology:{local_part}"
+            else:
+                return f"skos:{local_part}"
+        
+        # ============= ACER (EU Energy Regulators) =============
+        elif "acer.europa.eu" in uri.lower() or "acer-remit" in uri.lower():
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"acer:{local_part}"
+        
+        # ============= DUTCH REGULATION =============
+        elif "wetten.nl" in uri.lower() or "dutch" in uri.lower() or "linkeddata.overheid.nl" in uri:
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"dutch:{local_part}"
+        
+        # ============= PAS1879 / BSI =============
+        elif "pas1879" in uri.lower() or "bsi-group" in uri.lower() or "linkeddata.bsigroup.com" in uri.lower():
+            # Format: http://linkeddata.bsigroup.com/pas/1879/Asset
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"pas1879:{local_part}"
+        
+        # ============= ARCHIMATE =============
+        elif "archi" in uri.lower() or "archimate" in uri.lower():
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"archi:{local_part}"
+        
+        # ============= LEGACY / OUT OF DATE =============
+        elif "confluence.alliander" in uri.lower():
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"confluence:{local_part}"
 
+        elif "poolparty.alliander" in uri.lower():
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"poolparty:{local_part}"
+
+        # ============= LIDO (Dutch Government) =============
+        elif "linkeddata.overheid.nl" in uri or "linkeddata/terms/" in uri.lower():
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+            return f"lido:{local_part}"
+
+        # ============= FALLBACK =============
+        else:
+            # Try to preserve namespace from URI
+            local_part = uri.split("/")[-1]
+            local_part = local_part.split('#')[-1]
+
+            if local_part and "//" in uri:
+                domain = uri.split("//")[1].split("/")[0]
+                prefix = domain.split('.')[0]
+                return f"{prefix}:{local_part}"
+
+            return None
     def get_citation_metadata(self, citation_id: str) -> Optional[Dict]:
         """
         Get metadata for a citation (label, definition, type).
-        
+
         CORRECTED VERSION: Uses actual namespace patterns with exact matching.
-        
+
         Args:
             citation_id: Citation ID (e.g., 'skos:1502', 'iec:DCLine')
-            
+
         Returns:
             Dictionary with metadata or None if not found
         """
@@ -1046,23 +1168,60 @@ class KnowledgeGraphLoader:
         
         # CORRECTED: Use actual namespace patterns
         namespace_patterns = {
+            # Alliander SKOS
             "skos": [
                 "https://vocabs.alliander.com/def/ppt/",
                 "http://vocabs.alliander.com/terms/"
             ],
-            "iec": [
-                "http://iec.ch/TC57/ns/CIM/",
-                "http://iec.ch/TC57/IEC61968/",
-                "http://iec.ch/TC57/IEC61970/"
+            # IEC Standards (split by series for correct citation format)
+            "iec61968": [
+                "http://iec.ch/TC57/IEC61968/"
             ],
+            "iec61970": [
+                "http://iec.ch/TC57/IEC61970/",
+                "http://iec.ch/TC57/ns/CIM/"
+            ],
+            "iec62325": [
+                "http://iec.ch/TC57/IEC62325/"
+            ],
+            "iec62746": [
+                "http://iec.ch/TC57/IEC62746/"
+            ],
+            # ENTSO-E
             "entsoe": [
-                "http://vocabs.entsoe.com/terms/"
+                "http://vocabs.entsoe.com/terms/",
+                "http://entsoe.eu/"
             ],
+            # EUR-LEX Regulation
             "eurlex": [
                 "http://data.europa.eu/eli/terms/"
             ],
+            # Dutch Government
             "lido": [
                 "http://linkeddata.overheid.nl/terms/"
+            ],
+            "dutch": [
+                "http://wetten.nl/terms/"
+            ],
+            # ACER
+            "acer": [
+                "http://acer.europa.eu/terms/"
+            ],
+            # Alliander specific
+            "modulair": [
+                "http://vocabs.alliander.com/modulair/"
+            ],
+            "aiontology": [
+                "http://vocabs.alliander.com/ai/"
+            ],
+            # ArchiMate
+            "archi": [
+                "http://www.archimatetool.com/"
+            ],
+            # BSI / PAS1879
+            "pas1879": [
+            "http://linkeddata.bsigroup.com/pas/1879/",
+            "http://bsi-group.com/pas1879/"
             ]
         }
         
