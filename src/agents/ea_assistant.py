@@ -55,6 +55,15 @@ try:
 except Exception:
     dedupe_candidates = None
 
+# API Reranker import
+try:
+    from src.retrieval.api_reranker import SelectiveAPIReranker, APIReranker
+    API_RERANKER_AVAILABLE = True
+except ImportError as e:
+    API_RERANKER_AVAILABLE = False
+    SelectiveAPIReranker = None
+    APIReranker = None
+
 # Configuration constants - replace all hardcoded values
 from src.config.constants import (
     CONFIDENCE,
@@ -71,6 +80,12 @@ from src.config.constants import (
 
 logger = logging.getLogger(__name__)
 tracer = get_tracer()
+
+# Log API reranker availability
+if API_RERANKER_AVAILABLE:
+    logger.info("✅ API reranker available")
+else:
+    logger.warning("API reranker not available")
 
 try:
     from src.agents.embedding_agent import EmbeddingAgent
@@ -357,6 +372,24 @@ class ProductionEAAgent:
                    f"{len(self.all_citations)} citations, "
                    f"{len(self.citation_metadata_cache)} with metadata")
         # ============= END CITATION POOL LOADING =============
+
+        # ============= API RERANKER INITIALIZATION =============
+        self.api_reranker = None
+        if API_RERANKER_AVAILABLE and not os.environ.get('DISABLE_API_RERANKING'):
+            try:
+                # Initialize API reranker with selective triggering
+                base_reranker = APIReranker()
+                self.api_reranker = SelectiveAPIReranker(base_reranker)
+                logger.info("✅ API reranker initialized for quality enhancement")
+                logger.info("   - Model: text-embedding-3-small")
+                logger.info("   - Selective reranking enabled (cost optimization)")
+            except Exception as e:
+                logger.warning(f"Could not initialize API reranker: {e}")
+                logger.warning("Continuing without API reranking capability")
+                self.api_reranker = None
+        else:
+            logger.info("API reranker disabled or not available")
+        # ============= END API RERANKER INITIALIZATION =============
 
         logger.info("Production EA Agent initialized with citation authenticity validation")
 
@@ -1513,6 +1546,36 @@ class ProductionEAAgent:
             except Exception as e:
                 logger.warning("Homonym guard failed: %s", e)
 
+            # PHASE 4.5: API Reranking (NEW)
+            if self.api_reranker and len(retrieval_context["candidates"]) > 1:
+                rerank_start = time.time()
+                try:
+                    # Check if we should rerank
+                    should_rerank, reason = self.api_reranker.should_rerank(
+                        retrieval_context["candidates"],
+                        query
+                    )
+
+                    if should_rerank:
+                        logger.info(f"🔄 API reranking triggered: {reason}")
+                        reranked = await self.api_reranker.rerank(
+                            query,
+                            retrieval_context["candidates"],
+                            top_k=min(10, len(retrieval_context["candidates"]))
+                        )
+                        retrieval_context["candidates"] = reranked
+                        retrieval_context["api_reranked"] = True
+
+                        rerank_duration = (time.time() - rerank_start) * 1000
+                        logger.info(f"✅ API reranking completed in {rerank_duration:.2f}ms")
+                    else:
+                        logger.info(f"⏭️  API reranking skipped: {reason}")
+                        retrieval_context["api_reranked"] = False
+
+                except Exception as e:
+                    logger.warning(f"API reranking failed: {e}")
+                    retrieval_context["api_reranked"] = False
+
             # PHASE 5: Rank and deduplicate
             rank_start = time.time()
             original_count = len(retrieval_context["candidates"])
@@ -1532,7 +1595,8 @@ class ProductionEAAgent:
                 tracer.trace_info(trace_id, "ea_assistant", "retrieve_complete",
                                 total_candidates=total_candidates,
                                 kg_count=len(retrieval_context.get("kg_results", [])),
-                                archimate_count=len(retrieval_context.get("archimate_elements", [])))
+                                archimate_count=len(retrieval_context.get("archimate_elements", [])),
+                                api_reranked=retrieval_context.get("api_reranked", False))
             
             # ALWAYS return retrieval_context
             return retrieval_context
