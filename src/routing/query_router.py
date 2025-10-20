@@ -8,6 +8,7 @@ is checked FIRST before falling back to embeddings. This is essential for:
 3. Grounding - structured sources provide better citations
 
 ROUTING PRIORITY (STRICT ORDER):
+0. ADR queries → unstructured_docs (HIGHEST PRIORITY - LLM-detected)
 1. IEC/Energy + ArchiMate terms → structured_model (knowledge graph)
 2. TOGAF ADM phases + viewpoints → togaf_method (TOGAF patterns)
 3. Everything else → unstructured_docs (vector search)
@@ -17,30 +18,16 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, List, Set, Optional, TYPE_CHECKING
+from typing import Dict, List, Set, Optional, TYPE_CHECKING, Any
 
+# Use TYPE_CHECKING to avoid circular imports while keeping type hints
 if TYPE_CHECKING:
     from src.knowledge.kg_loader import KnowledgeGraphLoader
-else:
-    try:
-        from src.knowledge.kg_loader import KnowledgeGraphLoader
-        KG_LOADER_AVAILABLE = True
-    except ImportError:
-        KnowledgeGraphLoader = None
-        KG_LOADER_AVAILABLE = False
-
-try:
-    from src.knowledge.kg_loader import KnowledgeGraphLoader
-    KG_LOADER_AVAILABLE = True
-except ImportError:
-    KnowledgeGraphLoader = None
-    KG_LOADER_AVAILABLE = False
 
 from src.utils.trace import get_tracer
 
 logger = logging.getLogger(__name__)
 tracer = get_tracer()
-
 
 class QueryRouter:
     """
@@ -50,7 +37,7 @@ class QueryRouter:
     Performance target: < 50ms per routing decision.
     """
 
-    def __init__(self, vocab_path: str = "config/vocabularies.json", kg_loader: Optional[KnowledgeGraphLoader] = None):
+    def __init__(self, vocab_path: str = "config/vocabularies.json", kg_loader: Optional["KnowledgeGraphLoader"] = None):
         """
         Initialize router with domain vocabularies.
 
@@ -68,10 +55,11 @@ class QueryRouter:
         self._load_vocabularies()
 
         # Auto-hydrate vocabularies from knowledge graph if available
-        if self.kg_loader and KG_LOADER_AVAILABLE:
+        if self.kg_loader:
             # Wait for KG to load before hydrating
             import time
             logger.info("Waiting for knowledge graph to load...")
+
             for i in range(10):
                 if self.kg_loader.is_full_graph_loaded():
                     logger.info(f"KG loaded after {i*0.5}s")
@@ -114,14 +102,13 @@ class QueryRouter:
 
     def route(self, query: str, trace_id: Optional[str] = None) -> str:
         """
-        Route query to appropriate knowledge source using strict priority order.
-
-        Args:
-            query: User query string
-            trace_id: Optional trace ID for detailed logging
-
-        Returns:
-            Route destination: "structured_model", "togaf_method", or "unstructured_docs"
+        Route query to appropriate knowledge source using LLM-assisted intent detection.
+        
+        Priority:
+        0. LLM detects ADR/document query → unstructured_docs
+        1. IEC/Energy + ArchiMate terms → structured_model
+        2. TOGAF ADM + viewpoints → togaf_method
+        3. Everything else → unstructured_docs
         """
         from src.monitoring.performance_slos import get_performance_monitor, ComponentType
 
@@ -135,14 +122,40 @@ class QueryRouter:
 
             if not query or not query.strip():
                 logger.warning("Empty query provided, routing to unstructured_docs")
-                if trace_id:
-                    tracer.trace_info(trace_id, "query_router", "route",
-                                    reason="empty_query", route="unstructured_docs")
                 return "unstructured_docs"
 
             query_lower = query.lower()
 
+            # ============================================================
+            # ✅ PRIORITY 0: LLM-BASED INTENT DETECTION (Two-Stage)
+            # ============================================================
+            
+            # STAGE 1: Quick keyword pre-filter (< 1ms)
+            # Only call LLM if query MIGHT be about documents/ADRs
+            might_be_document = self._might_be_document_query(query_lower)
+            
+            if might_be_document:
+                # STAGE 2: LLM classification (~ 200ms, only when needed)
+                logger.debug("Query might be about documents/ADRs, calling LLM classifier...")
+                intent = self._classify_query_intent(query)
+                
+                # If LLM confirms it's an ADR/document query, route to unstructured_docs
+                if intent.get("type") in ["adr_query", "document_query"]:
+                    route = "unstructured_docs"
+                    logger.info(f"Query routed to {route} (LLM detected: {intent.get('type')})")
+                    if trace_id:
+                        tracer.trace_info(trace_id, "query_router", "route_decision",
+                                        route=route, 
+                                        reason=f"llm_intent_{intent.get('type')}",
+                                        llm_confidence=intent.get('confidence'))
+                    self._log_performance(start_time, route)
+                    return route
+                else:
+                    logger.debug(f"LLM classified as: {intent.get('type')}, continuing with term-based routing")
+            
+            # ============================================================
             # PRIORITY 1: Check for IEC/Energy + ArchiMate terms
+            # ============================================================
             if trace_id:
                 tracer.trace_info(trace_id, "query_router", "check_structured_terms",
                                 query_lower=query_lower[:50])
@@ -156,7 +169,9 @@ class QueryRouter:
                 self._log_performance(start_time, route)
                 return route
 
+            # ============================================================
             # PRIORITY 2: Check for TOGAF ADM phases + viewpoints
+            # ============================================================
             if trace_id:
                 tracer.trace_info(trace_id, "query_router", "check_togaf_terms",
                                 query_lower=query_lower[:50])
@@ -170,7 +185,9 @@ class QueryRouter:
                 self._log_performance(start_time, route)
                 return route
 
+            # ============================================================
             # PRIORITY 3: Default to unstructured search
+            # ============================================================
             route = "unstructured_docs"
             logger.info(f"Query routed to {route} (no domain-specific terms found)")
             if trace_id:
@@ -179,6 +196,132 @@ class QueryRouter:
             self._log_performance(start_time, route)
             return route
 
+    def _might_be_document_query(self, query_lower: str) -> bool:
+        """
+        STAGE 1: Quick pre-filter to avoid calling LLM for every query.
+        
+        Only returns True if query MIGHT be about documents/ADRs.
+        This is just a performance optimization - false positives are OK.
+        The LLM will do the accurate classification in stage 2.
+        
+        Performance: < 1ms (simple keyword check)
+        
+        Args:
+            query_lower: Lowercase query string
+            
+        Returns:
+            True if query might be about documents/ADRs (needs LLM classification)
+        """
+        # Simple keyword check (fast, no LLM needed)
+        document_keywords = [
+            'adr', 'decision', 'document', 'file', 'record',
+            'details', 'show', 'explain', 'tell me about',
+            'latest', 'recent', 'our', 'content of',
+            'what does', 'summary of', 'describe'
+        ]
+        
+        # Also check for number patterns that might be ADR numbers
+        import re
+        if re.search(r'\b\d{4}\b', query_lower):  # 4-digit numbers like "0025"
+            return True
+        
+        return any(keyword in query_lower for keyword in document_keywords)
+
+    def _classify_query_intent(self, query: str) -> Dict:
+        """
+        STAGE 2: Use LLM to classify query intent for routing decisions.
+        
+        This is more accurate than hardcoded patterns because the LLM
+        understands semantic meaning, not just keywords.
+        
+        Performance: ~ 200ms (LLM API call)
+        Only called when stage 1 pre-filter returns True.
+        
+        Args:
+            query: User query
+            
+        Returns:
+            Dict with:
+            - type: "adr_query", "document_query", "definition_query", "other"
+            - confidence: 0.0-1.0
+            - reasoning: Brief explanation
+            - extracted_info: Additional context (e.g., ADR number, topic)
+        """
+        try:
+            from src.llm.factory import get_llm_provider
+            
+            # Get a fast LLM for classification (prefer Groq for speed)
+            llm = get_llm_provider()
+            
+            classification_prompt = f"""Classify the following user query into ONE of these categories:
+
+    1. "adr_query" - User is asking about an Architectural Decision Record (ADR)
+    Examples: 
+    - "show me adr 0025"
+    - "what does our decision on interfaces say"
+    - "details of adr"
+    - "tell me about decision 0025"
+    - "explain our architectural choice on demand response"
+    
+    2. "document_query" - User is asking about a document/file/report (not an ADR)
+    Examples: 
+    - "show me the PDF on solar"
+    - "what's in document X"
+    
+    3. "definition_query" - User wants a definition/explanation of a concept
+    Examples: 
+    - "what is reactive power"
+    - "explain demand response"
+    - "define asset"
+    - "what does ADR mean" (asking for definition of ADR itself)
+    
+    4. "other" - None of the above
+
+    User query: "{query}"
+
+    Respond with ONLY valid JSON in this exact format (no extra text):
+    {{
+    "type": "adr_query",
+    "confidence": 0.95,
+    "reasoning": "User is asking for details about a specific ADR",
+    "extracted_info": {{
+        "adr_number": "0025",
+        "topic": "demand response interfaces"
+    }}
+    }}"""
+
+            response = llm.generate(
+                prompt=classification_prompt,
+                temperature=0.1,  # Low temperature for deterministic classification
+                max_tokens=200
+            )
+            
+            # Parse JSON response
+            import json
+            import re
+            
+            # Strip markdown code blocks if present
+            content = response.content.strip()
+            content = re.sub(r'```json\s*', '', content)
+            content = re.sub(r'```\s*', '', content)
+            content = content.strip()
+            
+            result = json.loads(content)
+            
+            logger.info(f"🤖 LLM classified query as: {result.get('type')} (confidence: {result.get('confidence'):.2f})")
+            logger.debug(f"   Reasoning: {result.get('reasoning')}")
+            
+            return result
+            
+        except Exception as e:
+            logger.warning(f"LLM intent classification failed: {e}")
+            # Fallback to safe default
+            return {
+                "type": "other",
+                "confidence": 0.0,
+                "reasoning": "classification_failed"
+            }
+        
     def _contains_structured_terms(self, query_lower: str) -> bool:
         """
         Check if query contains IEC/Energy or ArchiMate terms.
@@ -214,6 +357,7 @@ class QueryRouter:
                 return True
 
         return False
+        
 
     def _contains_togaf_terms(self, query_lower: str) -> bool:
         """
@@ -279,7 +423,7 @@ class QueryRouter:
             "performance_target_ms": self.performance_target_ms,
             "vocab_file": str(self.vocab_path),
             "auto_hydrated": self.auto_hydrated,
-            "kg_loader_available": KG_LOADER_AVAILABLE and self.kg_loader is not None,
+            "kg_loader_available": self.kg_loader is not None,
             "routing_priorities": [
                 "1. IEC/Energy + ArchiMate → structured_model",
                 "2. TOGAF ADM + viewpoints → togaf_method",
@@ -387,7 +531,7 @@ class QueryRouter:
             logger.error(f"Failed to auto-hydrate vocabularies: {e}")
             # Continue with existing vocabularies
 
-    def hydrate_from_kg(self, kg_loader: KnowledgeGraphLoader) -> None:
+    def hydrate_from_kg(self, kg_loader: "KnowledgeGraphLoader") -> None:
         """
         Manually hydrate vocabularies from a knowledge graph loader.
 
@@ -403,7 +547,7 @@ class QueryRouter:
         self._load_vocabularies()
 
         # Re-run auto-hydration if KG loader is available
-        if self.kg_loader and KG_LOADER_AVAILABLE:
+        if self.kg_loader:
             self._auto_hydrate_vocabularies()
 
         logger.info("Vocabularies reloaded successfully")
