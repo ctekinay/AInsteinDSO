@@ -178,3 +178,8 @@ cython_debug/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Cache files (generated at runtime)
+data/embeddings/*.pkl
+data/embeddings/query_cache.pkl
+data/.kg_cache.pkl
