@@ -126,33 +126,39 @@ examples = {
 
 ### 3. Multi-LLM Infrastructure (`src/llm/`)
 
-**Provider Configuration:**
+**Actual Provider Hierarchy (from .env configuration):**
 
-| Provider | Model | Use Case | Performance |
-|----------|-------|----------|-------------|
-| **Groq** | llama-3.3-70b-versatile | Primary responses | 2-5s, cost-effective |
-| **Groq** | qwen2.5-72b-instruct | Technical queries | 3-7s, high accuracy |
-| **Groq** | deepseek-r1-distill-llama-70b | Complex reasoning | 5-10s, analytical |
-| **OpenAI** | gpt-5 | Fallback/validation | 3-8s, premium quality |
-| **Ollama** | llama3.1, qwen2.5 | Offline mode | 10-30s, local |
+| Priority | Provider | Model | Role | Status |
+|----------|----------|-------|------|--------|
+| **1st** | **Groq** | llama-3.3-70b-versatile | PRIMARY Provider | Active (`LLM_PROVIDER=groq`) |
+| **2nd** | **OpenAI** | gpt-5 | FALLBACK Provider | When Groq fails |
+| **3rd** | **Ollama** | mistral/llama3.1 | LOCAL Fallback | Offline mode |
+
+**Current Configuration Reality:**
+```python
+# From actual .env file:
+LLM_PROVIDER=groq  # THIS IS PRIMARY, NOT OPENAI!
+
+# Provider hierarchy in code:
+primary = "groq"      # Fast, cost-effective, reliable
+fallback = "openai"   # Only when Groq unavailable
+local = "ollama"      # Last resort or offline mode
+```
 
 **Factory Pattern Implementation:**
 ```python
 class LLMFactory:
-    """Enhanced multi-LLM provider factory with health checking."""
+    """Multi-LLM provider factory with automatic fallback."""
 
-    DEFAULT_CONFIGS = {
-        "groq": {
-            "model": "llama-3.3-70b-versatile",
-            "max_tokens": 4096,
-            "temperature": 0.3
-        },
-        "openai": {
-            "model": "gpt-5",
-            "max_tokens": 4096,
-            "temperature": 0.3
-        }
-    }
+    async def create_with_fallback(self, primary="groq"):
+        """
+        Creates LLM provider with fallback chain.
+
+        Actual order (from code):
+        1. Try Groq (PRIMARY)
+        2. Fallback to OpenAI if Groq fails
+        3. Fallback to Ollama if both API providers fail
+        """
 ```
 
 ### 4. Enhanced Citation Validation (`src/safety/grounding.py`)
@@ -193,32 +199,53 @@ class GroundingCheck:
 - **IEC Standards**: 19 (0.5%)
 - **ArchiMate Models**: 82 (2%)
 
-### 5. API Reranking System (`src/retrieval/api_reranker.py`)
+### 5. Dual Embedding System Architecture
 
-**OpenAI Integration for Quality Enhancement:**
+#### 5.1 Primary Embeddings (`all-MiniLM-L6-v2`)
+**Local Embedding Model (Still in Use):**
+
+```python
+class EmbeddingAgent:
+    """
+    Primary embedding system using LOCAL model.
+
+    Current Reality:
+    - Model: all-MiniLM-L6-v2 (2020, outdated)
+    - Dimensions: 384
+    - MTEB Score: 58.8 (below modern standards)
+    - Storage: data/embeddings/ cache
+    """
+
+    def __init__(self):
+        self.embedding_model = "all-MiniLM-L6-v2"  # STILL USING THIS
+        self.vector_dim = 384
+```
+
+#### 5.2 API Reranking (`text-embedding-3-small`)
+**Optional Enhancement Layer:**
 
 ```python
 class SelectiveAPIReranker:
     """
-    API-based reranking using OpenAI text-embedding-3-small.
+    OPTIONAL reranking using OpenAI API.
 
-    Features:
-    - Selective activation (cost optimization)
-    - 1536-dimensional embeddings
-    - +15-20% quality improvement
-    - Performance tracking and statistics
+    Important Notes:
+    - NOT the primary embedding system
+    - Must be enabled via ENABLE_API_RERANKING=true
+    - Only reranks already-retrieved results
+    - Adds +15-20% quality boost when enabled
     """
 
     def __init__(self):
-        self.model = "text-embedding-3-small"  # State-of-art 2024
+        self.model = "text-embedding-3-small"  # Only for reranking
         self.dimensions = 1536
         self.cost_per_1k_tokens = 0.00002  # $0.02/1M tokens
 ```
 
-**Quality Impact:**
-- **Precision Improvement**: +15-20% over base embeddings
-- **Comparison Queries**: 95% accuracy on distinct concepts
-- **Cost Optimization**: Selective activation based on query complexity
+**Architecture Reality:**
+- **Primary Retrieval**: Uses outdated `all-MiniLM-L6-v2` embeddings
+- **Optional Enhancement**: API reranking improves quality but doesn't replace base model
+- **Technical Debt**: Running two embedding systems in parallel
 
 ### 6. Configuration Management (`src/config/constants.py`)
 
@@ -404,20 +431,50 @@ python scripts/comprehensive_quality_test.py
 - **Response Time**: < 3s P50, < 8s P95
 - **Accuracy**: 95%+ on comparison queries
 
+## Current Architecture Reality Check
+
+### What We Actually Have (October 2025)
+1. **Primary Embeddings**: Still using `all-MiniLM-L6-v2` (384 dims, MTEB 58.8)
+   - This is the MAIN embedding model for semantic search
+   - Used by EmbeddingAgent for document embeddings
+   - Cached locally in `data/embeddings/`
+
+2. **API Reranking**: OpenAI `text-embedding-3-small` (1536 dims, MTEB 62.3)
+   - OPTIONAL feature, must be enabled via `ENABLE_API_RERANKING=true`
+   - Only used for reranking already-retrieved results
+   - NOT a replacement for primary embeddings
+   - Provides +15-20% quality boost when enabled
+
+3. **LLM Providers**:
+   - **Primary**: Groq (as configured in .env with `LLM_PROVIDER=groq`)
+   - **Fallback**: OpenAI GPT-5
+   - **Local**: Ollama for offline capability
+
 ## Future Enhancements
 
-### Planned Improvements (Q4 2025)
-1. **Embedding Model Upgrade**: Transition from all-MiniLM-L6-v2 to nomic-embed-text-v1.5
-2. **Multilingual Support**: Enhanced Dutch language processing
-3. **Advanced Analytics**: User behavior and query pattern analysis
-4. **API Expansion**: RESTful API for external integrations
-5. **Model Fine-tuning**: Domain-specific LLM optimization
+### High Priority Improvements (Q4 2025)
+1. **Primary Embedding Model Upgrade**:
+   - Current: `all-MiniLM-L6-v2` (2020 model, outdated)
+   - Target: `nomic-embed-text-v1.5` or `bge-m3`
+   - Impact: Would require complete re-embedding of all documents
+   - Benefit: +5-10% quality improvement on primary retrieval
 
-### Technical Debt
-1. **Embedding Model**: Current all-MiniLM-L6-v2 is 2+ years old (MTEB 58.8 vs modern 62-67)
-2. **Cache Management**: Embedding cache regeneration for model upgrades
-3. **Test Coverage**: Increase integration test scenarios
-4. **Documentation**: API reference documentation
+2. **Full OpenAI Embedding Migration**:
+   - Move from local embeddings to API-based completely
+   - Use `text-embedding-3-small` as primary (not just reranking)
+   - Trade-off: Higher API costs but better quality and no local compute
+
+3. **Advanced Analytics**: User behavior and query pattern analysis
+
+4. **API Expansion**: RESTful API for external integrations
+
+### Technical Debt (Actual)
+1. **Primary Embedding Model**: `all-MiniLM-L6-v2` is outdated (MTEB 58.8 vs modern 62-67)
+   - We have NOT migrated to OpenAI embeddings as primary
+   - API reranking is a band-aid, not a solution
+2. **Dual Embedding Systems**: Maintaining both local and API embeddings is complex
+3. **Cache Management**: Need strategy for embedding model upgrades
+4. **Test Coverage**: Increase integration test scenarios
 
 ---
 
