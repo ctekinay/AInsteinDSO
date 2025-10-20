@@ -2309,7 +2309,7 @@ class ProductionEAAgent:
         """
         Query Architectural Decision Records.
 
-        Returns list of candidate dictionaries with proper citations.
+        Returns list of candidate dictionaries with COMPLETE ADR content.
         Format includes citation_id for citation pool extraction.
         
         Args:
@@ -2317,7 +2317,7 @@ class ProductionEAAgent:
             trace_id: Optional trace ID for logging
             
         Returns:
-            List of ADR candidate dictionaries
+            List of ADR candidate dictionaries with full content
         """
         adr_candidates = []
 
@@ -2328,24 +2328,88 @@ class ProductionEAAgent:
             adrs = self.adr_indexer.search_adrs(query_terms, max_results=5)
 
             for adr_result in adrs:
+                # ✅ Build comprehensive definition from ALL ADR sections
+                sections = []
+                
+                # Title and Status
+                sections.append(f"**ADR-{adr_result['adr_number']}: {adr_result['title']}**")
+                sections.append(f"**Status:** {adr_result['status']}")
+                sections.append("")  # Blank line
+                
+                # Decision
+                if adr_result.get('decision'):
+                    sections.append("## Decision")
+                    sections.append(adr_result['decision'])
+                    sections.append("")
+                
+                # Context
+                if adr_result.get('context'):
+                    sections.append("## Context")
+                    sections.append(adr_result['context'])
+                    sections.append("")
+                
+                # Consequences
+                if adr_result.get('consequences'):
+                    sections.append("## Consequences")
+                    sections.append(adr_result['consequences'])
+                    sections.append("")
+                
+                # Options Considered
+                if adr_result.get('options'):
+                    sections.append("## Options Considered")
+                    sections.append(adr_result['options'])
+                    sections.append("")
+                
+                # More Information
+                if adr_result.get('more_info'):
+                    sections.append("## Additional Information")
+                    sections.append(adr_result['more_info'])
+                    sections.append("")
+                
+                # Driver (if available)
+                if adr_result.get('driver'):
+                    sections.append(f"**Driver:** {adr_result['driver']}")
+                    sections.append("")
+                
+                # Combine all sections
+                full_definition = "\n".join(sections)
+                
+                # ✅ DEBUG: Log what we're including
+                logger.info(f"📄 Building ADR candidate: {adr_result['adr_number']}")
+                logger.info(f"   Title: {adr_result['title'][:60]}...")
+                logger.info(f"   Decision: {len(adr_result.get('decision', ''))} chars")
+                logger.info(f"   Context: {len(adr_result.get('context', ''))} chars")
+                logger.info(f"   Consequences: {len(adr_result.get('consequences', ''))} chars")
+                logger.info(f"   Options: {len(adr_result.get('options', ''))} chars")
+                logger.info(f"   More info: {len(adr_result.get('more_info', ''))} chars")
+                logger.info(f"   TOTAL definition: {len(full_definition)} chars")
+                
                 candidate = {
                     "element": adr_result["title"],
                     "type": "Architectural Decision",
                     "citation": adr_result["citation"],
                     "citation_id": adr_result["citation_id"],
                     "confidence": adr_result["confidence"],
-                    "definition": adr_result["decision"],
+                    "definition": full_definition,  # ✅ FULL CONTENT
                     "context": adr_result["context"],
                     "status": adr_result["status"],
                     "source": "ADR",
-                    "priority": "normal",
-                    "adr_number": adr_result["adr_number"]
+                    "priority": "high",  # ✅ Changed to "high" - ADRs are important!
+                    "adr_number": adr_result["adr_number"],
+                    # ✅ Keep individual sections for easy access
+                    "decision": adr_result.get("decision", ""),
+                    "consequences": adr_result.get("consequences", ""),
+                    "options": adr_result.get("options", ""),
+                    "more_info": adr_result.get("more_info", ""),
+                    "driver": adr_result.get("driver", "Unknown")
                 }
                 adr_candidates.append(candidate)
 
             if trace_id:
                 tracer.trace_info(trace_id, "adr_indexer", "query_complete",
                                 results_count=len(adr_candidates))
+            
+            logger.info(f"✅ Returning {len(adr_candidates)} ADR candidates with full content")
 
         except Exception as e:
             logger.error(f"ADR query failed: {e}", exc_info=True)
