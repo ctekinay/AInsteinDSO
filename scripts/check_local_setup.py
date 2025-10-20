@@ -356,7 +356,7 @@ def run_integration_test(env_vars: Dict[str, str]) -> bool:
 
     try:
         # Try to import and initialize key components
-        from agents.embedding_agent import EmbeddingAgent
+        from src.agents.embedding_agent import EmbeddingAgent
 
         print_status("Initializing EA Assistant...", "ℹ")
         agent = EmbeddingAgent()

@@ -201,8 +201,8 @@ class GroundingCheck:
 
 ### 5. Dual Embedding System Architecture
 
-#### 5.1 Primary Embeddings (`all-MiniLM-L6-v2`)
-**Local Embedding Model (Still in Use):**
+#### 5.1 Primary Embeddings (`text-embedding-3-small`)
+**Local Embedding Model (Cached in Use):**
 
 ```python
 class EmbeddingAgent:
@@ -210,15 +210,14 @@ class EmbeddingAgent:
     Primary embedding system using LOCAL model.
 
     Current Reality:
-    - Model: all-MiniLM-L6-v2 (2020, outdated)
-    - Dimensions: 384
-    - MTEB Score: 58.8 (below modern standards)
+    - Model: text-embedding-3-small (2020, outdated)
+    - Dimensions: 1536 dims
+    - MTEB Score: 62.3
     - Storage: data/embeddings/ cache
     """
 
     def __init__(self):
-        self.embedding_model = "all-MiniLM-L6-v2"  # STILL USING THIS
-        self.vector_dim = 384
+        self.embedding_model = "text-embedding-3-small"  # NOW USING THIS
 ```
 
 #### 5.2 API Reranking (`text-embedding-3-small`)
@@ -237,7 +236,7 @@ class SelectiveAPIReranker:
     """
 
     def __init__(self):
-        self.model = "text-embedding-3-small"  # Only for reranking
+        self.model = "text-embedding-3-small"  # for embedding and reranking
         self.dimensions = 1536
         self.cost_per_1k_tokens = 0.00002  # $0.02/1M tokens
 ```
@@ -434,10 +433,11 @@ python scripts/comprehensive_quality_test.py
 ## Current Architecture Reality Check
 
 ### What We Actually Have (October 2025)
-1. **Primary Embeddings**: Still using `all-MiniLM-L6-v2` (384 dims, MTEB 58.8)
+1. **Primary Embeddings**: Now using `text-embedding-3-small` (1536 dims, MTEB 62.3)
    - This is the MAIN embedding model for semantic search
    - Used by EmbeddingAgent for document embeddings
    - Cached locally in `data/embeddings/`
+   - Script "regenerate_embeddings_openai.py" is created to create a local embedding cache "embeddings_cache.pkl"
 
 2. **API Reranking**: OpenAI `text-embedding-3-small` (1536 dims, MTEB 62.3)
    - OPTIONAL feature, must be enabled via `ENABLE_API_RERANKING=true`
@@ -448,39 +448,32 @@ python scripts/comprehensive_quality_test.py
 3. **LLM Providers**:
    - **Primary**: Groq (as configured in .env with `LLM_PROVIDER=groq`)
    - **Fallback**: OpenAI GPT-5
-   - **Local**: Ollama for offline capability
+   - **Local**: [Model of choice] for offline capability
 
-## Future Enhancements
+## Recent Enhancements
 
-### High Priority Improvements (Q4 2025)
-1. **Primary Embedding Model Upgrade**:
-   - Current: `all-MiniLM-L6-v2` (2020 model, outdated)
-   - Target: `nomic-embed-text-v1.5` or `bge-m3`
-   - Impact: Would require complete re-embedding of all documents
-   - Benefit: +5-10% quality improvement on primary retrieval
+### High Priority Improvements
 
-2. **Full OpenAI Embedding Migration**:
+1. **Full OpenAI Embedding Migration**:
    - Move from local embeddings to API-based completely
    - Use `text-embedding-3-small` as primary (not just reranking)
    - Trade-off: Higher API costs but better quality and no local compute
 
-3. **Advanced Analytics**: User behavior and query pattern analysis
+2. **ADR Embeddings**: ADRs are embeedded into the embeddings_cache.pkl
 
-4. **API Expansion**: RESTful API for external integrations
+3. **Query Router and Indexer for ADRs**: Adding the query_router and adr_indexer implementations
 
 ### Technical Debt (Actual)
-1. **Primary Embedding Model**: `all-MiniLM-L6-v2` is outdated (MTEB 58.8 vs modern 62-67)
-   - We have NOT migrated to OpenAI embeddings as primary
-   - API reranking is a band-aid, not a solution
-2. **Dual Embedding Systems**: Maintaining both local and API embeddings is complex
-3. **Cache Management**: Need strategy for embedding model upgrades
-4. **Test Coverage**: Increase integration test scenarios
+1. **Dual Embedding Systems**: Maintaining both local and API embeddings is complex
+2. **Cache Management**: Need strategy for embedding model upgrades
+3. **Test Coverage**: Increase integration test scenarios
+4. **(optional) Local Deployment with no external APIs **: Need to ensure that in the future the solution can be fully run with local LLM running
 
 ---
 
 **Document Control:**
 - Version: 3.0
 - Classification: Internal
-- Review Cycle: Monthly
-- Next Review: November 20, 2025
+- Review Cycle: Weekly
+- Next Review: October 27, 2025
 - Owner: AInstein Development Team

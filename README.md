@@ -215,7 +215,6 @@ AInsteinDSO/
 
 - **Check the logs** - Look at the terminal output for error messages and debug functionality
 - **Verify your setup** - Make sure Python 3.11+, API keys are correct
-- **Run verification tests** - Use `python scripts/verify_fixes.py` to check system health
 - **Check web interface** - Open http://localhost:8000 to see trace visualization
 
 ## 📊 System Architecture
