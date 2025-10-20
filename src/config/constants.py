@@ -126,8 +126,12 @@ class SemanticEnhancementConfig:
     ENABLED_BY_DEFAULT: bool = True  # Can be disabled via env var
     
     # Embedding model metadata
-    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
-    EMBEDDING_DIMENSION: int = 384
+    # NOTE: When use_openai=True, text-embedding-3-small (1536-dim) is used
+    # This fallback is for local-only deployments
+    EMBEDDING_MODEL: str = "text-embedding-3-small"  # ✅ Updated default
+    EMBEDDING_DIMENSION: int = 1536  # ✅ Updated for OpenAI model
+    FALLBACK_MODEL: str = "all-MiniLM-L6-v2"  # Local fallback
+    FALLBACK_DIMENSION: int = 384  # Local fallback dimensio
     
     def __post_init__(self):
         """Validate configuration values."""
@@ -314,6 +318,7 @@ REQUIRED_CITATION_PREFIXES: List[str] = [
     # DOCUMENTS & EXTERNAL SOURCES
     # ─────────────────────────────────────────────────────────────────────
     "doc:",              # PDF Documents (format: doc:filename:page123)
+    "adr:",              # ArchiMate Decision Records (format: adr:record-name)
     "external:",         # External sources (format: external:source:identifier)
     
     # ─────────────────────────────────────────────────────────────────────
@@ -333,7 +338,7 @@ CITATION_PREFIX_CATEGORIES: Dict[str, List[str]] = {
     "european_regulation": ["eurlex:", "acer:", "entsoe:"],
     "dutch_regulation": ["dutch:", "lido:"],
     "british_standards": ["pas1879:", "bsi:"],
-    "architecture": ["archi:", "archi:id-", "togaf:adm:", "togaf:concepts:", "archimate:research:"],
+    "architecture": ["archi:", "archi:id-", "togaf:adm:", "togaf:concepts:", "archimate:research:", "adr:"],
     "documents": ["doc:", "external:"],
     "legacy": ["confluence:", "poolparty:"]
 }

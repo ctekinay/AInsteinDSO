@@ -266,6 +266,20 @@ class ProductionEAAgent:
             logger.warning(f"PDF indexer initialization failed: {e}")
             self.pdf_indexer = None
             
+        # Initialize ADR indexer
+        from src.documents.adr_indexer import ADRIndexer
+        self.adr_indexer = ADRIndexer("data/adrs/")
+        try:
+            adr_count = self.adr_indexer.load_adrs()
+            if adr_count > 0:
+                logger.info(f"✅ ADR indexer initialized: {adr_count} decision records loaded")
+            else:
+                logger.warning("⚠️  No ADRs found in data/adrs/")
+                self.adr_indexer = None
+        except Exception as e:
+            logger.warning(f"ADR indexer initialization failed: {e}")
+            self.adr_indexer = None
+            
         # Semantic search enhancement (optional)
         self.embedding_agent = None
         if EMBEDDING_AVAILABLE and not os.environ.get('DISABLE_EMBEDDING_AGENT'):
@@ -285,12 +299,18 @@ class ProductionEAAgent:
                     kg_loader=self.kg_loader,
                     archimate_parser=self.archimate_parser,
                     pdf_indexer=self.pdf_indexer,
-                    embedding_model="all-MiniLM-L6-v2",  # Fallback if no API key
+                    adr_indexer=self.adr_indexer,  # ✅ NEW: Pass ADR indexer
+                    embedding_model="text-embedding-3-small" if use_openai_embeddings else "all-MiniLM-L6-v2",  # ✅ CORRECT
                     cache_dir="data/embeddings",
-                    use_openai=use_openai_embeddings,  # ✅ ENABLE OPENAI
-                    openai_api_key=openai_key,          # ✅ PASS API KEY
-                    lazy_load=True  # Enable lazy loading for faster startup
+                    use_openai=use_openai_embeddings,
+                    openai_api_key=openai_key,
+                    lazy_load=True
                 )
+                # ✅ NEW: Log which model is actually being used
+                if self.embedding_agent:
+                    model_info = self.embedding_agent.get_model_info()
+                    logger.info(f"Embedding model: {model_info['provider']} - {model_info['model']}")
+                    logger.info(f"   Dimensions: {model_info['dimensions']}, MTEB: {model_info['mteb_score']}")
                 logger.info("Embedding agent initialized for semantic search fallback")
             except Exception as e:
                 logger.warning(f"Could not initialize embedding agent: {e}")
@@ -1148,7 +1168,7 @@ class ProductionEAAgent:
                     print(f"🔍 ❌ NOT A COMPARISON - calling standard _refine_response")  # ← CHANGED
                     print(f"🔍   Reason: is_followup={is_followup}, is_comparison={'unknown' if not is_followup else self.session_manager._is_comparison_query(query)}")  # ← CHANGED
                     refine_phase.add_detail("refinement_mode", "standard")
-                    
+
                     # Standard refinement
                     response, candidates = await self._refine_response(
                         enhanced_query if is_followup else query,
@@ -1461,205 +1481,234 @@ class ProductionEAAgent:
         return citation_pool
 
     async def _retrieve_knowledge(self, query: str, route: str, trace_id: Optional[str] = None) -> Dict:
-            """
-            SIMPLIFIED UNIFIED RETRIEVAL - No complex conditional logic.
+        """
+        SIMPLIFIED UNIFIED RETRIEVAL - No complex conditional logic.
+        
+        Priority order (always the same):
+        1. Knowledge Graph (SPARQL) - for definitions and concepts
+        2. ArchiMate Models - for architectural elements
+        3. PDF Documents - for unstructured content
+        
+        Args:
+            query: User query
+            route: Route destination from router
+            trace_id: Optional trace ID for logging
             
-            Priority order (always the same):
-            1. Knowledge Graph (SPARQL) - for definitions and concepts
-            2. ArchiMate Models - for architectural elements
-            3. PDF Documents - for unstructured content
-            
-            Args:
-                query: User query
-                route: Route destination from router
-                trace_id: Optional trace ID for logging
+        Returns:
+            Dictionary with unified retrieval context
+        """
+        retrieval_context = {
+            "route": route,
+            "candidates": [],
+            "kg_results": [],
+            "archimate_elements": [],
+            "togaf_docs": [],
+            "togaf_context": {}
+            # domain_context will be added dynamically in response building
+        }
+        
+        # Extract query terms (simplified)
+        query_terms = self._extract_query_terms(query)
+        logger.info(f"Extracted query terms: {query_terms}")
+        
+        # 🎯 NEW: For comparison queries, extract terms from previous turns
+        if hasattr(self, 'session_manager'):
+            session_history = self.session_manager.get_history(trace_id or 'default')
+            if session_history and len(session_history) >= 2:
+                # Get terms from last 2 queries
+                prev_query_1 = session_history[-1].query if len(session_history) >= 1 else ""
+                prev_query_2 = session_history[-2].query if len(session_history) >= 2 else ""
                 
-            Returns:
-                Dictionary with unified retrieval context
-            """
-            retrieval_context = {
-                "route": route,
-                "candidates": [],
-                "kg_results": [],
-                "archimate_elements": [],
-                "togaf_docs": [],
-                "togaf_context": {}
-                # domain_context will be added dynamically in response building
+                prev_terms = self._extract_query_terms(prev_query_1 + " " + prev_query_2)
+                
+                # Combine with current terms
+                combined_terms = list(set(query_terms + prev_terms))
+                logger.info(f"🎯 Added {len(prev_terms)} terms from session history")
+                logger.info(f"🎯 Combined terms: {combined_terms[:10]}")
+                
+                query_terms = combined_terms
+        
+        if route == "structured_model":
+            # STEP 1: Query Knowledge Graph (ALWAYS FIRST)
+            kg_candidates = await self._query_knowledge_graph(query_terms, trace_id)
+            logger.info(f"KG returned {len(kg_candidates)} candidates")
+            
+            # Store for citation pool extraction
+            retrieval_context["kg_results"] = kg_candidates
+            
+            # STEP 2: Query ArchiMate Models (ALWAYS SECOND)
+            archimate_candidates = await self._query_archimate_models(query_terms, trace_id)
+            logger.info(f"ArchiMate returned {len(archimate_candidates)} candidates")
+            
+            # Store for citation pool extraction
+            retrieval_context["archimate_elements"] = archimate_candidates
+            
+            # Combine with KG first (higher priority)
+            retrieval_context["candidates"] = kg_candidates + archimate_candidates
+            
+            # Add TOGAF context
+            retrieval_context["togaf_context"] = self._get_togaf_context(query, archimate_candidates)
+            
+            # ✅ NEW: Add ADRs for architectural queries
+            if self.adr_indexer:
+                adr_candidates = await self._query_adrs(query_terms, trace_id)
+                if adr_candidates:
+                    retrieval_context["candidates"].extend(adr_candidates)
+                    retrieval_context["adr_results"] = adr_candidates
+                    logger.info(f"ADRs returned {len(adr_candidates)} candidates") 
+            
+        elif route == "togaf_method":
+            # TOGAF methodology guidance
+            phase_context = self._get_togaf_phase_guidance(query)
+            togaf_candidate = {
+                "element": f"TOGAF ADM {phase_context['phase']}",
+                "type": "Methodology",
+                "citation_id": f"togaf:adm:{phase_context['phase_letter']}",
+                "confidence": CONFIDENCE.TOGAF_DOCUMENTATION,
+                "definition": phase_context["description"],
+                "source": "TOGAF 9.2 Standard",
+                "priority": "togaf"
             }
+            retrieval_context["candidates"] = [togaf_candidate]
+            retrieval_context["togaf_docs"] = [togaf_candidate]
+            retrieval_context["togaf_context"] = phase_context
             
-            # Extract query terms (simplified)
-            query_terms = self._extract_query_terms(query)
-            logger.info(f"Extracted query terms: {query_terms}")
+        elif route == "unstructured_docs":
+            # PDF document search
+            if self.pdf_indexer:
+                doc_candidates = await self._query_documents(query_terms, trace_id)
+                retrieval_context["candidates"] = doc_candidates
+                retrieval_context["document_chunks"] = doc_candidates
+                logger.info(f"Documents returned {len(doc_candidates)} candidates")
             
-            # 🎯 NEW: For comparison queries, extract terms from previous turns
-            if hasattr(self, 'session_manager'):
-                session_history = self.session_manager.get_history(trace_id or 'default')
-                if session_history and len(session_history) >= 2:
-                    # Get terms from last 2 queries
-                    prev_query_1 = session_history[-1].query if len(session_history) >= 1 else ""
-                    prev_query_2 = session_history[-2].query if len(session_history) >= 2 else ""
-                    
-                    prev_terms = self._extract_query_terms(prev_query_1 + " " + prev_query_2)
-                    
-                    # Combine with current terms
-                    combined_terms = list(set(query_terms + prev_terms))
-                    logger.info(f"🎯 Added {len(prev_terms)} terms from session history")
-                    logger.info(f"🎯 Combined terms: {combined_terms[:10]}")
-                    
-                    query_terms = combined_terms
-            
-            if route == "structured_model":
-                # STEP 1: Query Knowledge Graph (ALWAYS FIRST)
-                kg_candidates = await self._query_knowledge_graph(query_terms, trace_id)
-                logger.info(f"KG returned {len(kg_candidates)} candidates")
-                
-                # Store for citation pool extraction
-                retrieval_context["kg_results"] = kg_candidates
-                
-                # STEP 2: Query ArchiMate Models (ALWAYS SECOND)
-                archimate_candidates = await self._query_archimate_models(query_terms, trace_id)
-                logger.info(f"ArchiMate returned {len(archimate_candidates)} candidates")
-                
-                # Store for citation pool extraction
-                retrieval_context["archimate_elements"] = archimate_candidates
-                
-                # Combine with KG first (higher priority)
-                retrieval_context["candidates"] = kg_candidates + archimate_candidates
-                
-                # Add TOGAF context
-                retrieval_context["togaf_context"] = self._get_togaf_context(query, archimate_candidates)
-                
-            elif route == "togaf_method":
-                # TOGAF methodology guidance
-                phase_context = self._get_togaf_phase_guidance(query)
-                togaf_candidate = {
-                    "element": f"TOGAF ADM {phase_context['phase']}",
-                    "type": "Methodology",
-                    "citation_id": f"togaf:adm:{phase_context['phase_letter']}",
-                    "confidence": CONFIDENCE.TOGAF_DOCUMENTATION,
-                    "definition": phase_context["description"],
-                    "source": "TOGAF 9.2 Standard",
-                    "priority": "togaf"
-                }
-                retrieval_context["candidates"] = [togaf_candidate]
-                retrieval_context["togaf_docs"] = [togaf_candidate]
-                retrieval_context["togaf_context"] = phase_context
-                
-            elif route == "unstructured_docs":
-                # PDF document search
-                if self.pdf_indexer:
-                    doc_candidates = await self._query_documents(query_terms, trace_id)
-                    retrieval_context["candidates"] = doc_candidates
-                    retrieval_context["document_chunks"] = doc_candidates
-                    logger.info(f"Documents returned {len(doc_candidates)} candidates")
-            
-            # PHASE 2: SEMANTIC ENHANCEMENT (NEW - always run when available)
-            enable_semantic = os.getenv("ENABLE_SEMANTIC_ENHANCEMENT", "true").lower() == "true"
-            if self.embedding_agent and enable_semantic:
-                semantic_start = time.time()
-                try:
-                    semantic_candidates = await self._semantic_enhancement(
-                        query,
-                        retrieval_context["candidates"]
-                    )
-                    retrieval_context["candidates"].extend(semantic_candidates)
-                    retrieval_context["semantic_enhanced"] = True
+            # ✅ NEW: ADR search
+            if self.adr_indexer:
+                adr_candidates = await self._query_adrs(query_terms, trace_id)
+                retrieval_context["candidates"].extend(adr_candidates)
+                retrieval_context["adr_results"] = adr_candidates
+                logger.info(f"ADRs returned {len(adr_candidates)} candidates")
 
-                    semantic_duration = (time.time() - semantic_start) * 1000
-                    logger.info(f"Added {len(semantic_candidates)} semantic candidates")
-                    logger.info(f"Semantic enhancement took {semantic_duration:.2f}ms")
-                except Exception as e:
-                    logger.warning(f"Semantic enhancement failed: {e}")
-                    retrieval_context["semantic_enhanced"] = False
-
-            # PHASE 3: Context expansion for follow-ups
-            session_id = trace_id or 'default'
-            if hasattr(self, 'session_manager') and len(self.session_manager.get_history(session_id)) > 0:
-                context_start = time.time()
-                try:
-                    context_candidates = await self._context_expansion(query, session_id)
-                    retrieval_context["candidates"].extend(context_candidates)
-
-                    context_duration = (time.time() - context_start) * 1000
-                    logger.info(f"Added {len(context_candidates)} context candidates")
-                    logger.info(f"Context expansion took {context_duration:.2f}ms")
-                except Exception as e:
-                    logger.warning(f"Context expansion failed: {e}")
-
-            # PHASE 4: Apply homonym guard
-            primary_category = (
-                "architectural_guidance" if route == "structured_model"
-                else "knowledge_retrieval" if route == "togaf_method"
-                else "analytical_task"
-            )
-            intent_confidence = 0.9
-
+        # PHASE 2: SEMANTIC ENHANCEMENT (NEW - always run when available)
+        enable_semantic = os.getenv("ENABLE_SEMANTIC_ENHANCEMENT", "true").lower() == "true"
+        if self.embedding_agent and enable_semantic:
+            semantic_start = time.time()
             try:
-                guarded = apply_homonym_guard(
-                    query=query,
-                    primary_category=primary_category,
-                    candidates=retrieval_context["candidates"],
-                    intent_confidence=intent_confidence,
+                semantic_candidates = await self._semantic_enhancement(
+                    query,
+                    retrieval_context["candidates"]
                 )
-                retrieval_context["candidates"] = guarded
-                logger.info("Applied homonym guard (%s)", primary_category)
+                retrieval_context["candidates"].extend(semantic_candidates)
+                retrieval_context["semantic_enhanced"] = True
+
+                semantic_duration = (time.time() - semantic_start) * 1000
+                logger.info(f"Added {len(semantic_candidates)} semantic candidates")
+                logger.info(f"Semantic enhancement took {semantic_duration:.2f}ms")
             except Exception as e:
-                logger.warning("Homonym guard failed: %s", e)
+                logger.warning(f"Semantic enhancement failed: {e}")
+                retrieval_context["semantic_enhanced"] = False
 
-            # PHASE 4.5: API Reranking (NEW)
-            if self.selective_reranker and len(retrieval_context["candidates"]) > API_RERANKING_CONFIG.MIN_CANDIDATES_FOR_RERANKING:
-                rerank_start = time.time()
-                try:
-                    # Check if we should rerank
-                    should_rerank, reason = self.selective_reranker.should_rerank(
+        # PHASE 3: Context expansion for follow-ups
+        session_id = trace_id or 'default'
+        if hasattr(self, 'session_manager') and len(self.session_manager.get_history(session_id)) > 0:
+            context_start = time.time()
+            try:
+                context_candidates = await self._context_expansion(query, session_id)
+                retrieval_context["candidates"].extend(context_candidates)
+
+                context_duration = (time.time() - context_start) * 1000
+                logger.info(f"Added {len(context_candidates)} context candidates")
+                logger.info(f"Context expansion took {context_duration:.2f}ms")
+            except Exception as e:
+                logger.warning(f"Context expansion failed: {e}")
+
+        # PHASE 4: Apply homonym guard
+        primary_category = (
+            "architectural_guidance" if route == "structured_model"
+            else "knowledge_retrieval" if route == "togaf_method"
+            else "analytical_task"
+        )
+        intent_confidence = 0.9
+
+        try:
+            guarded = apply_homonym_guard(
+                query=query,
+                primary_category=primary_category,
+                candidates=retrieval_context["candidates"],
+                intent_confidence=intent_confidence,
+            )
+            retrieval_context["candidates"] = guarded
+            logger.info("Applied homonym guard (%s)", primary_category)
+        except Exception as e:
+            logger.warning("Homonym guard failed: %s", e)
+
+        # ✅ PHASE 4.5: Filter candidates without meaningful definitions
+        # This prevents LLM from citing IEC/ENTSOE terms that only have names but no definitions
+        all_candidates = retrieval_context.get("candidates", [])
+        if all_candidates:
+            candidates_with_definitions = [
+                c for c in all_candidates 
+                if c.get('definition') and len(c.get('definition', '').strip()) > 10
+            ]
+            
+            filtered_count = len(all_candidates) - len(candidates_with_definitions)
+            if filtered_count > 0:
+                logger.info(f"🧹 Filtered {filtered_count} candidates without meaningful definitions")
+                retrieval_context["candidates"] = candidates_with_definitions
+
+        # PHASE 5: API Reranking (NEW)
+        if self.selective_reranker and len(retrieval_context["candidates"]) > API_RERANKING_CONFIG.MIN_CANDIDATES_FOR_RERANKING:
+            rerank_start = time.time()
+            try:
+                # Check if we should rerank
+                should_rerank, reason = self.selective_reranker.should_rerank(
+                    retrieval_context["candidates"],
+                    query
+                )
+
+                if should_rerank:
+                    logger.info(f"🔄 API reranking triggered: {reason}")
+                    reranked = await self.selective_reranker.rerank(
+                        query,
                         retrieval_context["candidates"],
-                        query
+                        top_k=min(10, len(retrieval_context["candidates"]))
                     )
+                    retrieval_context["candidates"] = reranked
+                    retrieval_context["api_reranked"] = True
 
-                    if should_rerank:
-                        logger.info(f"🔄 API reranking triggered: {reason}")
-                        reranked = await self.selective_reranker.rerank(
-                            query,
-                            retrieval_context["candidates"],
-                            top_k=min(10, len(retrieval_context["candidates"]))
-                        )
-                        retrieval_context["candidates"] = reranked
-                        retrieval_context["api_reranked"] = True
-
-                        rerank_duration = (time.time() - rerank_start) * 1000
-                        logger.info(f"✅ API reranking completed in {rerank_duration:.2f}ms")
-                    else:
-                        logger.info(f"⏭️  API reranking skipped: {reason}")
-                        retrieval_context["api_reranked"] = False
-
-                except Exception as e:
-                    logger.warning(f"API reranking failed: {e}")
+                    rerank_duration = (time.time() - rerank_start) * 1000
+                    logger.info(f"✅ API reranking completed in {rerank_duration:.2f}ms")
+                else:
+                    logger.info(f"⏭️  API reranking skipped: {reason}")
                     retrieval_context["api_reranked"] = False
 
-            # PHASE 5: Rank and deduplicate
-            rank_start = time.time()
-            original_count = len(retrieval_context["candidates"])
-            retrieval_context["candidates"] = self._rank_and_deduplicate(
-                retrieval_context["candidates"],
-                query
-            )
-            final_count = len(retrieval_context["candidates"])
-            rank_duration = (time.time() - rank_start) * 1000
-            logger.info(f"Ranking and deduplication: {original_count} → {final_count} candidates in {rank_duration:.2f}ms")
-            
-            # Log final candidate count
-            total_candidates = len(retrieval_context.get("candidates", []))
-            logger.info(f"Total candidates for refinement: {total_candidates}")
-            
-            if trace_id:
-                tracer.trace_info(trace_id, "ea_assistant", "retrieve_complete",
-                                total_candidates=total_candidates,
-                                kg_count=len(retrieval_context.get("kg_results", [])),
-                                archimate_count=len(retrieval_context.get("archimate_elements", [])),
-                                api_reranked=retrieval_context.get("api_reranked", False))
-            
-            # ALWAYS return retrieval_context
-            return retrieval_context
+            except Exception as e:
+                logger.warning(f"API reranking failed: {e}")
+                retrieval_context["api_reranked"] = False
+
+        # PHASE 6: Rank and deduplicate
+        rank_start = time.time()
+        original_count = len(retrieval_context["candidates"])
+        retrieval_context["candidates"] = self._rank_and_deduplicate(
+            retrieval_context["candidates"],
+            query
+        )
+        final_count = len(retrieval_context["candidates"])
+        rank_duration = (time.time() - rank_start) * 1000
+        logger.info(f"Ranking and deduplication: {original_count} → {final_count} candidates in {rank_duration:.2f}ms")
+        
+        # Log final candidate count
+        total_candidates = len(retrieval_context.get("candidates", []))
+        logger.info(f"Total candidates for refinement: {total_candidates}")
+        
+        if trace_id:
+            tracer.trace_info(trace_id, "ea_assistant", "retrieve_complete",
+                            total_candidates=total_candidates,
+                            kg_count=len(retrieval_context.get("kg_results", [])),
+                            archimate_count=len(retrieval_context.get("archimate_elements", [])),
+                            api_reranked=retrieval_context.get("api_reranked", False))
+        
+        # ALWAYS return retrieval_context
+        return retrieval_context
 
     def _extract_query_terms(self, query: str) -> List[str]:
         """
@@ -2123,6 +2172,55 @@ class ProductionEAAgent:
             logger.error(f"Document query failed: {e}", exc_info=True)
 
         return doc_candidates
+    
+    # Query ADRs
+    async def _query_adrs(self, query_terms: List[str], trace_id: Optional[str] = None) -> List[Dict]:
+        """
+        Query Architectural Decision Records.
+
+        Returns list of candidate dictionaries with proper citations.
+        Format includes citation_id for citation pool extraction.
+        
+        Args:
+            query_terms: List of search terms
+            trace_id: Optional trace ID for logging
+            
+        Returns:
+            List of ADR candidate dictionaries
+        """
+        adr_candidates = []
+
+        if not self.adr_indexer:
+            return adr_candidates
+
+        try:
+            adrs = self.adr_indexer.search_adrs(query_terms, max_results=5)
+
+            for adr_result in adrs:
+                candidate = {
+                    "element": adr_result["title"],
+                    "type": "Architectural Decision",
+                    "citation": adr_result["citation"],
+                    "citation_id": adr_result["citation_id"],
+                    "confidence": adr_result["confidence"],
+                    "definition": adr_result["decision"],
+                    "context": adr_result["context"],
+                    "status": adr_result["status"],
+                    "source": "ADR",
+                    "priority": "normal",
+                    "adr_number": adr_result["adr_number"]
+                }
+                adr_candidates.append(candidate)
+
+            if trace_id:
+                tracer.trace_info(trace_id, "adr_indexer", "query_complete",
+                                results_count=len(adr_candidates))
+
+        except Exception as e:
+            logger.error(f"ADR query failed: {e}", exc_info=True)
+
+        return adr_candidates
+
 
     def _calculate_element_confidence(self, element: ArchiMateElement, query_terms: List[str]) -> float:
         """Calculate confidence score for an ArchiMate element based on query relevance."""

@@ -20,7 +20,7 @@ import logging
 import time
 import hashlib
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 import numpy as np
 from dataclasses import dataclass
 from datetime import datetime
@@ -112,6 +112,7 @@ class EmbeddingAgent:
         kg_loader=None,
         archimate_parser=None,
         pdf_indexer=None,
+        adr_indexer = None, # NEW: ADR indexer
         embedding_model: str = "all-MiniLM-L6-v2",
         cache_dir: str = "data/embeddings",
         use_openai: bool = False,
@@ -131,6 +132,7 @@ class EmbeddingAgent:
         self.kg_loader = kg_loader
         self.archimate_parser = archimate_parser
         self.pdf_indexer = pdf_indexer
+        self.adr_indexer = adr_indexer
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.lazy_load = lazy_load
@@ -251,7 +253,25 @@ class EmbeddingAgent:
                 logger.error("Model not cached. Download once with internet connection:")
                 logger.error(f"  python3 -c \"from sentence_transformers import SentenceTransformer; SentenceTransformer('{self.embedding_model}')\"")
                 raise
-
+    
+    def get_model_info(self) -> Dict[str, Any]:
+        """Get information about the embedding model being used."""
+        if self.use_openai:
+            return {
+                "provider": "OpenAI",
+                "model": "text-embedding-3-small",
+                "dimensions": 1536,
+                "mteb_score": 62.3,
+                "cost_per_1m_tokens": 0.02
+            }
+        else:
+            return {
+                "provider": "Local (Sentence Transformers)",
+                "model": self.embedding_model or "all-MiniLM-L6-v2",
+                "dimensions": 384,
+                "mteb_score": 58.8,
+                "cost_per_1m_tokens": 0.0
+            }
     # ---------- Caching / refresh ----------
 
     def _get_source_file_info(self) -> Dict[str, float]:
@@ -294,7 +314,21 @@ class EmbeddingAgent:
         
         NEW (A): Validates model fingerprint and rebuilds if model changed.
         """
-        cache_file = self.cache_dir / "embeddings.pkl"
+        # Cache file path (standardized name)
+        cache_file = self.cache_dir / "embeddings_cache.pkl"
+
+        # Legacy cache file (for backwards compatibility)
+        old_cache_file = self.cache_dir / "embeddings.pkl"
+
+        # Auto-migrate old cache if it exists
+        if not cache_file.exists() and old_cache_file.exists():
+            logger.info(f"Migrating cache: {old_cache_file.name} → {cache_file.name}")
+            try:
+                old_cache_file.rename(cache_file)
+                logger.info("✅ Cache migration successful")
+            except Exception as e:
+                logger.warning(f"Cache migration failed: {e}")
+        
         metadata_file = self.cache_dir / "embeddings_metadata.json"
 
         last_source_mtimes: Dict[str, float] = {}
@@ -309,18 +343,18 @@ class EmbeddingAgent:
         current_source_mtimes = self._get_source_file_info()
 
         should_refresh = False
-        
+
         # Check if cache exists
         if cache_file.exists():
             # NEW (A): Load and validate fingerprint
             try:
                 with open(cache_file, 'rb') as f:
                     embeddings = pickle.load(f)
-                
+
                 fp = embeddings.get('fingerprint', {})
-                
+
                 # Check if model changed
-                if (fp.get('backend') != self.backend or 
+                if (fp.get('backend') != self.backend or
                     fp.get('model_name') != self.model_name):
                     logger.info(
                         f"Embedding model changed: {fp.get('backend')}/{fp.get('model_name')} "
@@ -393,7 +427,21 @@ class EmbeddingAgent:
         """Force refresh embeddings by recreating from current knowledge sources."""
         logger.info("🔄 Manually refreshing embeddings...")
 
-        cache_file = self.cache_dir / "embeddings.pkl"
+        # Cache file path (standardized name)
+        cache_file = self.cache_dir / "embeddings_cache.pkl"
+
+        # Legacy cache file (for backwards compatibility)
+        old_cache_file = self.cache_dir / "embeddings.pkl"
+
+        # Auto-migrate old cache if it exists
+        if not cache_file.exists() and old_cache_file.exists():
+            logger.info(f"Migrating cache: {old_cache_file.name} → {cache_file.name}")
+            try:
+                old_cache_file.rename(cache_file)
+                logger.info("✅ Cache migration successful")
+            except Exception as e:
+                logger.warning(f"Cache migration failed: {e}")
+        
         metadata_file = self.cache_dir / "embeddings_metadata.json"
 
         for file in (cache_file, metadata_file):
@@ -446,7 +494,7 @@ class EmbeddingAgent:
 
         # 3. PDFs
         if self.pdf_indexer:
-            logger.info("Extracting TOGAF documents...")
+            logger.info("Extracting pdf documents...")
             try:
                 pdf_texts = self._extract_pdf_texts()
                 for text, meta, citation in pdf_texts:
@@ -455,6 +503,28 @@ class EmbeddingAgent:
                     citations.append(citation)
             except Exception as e:
                 logger.warning(f"Failed to extract PDF texts: {e}")
+        
+        # 3b. ADRs (NEW)
+        if self.adr_indexer:
+            logger.info("Extracting ADR documents...")
+            try:
+                for adr in self.adr_indexer.adrs:
+                    text = adr.get_searchable_text()
+                    meta = {
+                        "source": "adr",
+                        "adr_number": adr.number,
+                        "title": adr.title,
+                        "status": adr.status
+                    }
+                    citation = adr.get_citation_id()
+                    
+                    texts.append(text)
+                    metadata.append(meta)  # ✅ Use metadata, not sources
+                    citations.append(citation)
+                
+                logger.info(f"Collected {len(self.adr_indexer.adrs)} ADR texts for embedding")
+            except Exception as e:
+                logger.warning(f"Could not collect ADR texts: {e}")
 
         # 4. Domain contexts
         logger.info("Adding domain contexts...")
