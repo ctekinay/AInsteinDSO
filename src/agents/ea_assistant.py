@@ -1643,18 +1643,44 @@ class ProductionEAAgent:
 
         # ✅ PHASE 4.5: Filter candidates without meaningful definitions
         # This prevents LLM from citing IEC/ENTSOE terms that only have names but no definitions
+        # EXCEPTION: Always keep ADRs and documents (they have rich content in other fields)
         all_candidates = retrieval_context.get("candidates", [])
         if all_candidates:
-            candidates_with_definitions = [
-                c for c in all_candidates 
-                if c.get('definition') and len(c.get('definition', '').strip()) > 10
-            ]
+            candidates_with_definitions = []
+            adr_count = 0
+            doc_count = 0
+            filtered_kg_count = 0
             
-            filtered_count = len(all_candidates) - len(candidates_with_definitions)
-            if filtered_count > 0:
-                logger.info(f"🧹 Filtered {filtered_count} candidates without meaningful definitions")
+            for c in all_candidates:
+                source = c.get('source', '')
+                
+                # Always keep ADRs (they have decision/context/consequences)
+                if source == 'ADR':
+                    candidates_with_definitions.append(c)
+                    adr_count += 1
+                    continue
+                
+                # Always keep documents (they have chunks)
+                if source in ['PDF', 'Document']:
+                    candidates_with_definitions.append(c)
+                    doc_count += 1
+                    continue
+                
+                # For KG/ArchiMate: only keep if has meaningful definition
+                definition = c.get('definition', '').strip()
+                if definition and len(definition) > 10:
+                    candidates_with_definitions.append(c)
+                else:
+                    filtered_kg_count += 1
+            
+            if filtered_kg_count > 0:
+                logger.info(f"🧹 Filtered {filtered_kg_count} KG/ArchiMate candidates without definitions")
+                if adr_count > 0:
+                    logger.info(f"   ✅ Kept {adr_count} ADR candidates")
+                if doc_count > 0:
+                    logger.info(f"   ✅ Kept {doc_count} document candidates")
                 retrieval_context["candidates"] = candidates_with_definitions
-
+                
         # PHASE 5: API Reranking (NEW)
         if self.selective_reranker and len(retrieval_context["candidates"]) > API_RERANKING_CONFIG.MIN_CANDIDATES_FOR_RERANKING:
             rerank_start = time.time()
