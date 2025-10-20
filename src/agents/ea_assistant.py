@@ -461,6 +461,80 @@ class ProductionEAAgent:
                 logger.info("Using template fallback for safety")
                 self.llm_provider = None
 
+    def _handle_system_query(self, query: str) -> Optional[Dict]:
+        """
+        Handle queries ABOUT the system itself (not definitions).
+        
+        Examples:
+        - "How many ADRs do we have?"
+        - "List all ADRs"
+        - "What decision records exist?"
+        
+        Args:
+            query: User query
+            
+        Returns:
+            Response dict if this is a system query, None otherwise
+        """
+        query_lower = query.lower()
+        
+        # Check if asking about ADR count/list
+        if any(pattern in query_lower for pattern in [
+            'how many adr', 'list adr', 'all adr', 'show adr', 'what adr'
+        ]):
+            if self.adr_indexer:
+                adr_count = len(self.adr_indexer.adrs)
+                adr_list = [
+                    f"- **ADR-{adr.number}**: {adr.title} `[adr:{adr.number}]` (Status: {adr.status})"
+                    for adr in sorted(self.adr_indexer.adrs, key=lambda x: x.number)
+                ]
+                
+                response_text = f"""# Architectural Decision Records
+
+    **Total ADRs in system:** {adr_count}
+
+    ## Complete List:
+
+    {chr(10).join(adr_list)}
+"""
+                
+                # Return in correct format matching other responses
+                from src.llm.base import LLMResponse
+                
+                return LLMResponse(
+                    content=response_text,
+                    model="system_query_handler",
+                    provider="direct",
+                    tokens_used=0,
+                    response_time_ms=0.0,
+                    finish_reason="complete",
+                    metadata={
+                        "source": "system_query",
+                        "adr_count": adr_count
+                    }
+                )
+        
+        # Check if asking about document count
+        if any(pattern in query_lower for pattern in [
+            'how many document', 'how many pdf', 'list document'
+        ]):
+            if self.pdf_indexer:
+                doc_count = len(self.pdf_indexer.chunks)
+                response_text = f"**Documents in system:** {doc_count} PDF chunks loaded from `data/docs/` directory."
+                
+                from src.llm.base import LLMResponse
+                
+                return LLMResponse(
+                    content=response_text,
+                    model="system_query_handler",
+                    provider="direct",
+                    tokens_used=0,
+                    response_time_ms=0.0,
+                    finish_reason="complete"
+                )
+        
+        return None
+    
     def _load_archimate_models(self, models_path: str) -> None:
         """
         Load all ArchiMate models from directory.
@@ -919,6 +993,37 @@ class ProductionEAAgent:
             with tracer.trace_function(trace_id, "query_router", "route", query=query):
                 route = self.router.route(enhanced_query if is_followup else query, trace_id=trace_id)
                 route_phase.add_detail("route", route)
+                
+                # ✅ NEW: Check if this is a system query (about the system itself)
+                system_response = self._handle_system_query(query)
+                if system_response:
+                    logger.info("System query detected, returning direct response")
+                    
+                    # Add to session history
+                    if self.session_manager:
+                        self.session_manager.add_turn(
+                            session_id=session_id,
+                            query=query,
+                            response=system_response.content,
+                            confidence=1.0,
+                            citations=[]
+                        )
+                        logger.info(f"✅ Added system query turn to session {session_id}")
+                    
+                    # ✅ Return PipelineResponse (consistent with normal queries)
+                    return PipelineResponse(
+                        query=query,
+                        response=system_response.content,  # Extract content from LLMResponse
+                        route="system_query",
+                        citations=[],
+                        confidence=1.0,
+                        requires_human_review=False,
+                        togaf_phase=None,
+                        archimate_elements=[],
+                        processing_time_ms=(time.perf_counter() - start_time) * 1000,
+                        session_id=session_id,
+                        timestamp=datetime.utcnow().isoformat()
+                    )
                 
                 if is_followup:
                     route_phase.add_detail("routing_mode", "context_enhanced")

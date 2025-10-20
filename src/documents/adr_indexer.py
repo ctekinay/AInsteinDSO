@@ -82,6 +82,10 @@ class ADRIndexer:
         self.adr_by_number: Dict[str, ADR] = {}
         self.adr_by_slug: Dict[str, ADR] = {}
         
+        logger.info(f"Successfully loaded {len(self.adrs)} ADRs")
+        for adr in self.adrs:
+            logger.info(f"  - ADR-{adr.number}: {adr.title} (status: {adr.status})")
+        
         logger.info(f"ADRIndexer initialized for directory: {adrs_dir}")
     
     def load_adrs(self) -> int:
@@ -230,7 +234,7 @@ class ADRIndexer:
     
     def search_adrs(self, query_terms: List[str], max_results: int = 5) -> List[Dict]:
         """
-        Search ADRs by query terms.
+        Search ADRs by query terms with PRIORITY for direct number matches.
         
         Args:
             query_terms: List of search terms
@@ -242,8 +246,63 @@ class ADRIndexer:
         if not self.adrs:
             return []
         
+        # ✅ PRIORITY 1: Extract ADR numbers from query
+        adr_numbers = []
+        import re
+        
+        # Combine all query terms into one string for easier pattern matching
+        query_string = ' '.join(query_terms).lower()
+        
+        # Pattern 1: "adr-0025", "adr 0025", "adr:0025"
+        matches = re.findall(r'adr[:\s-]?(\d{4})', query_string)
+        adr_numbers.extend(matches)
+        
+        # Pattern 2: Just "0025" by itself
+        standalone_numbers = re.findall(r'\b(\d{4})\b', query_string)
+        adr_numbers.extend(standalone_numbers)
+        
+        # Pattern 3: "adr 25" (without leading zeros)
+        short_numbers = re.findall(r'adr[:\s-]?(\d{1,3})\b', query_string)
+        # Pad with zeros
+        adr_numbers.extend([n.zfill(4) for n in short_numbers])
+        
+        # Remove duplicates
+        adr_numbers = list(set(adr_numbers))
+        
+        logger.info(f"🔍 ADR search: extracted numbers {adr_numbers} from query: {query_string}")
+        
         results = []
-        query_lower = ' '.join(query_terms).lower()
+        
+        # ✅ DIRECT NUMBER MATCH (Highest Priority)
+        if adr_numbers:
+            for adr in self.adrs:
+                if adr.number in adr_numbers:
+                    logger.info(f"✅ Direct ADR number match: {adr.number}")
+                    results.append({
+                        "adr_number": adr.number,
+                        "title": adr.title,
+                        "status": adr.status,
+                        "citation": adr.get_citation_id(),
+                        "citation_id": adr.get_citation_id(),
+                        "decision": adr.decision,
+                        "context": adr.context,
+                        "consequences": adr.consequences,
+                        "options": adr.options,
+                        "more_info": adr.more_info,
+                        "driver": adr.driver or "Unknown",
+                        "score": 1000,  # Highest priority
+                        "confidence": 0.99,
+                        "type": "Architectural Decision Record",
+                        "source": "ADR"
+                    })
+            
+            # If we found direct matches, return them immediately
+            if results:
+                logger.info(f"Returning {len(results)} direct ADR matches")
+                return results[:max_results]
+        
+        # ✅ FALLBACK: Content-based search (only if no direct match)
+        logger.info("No direct ADR number match, trying content search...")
         
         for adr in self.adrs:
             # Calculate relevance score
@@ -251,48 +310,38 @@ class ADRIndexer:
             searchable = adr.get_searchable_text().lower()
             
             # Title match (highest weight)
-            title_matches = sum(1 for term in query_terms if term.lower() in adr.title.lower())
-            score += title_matches * 10
-            
-            # Decision text match (high weight)
-            decision_matches = sum(1 for term in query_terms if term.lower() in adr.decision.lower())
-            score += decision_matches * 5
-            
-            # Context match (medium weight)
-            context_matches = sum(1 for term in query_terms if term.lower() in adr.context.lower())
-            score += context_matches * 3
-            
-            # Full text occurrence count (low weight)
             for term in query_terms:
-                score += searchable.count(term.lower())
-            
-            # Bonus for accepted/proposed status
-            if adr.status.lower() in ['accepted', 'proposed']:
-                score += 2
+                term_lower = term.lower()
+                if term_lower in adr.title.lower():
+                    score += 10
+                if term_lower in adr.decision.lower():
+                    score += 5
+                if term_lower in searchable:
+                    score += searchable.count(term_lower)
             
             if score > 0:
-                # Prepare summary (first 200 chars of decision)
-                decision_summary = adr.decision[:200]
-                if len(adr.decision) > 200:
-                    decision_summary += "..."
-                
                 results.append({
                     "adr_number": adr.number,
                     "title": adr.title,
                     "status": adr.status,
                     "citation": adr.get_citation_id(),
                     "citation_id": adr.get_citation_id(),
-                    "decision": decision_summary,
-                    "context": adr.context[:150] + "..." if len(adr.context) > 150 else adr.context,
+                    "decision": adr.decision,
+                    "context": adr.context,
+                    "consequences": adr.consequences,
+                    "options": adr.options,
+                    "more_info": adr.more_info,
                     "driver": adr.driver or "Unknown",
                     "score": score,
-                    "confidence": min(0.9, score / 20.0),  # Normalize to 0-0.9
-                    "type": "Architectural Decision",
+                    "confidence": min(0.9, score / 20.0),
+                    "type": "Architectural Decision Record",
                     "source": "ADR"
                 })
         
         # Sort by score (highest first)
         results.sort(key=lambda x: x['score'], reverse=True)
+        
+        logger.info(f"Content search found {len(results)} ADRs")
         
         return results[:max_results]
     

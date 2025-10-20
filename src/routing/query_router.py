@@ -18,7 +18,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, List, Set, Optional, TYPE_CHECKING, Any
+from typing import Dict, List, Set, Optional, TYPE_CHECKING, Any, Tuple
 
 # Use TYPE_CHECKING to avoid circular imports while keeping type hints
 if TYPE_CHECKING:
@@ -102,10 +102,10 @@ class QueryRouter:
 
     def route(self, query: str, trace_id: Optional[str] = None) -> str:
         """
-        Route query to appropriate knowledge source using LLM-assisted intent detection.
+        Route query to appropriate knowledge source.
         
         Priority:
-        0. LLM detects ADR/document query → unstructured_docs
+        0. LLM-detected ADR/document queries → unstructured_docs
         1. IEC/Energy + ArchiMate terms → structured_model
         2. TOGAF ADM + viewpoints → togaf_method
         3. Everything else → unstructured_docs
@@ -126,36 +126,29 @@ class QueryRouter:
 
             query_lower = query.lower()
 
-            # ============================================================
-            # ✅ PRIORITY 0: LLM-BASED INTENT DETECTION (Two-Stage)
-            # ============================================================
-            
-            # STAGE 1: Quick keyword pre-filter (< 1ms)
-            # Only call LLM if query MIGHT be about documents/ADRs
-            might_be_document = self._might_be_document_query(query_lower)
-            
-            if might_be_document:
-                # STAGE 2: LLM classification (~ 200ms, only when needed)
-                logger.debug("Query might be about documents/ADRs, calling LLM classifier...")
-                intent = self._classify_query_intent(query)
+            #✅ PRIORITY 0: ALWAYS use LLM classification (it's fast and accurate)
+            # The LLM understands semantic intent better than keyword matching
+            try:
+                intent, confidence = self._classify_query_intent(query)
                 
-                # If LLM confirms it's an ADR/document query, route to unstructured_docs
-                if intent.get("type") in ["adr_query", "document_query"]:
+                # Route based on LLM classification
+                if intent in ["adr_query", "document_query", "system_query"] and confidence > 0.7:
                     route = "unstructured_docs"
-                    logger.info(f"Query routed to {route} (LLM detected: {intent.get('type')})")
+                    logger.info(f"Query routed to {route} (LLM: {intent}, conf: {confidence:.2f})")
                     if trace_id:
                         tracer.trace_info(trace_id, "query_router", "route_decision",
-                                        route=route, 
-                                        reason=f"llm_intent_{intent.get('type')}",
-                                        llm_confidence=intent.get('confidence'))
+                                        route=route, reason=f"llm_{intent}", confidence=confidence)
                     self._log_performance(start_time, route)
                     return route
-                else:
-                    logger.debug(f"LLM classified as: {intent.get('type')}, continuing with term-based routing")
-            
-            # ============================================================
+                
+                # Log low-confidence classifications for analysis
+                if confidence < 0.7:
+                    logger.debug(f"Low-confidence classification: {intent} ({confidence:.2f}), continuing to term-based routing")
+
+            except Exception as e:
+                logger.warning(f"LLM classification failed: {e}, falling back to term-based routing")
+
             # PRIORITY 1: Check for IEC/Energy + ArchiMate terms
-            # ============================================================
             if trace_id:
                 tracer.trace_info(trace_id, "query_router", "check_structured_terms",
                                 query_lower=query_lower[:50])
@@ -169,9 +162,7 @@ class QueryRouter:
                 self._log_performance(start_time, route)
                 return route
 
-            # ============================================================
             # PRIORITY 2: Check for TOGAF ADM phases + viewpoints
-            # ============================================================
             if trace_id:
                 tracer.trace_info(trace_id, "query_router", "check_togaf_terms",
                                 query_lower=query_lower[:50])
@@ -185,9 +176,7 @@ class QueryRouter:
                 self._log_performance(start_time, route)
                 return route
 
-            # ============================================================
             # PRIORITY 3: Default to unstructured search
-            # ============================================================
             route = "unstructured_docs"
             logger.info(f"Query routed to {route} (no domain-specific terms found)")
             if trace_id:
@@ -195,6 +184,122 @@ class QueryRouter:
                                 route=route, reason="default_fallback")
             self._log_performance(start_time, route)
             return route
+
+    def _classify_query_intent(self, query: str) -> Tuple[str, float]:
+        """
+        Use LLM to classify query intent for routing decisions.
+        
+        This uses a synchronous approach compatible with the router's sync context.
+        
+        Args:
+            query: User query
+            
+        Returns:
+            (intent_type, confidence)
+        """
+        try:
+            import os
+            import httpx
+            import json
+            
+            # Determine which provider to use
+            provider = os.getenv('LLM_PROVIDER', 'groq')
+            
+            if provider == 'groq':
+                api_key = os.getenv('GROQ_API_KEY_1')
+                api_url = "https://api.groq.com/openai/v1/chat/completions"
+                model = "llama-3.3-70b-versatile"
+            elif provider == 'openai':
+                api_key = os.getenv('OPENAI_API_KEY')
+                api_url = "https://api.openai.com/v1/chat/completions"
+                model = "gpt-4o-mini"  # Use cheaper model for classification
+            else:
+                # For ollama or other providers, skip LLM classification
+                return "other", 0.0
+            
+            if not api_key:
+                return "other", 0.0
+            
+            classification_prompt = f"""Classify this user query into ONE category and provide your confidence level:
+
+    **Categories:**
+
+    1. **adr_query** - User wants content/details of a specific ADR
+    Examples: "show adr 0025", "details of ADR on interfaces", "what does ADR 25 say"
+    
+    2. **system_query** - User asks about the system itself (counts, lists, what exists)
+    Examples: "how many ADRs do we have", "list all ADRs", "what ADRs exist", "show me all decisions"
+    
+    3. **document_query** - User wants content from a document/file
+    Examples: "show the PDF", "what's in the document"
+    
+    4. **definition_query** - User wants a definition/explanation of a concept
+    Examples: "what is reactive power", "explain demand response", "define X"
+    
+    5. **other** - None of the above
+
+    **Query to classify:**
+    "{query}"
+
+    **Instructions:**
+    - Analyze the query semantics carefully
+    - Choose the MOST appropriate category
+    - Confidence must be between 0.0 (uncertain) and 1.0 (very certain)
+    - Base confidence on how well the query matches category patterns
+    - Respond with ONLY valid JSON (no markdown code blocks, no explanation text)
+
+    **Response format:**
+    {{"type": "category_name", "confidence": 0.XX}}
+
+    **Example valid responses:**
+    {{"type": "adr_query", "confidence": 0.95}}
+    {{"type": "system_query", "confidence": 0.88}}
+    {{"type": "definition_query", "confidence": 0.75}}
+    {{"type": "other", "confidence": 0.60}}"""
+
+            # Make synchronous HTTP request
+            with httpx.Client(timeout=5.0) as client:
+                response = client.post(
+                    api_url,
+                    headers={
+                        "Authorization": f"Bearer {api_key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": model,
+                        "messages": [{"role": "user", "content": classification_prompt}],
+                        "temperature": 0.1,  # Low temperature for consistent classification
+                        "max_tokens": 100
+                    }
+                )
+            
+            if response.status_code != 200:
+                logger.warning(f"LLM API returned {response.status_code}")
+                return "other", 0.0
+            
+            result_data = response.json()
+            content = result_data['choices'][0]['message']['content'].strip()
+            
+            # Parse JSON response (remove markdown if present)
+            import re
+            content = re.sub(r'```json\s*', '', content)
+            content = re.sub(r'```\s*', '', content)
+            content = content.strip()
+            
+            result = json.loads(content)
+            intent = result.get('type', 'other')
+            confidence = float(result.get('confidence', 0.5))
+            
+            # Validate confidence is in valid range
+            confidence = max(0.0, min(1.0, confidence))
+            
+            logger.info(f"🤖 LLM classified '{query[:50]}...' as: {intent} (confidence: {confidence:.2f})")
+            
+            return intent, confidence
+            
+        except Exception as e:
+            logger.warning(f"LLM intent classification failed: {e}")
+            return "other", 0.0
 
     def _might_be_document_query(self, query_lower: str) -> bool:
         """
@@ -227,101 +332,7 @@ class QueryRouter:
         
         return any(keyword in query_lower for keyword in document_keywords)
 
-    def _classify_query_intent(self, query: str) -> Dict:
-        """
-        STAGE 2: Use LLM to classify query intent for routing decisions.
-        
-        This is more accurate than hardcoded patterns because the LLM
-        understands semantic meaning, not just keywords.
-        
-        Performance: ~ 200ms (LLM API call)
-        Only called when stage 1 pre-filter returns True.
-        
-        Args:
-            query: User query
-            
-        Returns:
-            Dict with:
-            - type: "adr_query", "document_query", "definition_query", "other"
-            - confidence: 0.0-1.0
-            - reasoning: Brief explanation
-            - extracted_info: Additional context (e.g., ADR number, topic)
-        """
-        try:
-            from src.llm.factory import get_llm_provider
-            
-            # Get a fast LLM for classification (prefer Groq for speed)
-            llm = get_llm_provider()
-            
-            classification_prompt = f"""Classify the following user query into ONE of these categories:
-
-    1. "adr_query" - User is asking about an Architectural Decision Record (ADR)
-    Examples: 
-    - "show me adr 0025"
-    - "what does our decision on interfaces say"
-    - "details of adr"
-    - "tell me about decision 0025"
-    - "explain our architectural choice on demand response"
-    
-    2. "document_query" - User is asking about a document/file/report (not an ADR)
-    Examples: 
-    - "show me the PDF on solar"
-    - "what's in document X"
-    
-    3. "definition_query" - User wants a definition/explanation of a concept
-    Examples: 
-    - "what is reactive power"
-    - "explain demand response"
-    - "define asset"
-    - "what does ADR mean" (asking for definition of ADR itself)
-    
-    4. "other" - None of the above
-
-    User query: "{query}"
-
-    Respond with ONLY valid JSON in this exact format (no extra text):
-    {{
-    "type": "adr_query",
-    "confidence": 0.95,
-    "reasoning": "User is asking for details about a specific ADR",
-    "extracted_info": {{
-        "adr_number": "0025",
-        "topic": "demand response interfaces"
-    }}
-    }}"""
-
-            response = llm.generate(
-                prompt=classification_prompt,
-                temperature=0.1,  # Low temperature for deterministic classification
-                max_tokens=200
-            )
-            
-            # Parse JSON response
-            import json
-            import re
-            
-            # Strip markdown code blocks if present
-            content = response.content.strip()
-            content = re.sub(r'```json\s*', '', content)
-            content = re.sub(r'```\s*', '', content)
-            content = content.strip()
-            
-            result = json.loads(content)
-            
-            logger.info(f"🤖 LLM classified query as: {result.get('type')} (confidence: {result.get('confidence'):.2f})")
-            logger.debug(f"   Reasoning: {result.get('reasoning')}")
-            
-            return result
-            
-        except Exception as e:
-            logger.warning(f"LLM intent classification failed: {e}")
-            # Fallback to safe default
-            return {
-                "type": "other",
-                "confidence": 0.0,
-                "reasoning": "classification_failed"
-            }
-        
+     
     def _contains_structured_terms(self, query_lower: str) -> bool:
         """
         Check if query contains IEC/Energy or ArchiMate terms.

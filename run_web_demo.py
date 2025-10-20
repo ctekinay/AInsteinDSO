@@ -252,19 +252,19 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
             try:
                 if ea_agent:
-                    # Process query - NOW RETURNS TUPLE!
+                    # Process query
                     logger.info(f"Processing query: {user_query}")
 
                     try:
                         # ============================================
-                        # Process query - returns PipelineResponse object
+                        # Process query - returns dict containing response data
                         # ============================================
                         response = await ea_agent.process_query(user_query, session_id)
-                        
+                                                
                         # Build response message
                         response_message = {
                             "type": "assistant",
-                            "content": response.response,
+                            "content": response.response,  # ✅ response.response is a string
                             "timestamp": datetime.now().isoformat(),
                             "confidence": round(response.confidence, 3),
                             "citations": response.citations,
@@ -275,19 +275,17 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                             "archimate_elements": response.archimate_elements,
                             "processing_time_ms": response.processing_time_ms
                         }
-                        
+
                         # Send the main response
                         await manager.send_message(websocket, response_message)
-                        
-                        # ============================================
+
                         # Send trace data separately (if available)
-                        # ============================================
-                        if hasattr(response, 'trace_id') and response.trace_id:
+                        if hasattr(response, 'session_id') and response.session_id:
                             trace_message = {
                                 "type": "trace",
-                                "trace_id": response.trace_id,
+                                "trace_id": response.session_id,
                                 "timestamp": datetime.now().isoformat(),
-                                "phases": getattr(response, 'trace_phases', []),
+                                "phases": [],  # PipelineResponse doesn't have trace_phases
                                 "duration_ms": response.processing_time_ms
                             }
                             await manager.send_message(websocket, trace_message)
@@ -297,18 +295,18 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                                 if "traces" not in manager.session_data[session_id]:
                                     manager.session_data[session_id]["traces"] = []
                                 manager.session_data[session_id]["traces"].append({
-                                    "trace_id": response.trace_id,
+                                    "trace_id": response.session_id,
                                     "query": user_query,
                                     "duration_ms": response.processing_time_ms,
                                     "timestamp": datetime.now().isoformat()
                                 })
-                        
+
                         # Store response
                         manager.session_data[session_id]["messages"].append(response_message)
-                        
+
                         logger.info(f"✅ Query processed successfully in {response.processing_time_ms:.0f}ms")
                         logger.info(f"   Citations: {len(response.citations)}, Confidence: {response.confidence:.2f}")
-
+                        
                     except FakeCitationError as e:
                         # Handle fake citation detection
                         logger.error(f"❌ FAKE CITATIONS DETECTED: {e.fake_citations}")

@@ -218,7 +218,7 @@ Response:"""
                 prompt=user_prompt,
                 system_prompt=system_prompt,
                 temperature=temperature,
-                max_tokens=2048
+                max_tokens=4096
             )
             
             logger.info(f"✅ Primary LLM generated {len(response.content)} chars, {response.tokens_used} tokens")
@@ -408,7 +408,7 @@ Respond in JSON format:
                 prompt=reconciliation_prompt,
                 system_prompt="You must create an accurate, well-grounded response.",
                 temperature=0.2,
-                max_tokens=2048  # ✅ Double it
+                max_tokens=4096  # ✅ Double it
             )
             
             reconciled = response.content
