@@ -257,14 +257,14 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
                     try:
                         # ============================================
-                        # Process query - returns dict containing response data
+                        # CRITICAL: Unpack tuple return
                         # ============================================
-                        response = await ea_agent.process_query(user_query, session_id)
-                                                
+                        response, trace = await ea_agent.process_query(user_query, session_id)
+
                         # Build response message
                         response_message = {
                             "type": "assistant",
-                            "content": response.response,  # ✅ response.response is a string
+                            "content": response.response,
                             "timestamp": datetime.now().isoformat(),
                             "confidence": round(response.confidence, 3),
                             "citations": response.citations,
@@ -279,30 +279,21 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
                         # Send the main response
                         await manager.send_message(websocket, response_message)
 
-                        # Send trace data separately (if available)
-                        if hasattr(response, 'session_id') and response.session_id:
-                            trace_message = {
-                                "type": "trace",
-                                "trace_id": response.session_id,
-                                "timestamp": datetime.now().isoformat(),
-                                "phases": [],  # PipelineResponse doesn't have trace_phases
-                                "duration_ms": response.processing_time_ms
-                            }
-                            await manager.send_message(websocket, trace_message)
-                            
-                            # Store trace info
-                            if session_id in manager.session_data:
-                                if "traces" not in manager.session_data[session_id]:
-                                    manager.session_data[session_id]["traces"] = []
-                                manager.session_data[session_id]["traces"].append({
-                                    "trace_id": response.session_id,
-                                    "query": user_query,
-                                    "duration_ms": response.processing_time_ms,
-                                    "timestamp": datetime.now().isoformat()
-                                })
+                        # ============================================
+                        # NEW: Send trace data separately
+                        # ============================================
+                        trace_message = {
+                            "type": "trace",
+                            "trace": trace.to_dict(),
+                            "timestamp": datetime.now().isoformat()
+                        }
+                        await manager.send_message(websocket, trace_message)
 
-                        # Store response
+                        # Store both response and trace
                         manager.session_data[session_id]["messages"].append(response_message)
+                        if "traces" not in manager.session_data[session_id]:
+                            manager.session_data[session_id]["traces"] = []
+                        manager.session_data[session_id]["traces"].append(trace.to_dict())
 
                         logger.info(f"✅ Query processed successfully in {response.processing_time_ms:.0f}ms")
                         logger.info(f"   Citations: {len(response.citations)}, Confidence: {response.confidence:.2f}")

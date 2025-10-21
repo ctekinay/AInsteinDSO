@@ -1530,7 +1530,7 @@ class ProductionEAAgent:
                     f"citations: {len(citations)}, "
                     f"followup: {is_followup})")
 
-            return pipeline_response
+            return pipeline_response, trace
 
         except UngroundedReplyError as e:
             logger.error(f"Grounding violation: {e}")

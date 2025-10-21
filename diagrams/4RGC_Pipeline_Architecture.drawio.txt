@@ -1,0 +1,239 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="4R+G+C Pipeline" id="pipeline">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="AInstein 4R+G+C Pipeline Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="290" y="30" width="590" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- User Query Input -->
+        <mxCell id="user-input" value="&lt;b&gt;User Query&lt;/b&gt;&lt;br&gt;&lt;br&gt;&quot;What's the difference between&lt;br&gt;active power and reactive power?&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="450" y="100" width="270" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Phase 1: REFLECT -->
+        <mxCell id="phase1-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="220" width="1010" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phase1-title" value="&lt;b&gt;PHASE 1: REFLECT&lt;/b&gt;&lt;br&gt;Query Analysis &amp; Intent Detection" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="230" width="280" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="reflect-comp1" value="&lt;b&gt;Query Parser&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Tokenization&lt;br&gt;• Entity extraction&lt;br&gt;• Intent classification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="110" y="275" width="160" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="reflect-comp2" value="&lt;b&gt;Comparison Detector&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Pattern matching&lt;br&gt;• Extract terms&lt;br&gt;• Validate structure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="290" y="275" width="180" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="reflect-comp3" value="&lt;b&gt;Context Analyzer&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Session history (3 turns)&lt;br&gt;• Extract concepts&lt;br&gt;• Build context" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="490" y="275" width="180" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="reflect-output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;&lt;br&gt;Query type: Comparison&lt;br&gt;Terms: [active power, reactive power]&lt;br&gt;Domain: Energy systems" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="850" y="275" width="220" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Phase 2: ROUTE -->
+        <mxCell id="phase2-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="400" width="1010" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phase2-title" value="&lt;b&gt;PHASE 2: ROUTE&lt;/b&gt;&lt;br&gt;LLM-Based Intelligent Query Routing" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="410" width="320" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="route-comp1" value="&lt;b&gt;Homonym Detector&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Check ambiguous terms&lt;br&gt;• Domain context&lt;br&gt;• Disambiguation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="110" y="455" width="160" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="route-comp2" value="&lt;b&gt;Domain Router&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Identify domains&lt;br&gt;• Select sources&lt;br&gt;• Priority ranking" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="290" y="455" width="160" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="route-comp3" value="&lt;b&gt;ADR Matcher&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Pattern matching&lt;br&gt;• Number extraction&lt;br&gt;• Content search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="470" y="455" width="160" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="route-output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;&lt;br&gt;Route: Knowledge Graph&lt;br&gt;Priority: IEC standards&lt;br&gt;No ambiguity detected" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="850" y="455" width="220" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Phase 3: RETRIEVE -->
+        <mxCell id="phase3-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="580" width="1010" height="160" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phase3-title" value="&lt;b&gt;PHASE 3: RETRIEVE&lt;/b&gt;&lt;br&gt;Multi-Source Knowledge Retrieval" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="590" width="300" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="retrieve-kg" value="&lt;b&gt;Knowledge Graph&lt;/b&gt;&lt;br&gt;&lt;br&gt;SPARQL queries&lt;br&gt;39,122 triples&lt;br&gt;IEC definitions" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="110" y="640" width="120" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="retrieve-archimate" value="&lt;b&gt;ArchiMate&lt;/b&gt;&lt;br&gt;&lt;br&gt;XML parsing&lt;br&gt;Model elements&lt;br&gt;TOGAF mapping" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="250" y="640" width="120" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="retrieve-adrs" value="&lt;b&gt;ADRs&lt;/b&gt;&lt;br&gt;&lt;br&gt;13 decisions&lt;br&gt;Markdown&lt;br&gt;Indexed" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="390" y="640" width="120" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="retrieve-embeddings" value="&lt;b&gt;Embeddings&lt;/b&gt;&lt;br&gt;&lt;br&gt;Semantic search&lt;br&gt;MiniLM-L6-v2&lt;br&gt;Score &amp;gt; 0.40" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="640" width="120" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="retrieve-rerank" value="&lt;b&gt;API Reranking&lt;/b&gt;&lt;br&gt;&lt;br&gt;OpenAI embeddings&lt;br&gt;+15-20% quality&lt;br&gt;text-embedding-3-small" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="670" y="640" width="160" height="85" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="retrieve-output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;&lt;br&gt;10 candidates&lt;br&gt;Distinct citations&lt;br&gt;Prioritized &amp; ranked" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="850" y="640" width="220" height="85" as="geometry" />
+        </mxCell>
+        
+        <!-- Phase 4: REFINE -->
+        <mxCell id="phase4-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="780" width="1010" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phase4-title" value="&lt;b&gt;PHASE 4: REFINE&lt;/b&gt;&lt;br&gt;Multi-LLM Response Generation" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="790" width="300" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="refine-prompt" value="&lt;b&gt;Prompt Builder&lt;/b&gt;&lt;br&gt;&lt;br&gt;• EA-specific templates&lt;br&gt;• Inject candidates&lt;br&gt;• Citation constraints" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="110" y="835" width="170" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="refine-llm" value="&lt;b&gt;LLM Provider&lt;/b&gt;&lt;br&gt;&lt;br&gt;Primary: Groq (Llama 3.3)&lt;br&gt;Fallback: OpenAI (GPT-5)&lt;br&gt;Local: Ollama" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="835" width="190" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="refine-council" value="&lt;b&gt;LLM Council&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Consensus building&lt;br&gt;• Quality voting&lt;br&gt;• Conflict resolution" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82b366;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="510" y="835" width="160" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="refine-output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;&lt;br&gt;Response with citations:&lt;br&gt;&quot;Active power (iec:ActivePower)&lt;br&gt;vs Reactive power (iec:ReactivePower)...&quot;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="850" y="835" width="220" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Phase 5: GROUND -->
+        <mxCell id="phase5-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="960" width="1010" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phase5-title" value="&lt;b&gt;PHASE 5: GROUND&lt;/b&gt;&lt;br&gt;Citation Validation (Zero Tolerance for Fake Citations)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="970" width="430" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ground-check" value="&lt;b&gt;Grounding Check&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Extract all citations&lt;br&gt;• Mandatory validation&lt;br&gt;• No ungrounded text" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1015" width="170" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ground-validator" value="&lt;b&gt;Citation Validator&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Pre-loaded pools (3,970+)&lt;br&gt;• Authentic sources only&lt;br&gt;• Pattern matching" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1015" width="180" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ground-fingerprint" value="&lt;b&gt;Fingerprint Check&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Vector validation&lt;br&gt;• Semantic accuracy&lt;br&gt;• Content match" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d79b00;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="500" y="1015" width="160" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="ground-output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;&lt;br&gt;✅ All citations valid&lt;br&gt;✅ Sources authentic&lt;br&gt;✅ 100% grounded" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="850" y="1015" width="220" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Phase 6: CRITIC -->
+        <mxCell id="phase6-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1140" width="1010" height="140" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="phase6-title" value="&lt;b&gt;PHASE 6: CRITIC&lt;/b&gt;&lt;br&gt;Quality Assessment &amp; Confidence Scoring" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="100" y="1150" width="350" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="critic-assess" value="&lt;b&gt;Quality Assessor&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Completeness check&lt;br&gt;• Relevance scoring&lt;br&gt;• Accuracy validation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="110" y="1195" width="170" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="critic-confidence" value="&lt;b&gt;Confidence Calculator&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Source quality weighting&lt;br&gt;• Coverage analysis&lt;br&gt;• Uncertainty quantification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="300" y="1195" width="190" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="critic-review" value="&lt;b&gt;Human Review Trigger&lt;/b&gt;&lt;br&gt;&lt;br&gt;• Threshold: 0.75&lt;br&gt;• Auto-flag low confidence&lt;br&gt;• Audit trail logging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;fontSize=11;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;" vertex="1" parent="1">
+          <mxGeometry x="510" y="1195" width="180" height="70" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="critic-output" value="&lt;b&gt;Output&lt;/b&gt;&lt;br&gt;&lt;br&gt;Confidence: 0.92&lt;br&gt;Review needed: No&lt;br&gt;Quality: High" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;verticalAlign=top;spacingLeft=10;spacingTop=5;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="850" y="1195" width="220" height="70" as="geometry" />
+        </mxCell>
+        
+        <!-- Final Response -->
+        <mxCell id="final-response" value="&lt;b&gt;FINAL RESPONSE&lt;/b&gt;&lt;br&gt;&lt;br&gt;✅ Cited answer with 100% authentic sources&lt;br&gt;✅ Confidence score: 0.92 (High)&lt;br&gt;✅ Response time: &amp;lt; 3 seconds&lt;br&gt;✅ No human review needed&lt;br&gt;✅ Full audit trail recorded" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="380" y="1320" width="410" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- Connecting arrows -->
+        <mxCell id="arrow1" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="user-input" target="phase1-box">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow2" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="phase1-box" target="phase2-box">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="400" as="sourcePoint" />
+            <mxPoint x="610" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow3" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="phase2-box" target="phase3-box">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="600" as="sourcePoint" />
+            <mxPoint x="610" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow4" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="phase3-box" target="phase4-box">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="800" as="sourcePoint" />
+            <mxPoint x="610" y="750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow5" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="phase4-box" target="phase5-box">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="1000" as="sourcePoint" />
+            <mxPoint x="610" y="950" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow6" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="phase5-box" target="phase6-box">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="1200" as="sourcePoint" />
+            <mxPoint x="610" y="1150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow7" value="" style="endArrow=classic;html=1;strokeWidth=3;strokeColor=#666666;" edge="1" parent="1" source="phase6-box" target="final-response">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="1400" as="sourcePoint" />
+            <mxPoint x="610" y="1350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Footer -->
+        <mxCell id="footer" value="AInstein v3.0 | 4R+G+C Pipeline | Production Implementation | October 2025" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2" vertex="1" parent="1">
+          <mxGeometry x="400" y="1470" width="370" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
