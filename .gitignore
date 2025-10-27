@@ -183,3 +183,4 @@ Thumbs.db
 data/embeddings/*.pkl
 data/embeddings/query_cache.pkl
 data/.kg_cache.pkl
+data/adrs/decision-drivers-catalog.md
