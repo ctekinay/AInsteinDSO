@@ -1,7 +1,6 @@
 """
 ONE-TIME SCRIPT: Regenerate embeddings cache with OpenAI text-embedding-3-small
 
-Cost: ~$0.01 one-time
 Benefit: Better quality (62.3 vs 58.8 MTEB) + no ongoing costs forever
 
 Usage:
@@ -13,12 +12,12 @@ import os
 import asyncio
 from pathlib import Path
 
-# ✅ FIX: Add parent directory to path so we can import src
+#Add parent directory to path so we can import src
 script_dir = Path(__file__).parent
 project_root = script_dir.parent
 sys.path.insert(0, str(project_root))
 
-# ✅ NEW: Load .env file before importing anything else
+#Load .env file before importing anything else
 from dotenv import load_dotenv
 env_path = project_root / ".env"
 if env_path.exists():
