@@ -29,6 +29,7 @@ import logging
 import os
 import time
 import re
+import numpy as np
 
 from dataclasses import dataclass, asdict, field
 from datetime import datetime
@@ -49,7 +50,7 @@ from src.exceptions.exceptions import UngroundedReplyError, LowConfidenceError, 
 from src.utils.trace import get_tracer
 from src.agents.session_manager import SessionManager, ConversationTurn
 from src.knowledge.homonym_guard import apply_homonym_guard
-
+from src.cache.semantic_cache import SemanticADRCache
 
 try:
     from src.utils.dedupe_results import dedupe_candidates
@@ -311,7 +312,20 @@ class ProductionEAAgent:
                     model_info = self.embedding_agent.get_model_info()
                     logger.info(f"Embedding model: {model_info['provider']} - {model_info['model']}")
                     logger.info(f"   Dimensions: {model_info['dimensions']}, MTEB: {model_info['mteb_score']}")
-                logger.info("Embedding agent initialized for semantic search fallback")
+                    
+                    # ✅ ADD THIS: Check if ADRs are in embeddings, force refresh if not
+                    if self.embedding_agent.embeddings:
+                        adr_count = sum(1 for m in self.embedding_agent.embeddings.get('metadata', []) 
+                                    if m.get('source') == 'adr')
+                        if adr_count == 0 and self.adr_indexer and len(self.adr_indexer.adrs) > 0:
+                            logger.warning(f"⚠️  No ADRs in embeddings but {len(self.adr_indexer.adrs)} ADRs loaded")
+                            logger.info("🔄 Forcing embedding refresh to include ADRs...")
+                            self.embedding_agent.refresh_embeddings()
+                            # Verify ADRs are now included
+                            adr_count = sum(1 for m in self.embedding_agent.embeddings.get('metadata', []) 
+                                        if m.get('source') == 'adr')
+                            logger.info(f"✅ Embedding refresh complete: {adr_count} ADRs now in embeddings")
+                    logger.info("Embedding agent initialized for semantic search fallback")
             except Exception as e:
                 logger.warning(f"Could not initialize embedding agent: {e}")
                 logger.warning("Continuing without semantic search capability")
@@ -321,6 +335,20 @@ class ProductionEAAgent:
 
         # Initialize query router with KG auto-hydration
         self.router = QueryRouter(vocab_path, kg_loader=self.kg_loader)
+        
+        # ============= SEMANTIC CACHE INITIALIZATION =============
+        try:
+            from src.cache.semantic_cache import SemanticADRCache
+            self.semantic_cache = SemanticADRCache(
+                similarity_threshold=0.85,
+                ttl_minutes=60,
+                max_entries=1000
+                # classifier will use the default for now
+            )
+            logger.info("✅ Semantic cache initialized for ADR analysis")
+        except ImportError as e:
+            logger.warning(f"Semantic cache not available: {e}")
+            self.semantic_cache = None
         
         # Initialize citation validator
         self.citation_validator = CitationValidator(
@@ -444,6 +472,22 @@ class ProductionEAAgent:
                 logger.info("API reranking disabled by configuration")
                 logger.info("   Set ENABLE_API_RERANKING=true to enable")
         # ============= END API RERANKING INITIALIZATION =============
+        
+        # ============= SEMANTIC CACHE INITIALIZATION =============
+        # Initialize semantic cache for ADR analysis
+        try:
+            from src.cache.semantic_cache import SemanticADRCache
+            self.semantic_cache = SemanticADRCache(
+                similarity_threshold=0.85,  # 85% similarity for cache hit
+                ttl_minutes=60,  # 1 hour TTL
+                max_entries=1000
+            )
+            logger.info("✅ Semantic cache initialized for ADR analysis")
+            logger.info("   Expected: 50-80% cache hit rate, 2-5x speedup")
+        except ImportError:
+            logger.warning("Semantic cache not available - install dependencies")
+            self.semantic_cache = None
+        # ============= END SEMANTIC CACHE INITIALIZATION =============
 
         logger.info("Production EA Agent initialized with citation authenticity validation")
 
@@ -829,727 +873,789 @@ class ProductionEAAgent:
         return context
 
     async def process_query(
-        self,
-        query: str,
-        session_id: str = None,
-        use_conversation_context: bool = True
-    ) -> PipelineResponse:
-        """
-        Process a query through the full 4R+G+C pipeline with complete tracing.
+            self,
+            query: str,
+            session_id: str = None,
+            use_conversation_context: bool = True
+        ) -> PipelineResponse:
+            """
+            Process a query through the full 4R+G+C pipeline with complete tracing.
 
-        ENHANCED: Now supports follow-up queries with conversation memory.
+            ENHANCED: Now supports follow-up queries with conversation memory.
 
-        Pipeline steps:
-        1. INITIALIZATION: Create session and audit trail
-        2. CONVERSATION_CONTEXT: Build context from history (NEW)
-        3. REFLECT: Analyze query intent
-        4. ROUTE: Determine knowledge source
-        5. RETRIEVE: Get relevant knowledge
-        6. BUILD_CITATION_POOL: Extract valid citations
-        7. REFINE: Generate response candidates
-        8. GROUND: Enforce citations with authenticity validation
-        9. CRITIC: Assess confidence
-        10. VALIDATE: Check TOGAF alignment
-        11. RESPONSE_ASSEMBLY: Build final response
+            Pipeline steps:
+            1. INITIALIZATION: Create session and audit trail
+            2. CONVERSATION_CONTEXT: Build context from history (NEW)
+            3. REFLECT: Analyze query intent
+            4. ROUTE: Determine knowledge source
+            5. RETRIEVE: Get relevant knowledge
+            6. BUILD_CITATION_POOL: Extract valid citations and create a semantic cache
+            7. REFINE: Generate response candidates
+            8. GROUND: Enforce citations with authenticity validation
+            9. CRITIC: Assess confidence
+            10. VALIDATE: Check TOGAF alignment
+            11. RESPONSE_ASSEMBLY: Build final response
 
-        Args:
-            query: User query string
-            session_id: Optional session ID for tracking (enables conversation memory)
-            use_conversation_context: Whether to use conversation history for follow-ups
+            Args:
+                query: User query string
+                session_id: Optional session ID for tracking (enables conversation memory)
+                use_conversation_context: Whether to use conversation history for follow-ups
 
-        Returns:
-            PipelineResponse: Response with confidence, citations, and metadata
-        """
-        start_time = time.perf_counter()
+            Returns:
+                PipelineResponse: Response with confidence, citations, and metadata
+            """
+            start_time = time.perf_counter()
 
-        if not session_id:
-            session_id = str(uuid4())[:8]
+            if not session_id:
+                session_id = str(uuid4())[:8]
 
-        # Initialize trace
-        trace = PipelineTrace(session_id=session_id, query=query)
+            # Initialize trace
+            trace = PipelineTrace(session_id=session_id, query=query)
 
-        # Start comprehensive tracing (keep for backwards compatibility)
-        trace_id = tracer.start_trace(session_id)
+            # Start comprehensive tracing (keep for backwards compatibility)
+            trace_id = tracer.start_trace(session_id)
 
-        # Initialize audit trail for this query
-        audit_trail = {
-            "session_id": session_id,
-            "trace_id": trace_id,
-            "query": query,
-            "original_query": query,
-            "timestamp": datetime.utcnow().isoformat(),
-            "steps": []
-        }
+            # Initialize audit trail for this query
+            audit_trail = {
+                "session_id": session_id,
+                "trace_id": trace_id,
+                "query": query,
+                "original_query": query,
+                "timestamp": datetime.utcnow().isoformat(),
+                "steps": []
+            }
 
-        tracer.trace_info(
-            trace_id, "ea_assistant", "process_query",
-            query=query, session_id=session_id
-        )
+            tracer.trace_info(
+                trace_id, "ea_assistant", "process_query",
+                query=query, session_id=session_id
+            )
 
-        try:
-            # ========== PHASE 1: INITIALIZATION 🚀 ==========
-            init_phase = trace.add_phase("INITIALIZATION")
-            init_phase.add_detail("session_id", session_id)
-            init_phase.add_detail("trace_id", trace_id)
-            init_phase.add_detail("timestamp", datetime.utcnow().isoformat())
-            init_phase.add_substep("Created session ID", session_id)
-            init_phase.add_substep("Started trace ID", trace_id)
-            init_phase.add_substep("Initialized audit trail", "Active")
-            
-            # Check session history
-            session_history = self.session_manager.get_history(session_id)
-            init_phase.add_detail("session_turns", len(session_history))
-            if session_history:
-                init_phase.add_substep("Session history found", f"{len(session_history)} previous turns")
-            
-            init_phase.complete()
-
-            audit_trail["steps"].append({
-                "step": "INITIALIZATION",
-                "action": "System initialized",
-                "session_turns": len(session_history),
-                "timestamp": datetime.utcnow().isoformat()
-            })
-
-            # ========== PHASE 2: CONVERSATION_CONTEXT 💬 ==========
-            enhanced_query = query
-            is_followup = False
-            conversation_context = ""
-            
-            if use_conversation_context and session_history:
-                context_phase = trace.add_phase("CONVERSATION_CONTEXT")
+            try:
+                # ========== PHASE 1: INITIALIZATION 🚀 ==========
+                init_phase = trace.add_phase("INITIALIZATION")
+                init_phase.add_detail("session_id", session_id)
+                init_phase.add_detail("trace_id", trace_id)
+                init_phase.add_detail("timestamp", datetime.utcnow().isoformat())
+                init_phase.add_substep("Created session ID", session_id)
+                init_phase.add_substep("Started trace ID", trace_id)
+                init_phase.add_substep("Initialized audit trail", "Active")
                 
-                # Get conversation context
-                conversation_context, is_followup = self.session_manager.get_context_for_query(
-                    session_id, query
-                )
+                # Check session history
+                session_history = self.session_manager.get_history(session_id)
+                init_phase.add_detail("session_turns", len(session_history))
+                if session_history:
+                    init_phase.add_substep("Session history found", f"{len(session_history)} previous turns")
                 
-                context_phase.add_detail("is_followup", is_followup)
-                context_phase.add_detail("previous_turns", len(session_history))
-                
-                if is_followup:
-                    enhanced_query = conversation_context
-                    context_phase.add_detail("context_length", len(conversation_context))
-                    context_phase.add_detail("enhanced_query_length", len(enhanced_query))
-                    context_phase.add_substep("Follow-up detected", "Context enhanced")
-                    context_phase.add_substep("Previous concepts", 
-                        ", ".join(session_history[-1].key_concepts[:3]) if session_history[-1].key_concepts else "None")
-                    
-                    logger.info(f"Follow-up query detected - enhanced with {len(session_history)} previous turns")
-                    
-                    audit_trail["conversation_context"] = {
-                        "is_followup": True,
-                        "context_length": len(conversation_context),
-                        "previous_turns": len(session_history)
-                    }
-                else:
-                    context_phase.add_substep("Standalone query", "No context enhancement needed")
-                    audit_trail["conversation_context"] = {
-                        "is_followup": False
-                    }
-                
-                context_phase.complete()
-            
-            # Update audit trail
-            audit_trail["enhanced_query"] = enhanced_query if is_followup else query
-            audit_trail["is_followup"] = is_followup
+                init_phase.complete()
 
-            # ========== PHASE 3: REFLECT 🤔 ==========
-            reflect_phase = trace.add_phase("REFLECT")
-            
-            with tracer.trace_function(trace_id, "ea_assistant", "reflect", query=query):
-                # Analyze query intent
-                query_intent = "definition" if is_definition_query(query) else "general"
-                
-                # Enhanced intent for follow-ups
-                if is_followup:
-                    if self.session_manager._is_comparison_query(query):
-                        query_intent = "comparison"
-                        reflect_phase.add_substep("Comparison query detected", "Will compare concepts")
-                
-                reflect_phase.add_detail("query_intent", query_intent)
-                reflect_phase.add_detail("query_length", len(query))
-                reflect_phase.add_detail("is_followup", is_followup)
-                reflect_phase.add_substep("Analyzed query intent", query_intent)
-                
-                # Extract key terms
-                key_terms = self._extract_query_terms(enhanced_query if is_followup else query)
-                reflect_phase.add_detail("key_terms", key_terms[:5])
-                reflect_phase.add_substep("Extracted key terms", f"{len(key_terms)} terms")
-                
                 audit_trail["steps"].append({
-                    "step": "REFLECT",
-                    "action": "Analyzing query intent",
-                    "query_intent": query_intent,
-                    "is_followup": is_followup,
+                    "step": "INITIALIZATION",
+                    "action": "System initialized",
+                    "session_turns": len(session_history),
                     "timestamp": datetime.utcnow().isoformat()
                 })
-            
-            reflect_phase.complete()
 
-            # ========== PHASE 4: ROUTE 🧭 ==========
-            route_phase = trace.add_phase("ROUTE")
-            
-            with tracer.trace_function(trace_id, "query_router", "route", query=query):
-                route = self.router.route(enhanced_query if is_followup else query, trace_id=trace_id)
-                route_phase.add_detail("route", route)
+                # ========== PHASE 2: CONVERSATION_CONTEXT 💬 ==========
+                enhanced_query = query
+                is_followup = False
+                conversation_context = ""
                 
-                # ✅ NEW: Check if this is a system query (about the system itself)
-                system_response = self._handle_system_query(query)
-                if system_response:
-                    logger.info("System query detected, returning direct response")
+                if use_conversation_context and session_history:
+                    context_phase = trace.add_phase("CONVERSATION_CONTEXT")
                     
-                    # Add to session history
-                    if self.session_manager:
-                        self.session_manager.add_turn(
-                            session_id=session_id,
+                    # Get conversation context
+                    conversation_context, is_followup = self.session_manager.get_context_for_query(
+                        session_id, query
+                    )
+                    
+                    context_phase.add_detail("is_followup", is_followup)
+                    context_phase.add_detail("previous_turns", len(session_history))
+                    
+                    if is_followup:
+                        enhanced_query = conversation_context
+                        context_phase.add_detail("context_length", len(conversation_context))
+                        context_phase.add_detail("enhanced_query_length", len(enhanced_query))
+                        context_phase.add_substep("Follow-up detected", "Context enhanced")
+                        context_phase.add_substep("Previous concepts", 
+                            ", ".join(session_history[-1].key_concepts[:3]) if session_history[-1].key_concepts else "None")
+                        
+                        logger.info(f"Follow-up query detected - enhanced with {len(session_history)} previous turns")
+                        
+                        audit_trail["conversation_context"] = {
+                            "is_followup": True,
+                            "context_length": len(conversation_context),
+                            "previous_turns": len(session_history)
+                        }
+                    else:
+                        context_phase.add_substep("Standalone query", "No context enhancement needed")
+                        audit_trail["conversation_context"] = {
+                            "is_followup": False
+                        }
+                    
+                    context_phase.complete()
+                
+                # Update audit trail
+                audit_trail["enhanced_query"] = enhanced_query if is_followup else query
+                audit_trail["is_followup"] = is_followup
+
+                # ========== PHASE 3: REFLECT 🤔 ==========
+                reflect_phase = trace.add_phase("REFLECT")
+                
+                with tracer.trace_function(trace_id, "ea_assistant", "reflect", query=query):
+                    # Analyze query intent
+                    query_intent = "definition" if is_definition_query(query) else "general"
+                    
+                    # Enhanced intent for follow-ups
+                    if is_followup:
+                        if self.session_manager._is_comparison_query(query):
+                            query_intent = "comparison"
+                            reflect_phase.add_substep("Comparison query detected", "Will compare concepts")
+                    
+                    reflect_phase.add_detail("query_intent", query_intent)
+                    reflect_phase.add_detail("query_length", len(query))
+                    reflect_phase.add_detail("is_followup", is_followup)
+                    reflect_phase.add_substep("Analyzed query intent", query_intent)
+                    
+                    # Extract key terms
+                    key_terms = self._extract_query_terms(enhanced_query if is_followup else query)
+                    reflect_phase.add_detail("key_terms", key_terms[:5])
+                    reflect_phase.add_substep("Extracted key terms", f"{len(key_terms)} terms")
+                    
+                    audit_trail["steps"].append({
+                        "step": "REFLECT",
+                        "action": "Analyzing query intent",
+                        "query_intent": query_intent,
+                        "is_followup": is_followup,
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                
+                reflect_phase.complete()
+                
+                # ========== SEMANTIC CACHE CHECK (NEW) 🚀 ==========
+                # Check cache BEFORE routing and retrieval
+                if self.semantic_cache and self.embedding_agent:
+                    cache_check_start = time.perf_counter()
+                    
+                    try:
+                        # Generate query embedding
+                        query_embedding = self.embedding_agent.model.encode(
+                            [query], 
+                            convert_to_numpy=True,
+                            show_progress_bar=False
+                        )[0]
+                        # Normalize for cosine similarity
+                        query_embedding = query_embedding / np.linalg.norm(query_embedding)
+                        
+                        # Use the cache's classifier
+                        analysis_type = self.semantic_cache.classifier(query)
+                        
+                        # Check semantic cache
+                        cached_result = self.semantic_cache.get(
+                            query=query,
+                            query_embedding=query_embedding,
+                            analysis_type=analysis_type
+                        )
+                        
+                        if cached_result:
+                            cache_time_ms = (time.perf_counter() - cache_check_start) * 1000
+                            logger.info(f"✨ Cache HIT! Returned in {cache_time_ms:.1f}ms")
+                            
+                            # Update audit trail
+                            audit_trail["steps"].append({
+                                "step": "SEMANTIC_CACHE_HIT",
+                                "cache_time_ms": cache_time_ms,
+                                "analysis_type": analysis_type,
+                                "timestamp": datetime.utcnow().isoformat()
+                            })
+                            
+                            # Add cache stats to response
+                            cached_result['from_cache'] = True
+                            cached_result['cache_stats'] = self.semantic_cache.get_stats()
+                            cached_result['processing_time_ms'] = cache_time_ms
+                            
+                            # Finalize trace
+                            trace.finalize()
+                            
+                            # Return cached response (ensure it's a PipelineResponse)
+                            if isinstance(cached_result, PipelineResponse):
+                                return cached_result, trace
+                            else:
+                                # Convert to PipelineResponse if needed
+                                return PipelineResponse(
+                                    query=query,
+                                    response=cached_result.get('response', ''),
+                                    route=cached_result.get('route', 'cached'),
+                                    citations=cached_result.get('citations', []),
+                                    confidence=cached_result.get('confidence', 0.95),
+                                    requires_human_review=False,
+                                    togaf_phase=cached_result.get('togaf_phase'),
+                                    archimate_elements=cached_result.get('archimate_elements', []),
+                                    processing_time_ms=cache_time_ms,
+                                    session_id=session_id,
+                                    timestamp=datetime.utcnow().isoformat()
+                                ), trace
+                        else:
+                            logger.debug(f"Cache MISS for query: {query[:50]}...")
+                            
+                    except Exception as e:
+                        logger.warning(f"Semantic cache check failed: {e}")
+                        # Continue without cache on error
+
+                # ========== PHASE 4: ROUTE 🧭 ==========
+                route_phase = trace.add_phase("ROUTE")
+                
+                with tracer.trace_function(trace_id, "query_router", "route", query=query):
+                    route = self.router.route(enhanced_query if is_followup else query, trace_id=trace_id)
+                    route_phase.add_detail("route", route)
+                    
+                    # Check if this is a system query (about the system itself)
+                    system_response = self._handle_system_query(query)
+                    if system_response:
+                        logger.info("System query detected, returning direct response")
+                        
+                        # Add to session history
+                        if self.session_manager:
+                            self.session_manager.add_turn(
+                                session_id=session_id,
+                                query=query,
+                                response=system_response.content,
+                                confidence=1.0,
+                                citations=[]
+                            )
+                            logger.info(f"✅ Added system query turn to session {session_id}")
+                        
+                        # Return PipelineResponse (consistent with normal queries)
+                        return PipelineResponse(
                             query=query,
                             response=system_response.content,
+                            route="system_query",
+                            citations=[],
                             confidence=1.0,
-                            citations=[]
-                        )
-                        logger.info(f"✅ Added system query turn to session {session_id}")
+                            requires_human_review=False,
+                            togaf_phase=None,
+                            archimate_elements=[],
+                            processing_time_ms=(time.perf_counter() - start_time) * 1000,
+                            session_id=session_id,
+                            timestamp=datetime.utcnow().isoformat()
+                        ), trace
                     
-                    # ✅ Return PipelineResponse (consistent with normal queries)
+                    if is_followup:
+                        route_phase.add_detail("routing_mode", "context_enhanced")
+                    
+                    # Get routing reasoning
+                    routing_reason = self.router.get_last_routing_reason() if hasattr(self.router, 'get_last_routing_reason') else "Route determined"
+                    route_phase.add_detail("reasoning", routing_reason)
+                    route_phase.add_substep(f"Routed to: {route}", routing_reason)
+                    
+                    audit_trail["steps"].append({
+                        "step": "ROUTE",
+                        "result": route,
+                        "routing_mode": "context_enhanced" if is_followup else "standard",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                    logger.info(f"Query routed to: {route}")
+                
+                route_phase.complete()
+
+                # ========== PHASE 5: RETRIEVE 📚 ==========
+                retrieve_phase = trace.add_phase("RETRIEVE")
+
+                with tracer.trace_function(trace_id, "ea_assistant", "retrieve_knowledge", route=route):
+                    
+                    # Start with original query
+                    retrieval_query = query
+                    
+                    # For follow-up queries, add terms from session history
+                    if is_followup and session_history and len(session_history) >= 1:
+                        print(f"🎯 RETRIEVAL ENHANCEMENT FOR FOLLOW-UP:")
+                        print(f"🎯   Original query: {query}")
+                        
+                        # Extract terms from previous queries
+                        prev_terms = []
+                        for turn in session_history[-2:]:
+                            turn_terms = self._extract_query_terms(turn.query)
+                            prev_terms.extend(turn_terms)
+                            print(f"🎯   Previous query: {turn.query}")
+                            print(f"🎯   Extracted terms: {turn_terms[:5]}")
+                        
+                        # Remove duplicates and common words
+                        prev_terms = list(set(prev_terms))
+                        prev_terms = [t for t in prev_terms if len(t) > 4 and 'what' not in t and 'is' not in t]
+                        
+                        print(f"🎯   Filtered previous terms: {prev_terms[:10]}")
+                        
+                        # Combine with current query
+                        key_prev_terms = [t for t in prev_terms if 'power' in t or 'active' in t or 'reactive' in t][:3]
+                        retrieval_query = query + " " + " ".join(key_prev_terms)
+                        print(f"🎯   Final retrieval query: {retrieval_query}")
+                    
+                    retrieval_context = await self._retrieve_knowledge(
+                        retrieval_query,
+                        route, 
+                        trace_id
+                    )
+                    
+                    candidates = retrieval_context.get("candidates", [])
+                    candidates, info_message, duplicate_citations = await self._handle_duplicate_definitions(
+                        query, 
+                        candidates
+                    )
+                    duplicate_info = info_message
+
+                    retrieval_context["duplicate_citations"] = duplicate_citations
+                    
+                    # Add conversation context to retrieval context
+                    if is_followup:
+                        retrieval_context["conversation_context"] = conversation_context
+                        retrieval_context["is_followup"] = True
+                        retrieval_context["session_history"] = [
+                            {"query": t.query, "response": t.response[:200]}
+                            for t in session_history[-2:]
+                        ]
+                    
+                    total_candidates = len(retrieval_context.get("candidates", []))
+                    retrieve_phase.add_detail("total_candidates", total_candidates)
+                    retrieve_phase.add_detail("route", route)
+                    
+                    if is_followup:
+                        retrieve_phase.add_detail("retrieval_mode", "context_enhanced")
+                        retrieve_phase.add_substep("Using conversation context", "Enhanced retrieval")
+                    
+                    if is_followup:
+                        print(f"🎯 RETRIEVAL RESULTS:")
+                        print(f"🎯   Total candidates: {total_candidates}")
+                        for i, c in enumerate(retrieval_context.get("candidates", [])[:5]):
+                            print(f"🎯   [{i}] {c.get('element', 'N/A')} - {c.get('citation', 'N/A')}")
+                    
+                    if route == "structured_model":
+                        kg_count = len(retrieval_context.get("kg_results", []))
+                        archimate_count = len(retrieval_context.get("archimate_elements", []))
+                        
+                        retrieve_phase.add_detail("kg_results_count", kg_count)
+                        retrieve_phase.add_detail("archimate_results_count", archimate_count)
+                        retrieve_phase.add_substep("Querying Knowledge Graph", "Started")
+                        retrieve_phase.add_substep("KG Results Found", kg_count)
+                        retrieve_phase.add_substep("Querying ArchiMate Models", "Started")
+                        retrieve_phase.add_substep("ArchiMate Elements Found", archimate_count)
+                    elif route == "togaf_method":
+                        togaf_count = len(retrieval_context.get("togaf_docs", []))
+                        retrieve_phase.add_detail("togaf_docs_count", togaf_count)
+                        retrieve_phase.add_substep("TOGAF Documents Found", togaf_count)
+                    elif route == "unstructured_docs":
+                        doc_count = len(retrieval_context.get("document_chunks", []))
+                        retrieve_phase.add_detail("document_chunks_count", doc_count)
+                        retrieve_phase.add_substep("Document Chunks Found", doc_count)
+                    
+                    if retrieval_context.get("semantic_enhanced"):
+                        retrieve_phase.add_detail("semantic_enhanced", True)
+                        retrieve_phase.add_substep("Semantic search enhancement", "Applied")
+                    
+                    audit_trail["steps"].append({
+                        "step": "RETRIEVE",
+                        "items_retrieved": total_candidates,
+                        "retrieval_mode": "context_enhanced" if is_followup else "standard",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+
+                retrieve_phase.complete()
+
+                # Out-of-scope guard
+                if route == "unstructured_docs" and not retrieval_context.get("candidates"):
+                    polite = (
+                        f"❌ **Term not found in Alliander ontology:** '{query}'\n\n"
+                        f"I couldn't find '{query}' in our internal knowledge bases:\n"
+                        f"• Alliander SKOS Vocabulary\n"
+                        f"• IEC Standards (61968, 61970, 62325, 62746)\n"
+                        f"• EUR-Lex Regulations\n"
+                        f"• ENTSO-E Market Models\n"
+                        f"• ArchiMate Models\n\n"
+                        f"**Would you like me to:**\n"
+                        f"1. Search external sources (web search)?\n"
+                        f"2. Try a different term?\n"
+                        f"3. Browse available vocabularies?\n\n"
+                        f"*Examples of terms I know: 'reactive power', 'congestion management', 'asset'*"
+                    )
+                    
+                    audit_trail["steps"].append({
+                        "step": "FILTER",
+                        "action": "out_of_scope_decline",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                    self.context_store[session_id] = audit_trail
+                    
+                    trace.finalize()
+                    
                     return PipelineResponse(
                         query=query,
-                        response=system_response.content,  # Extract content from LLMResponse
-                        route="system_query",
+                        response=polite,
+                        route=route,
                         citations=[],
-                        confidence=1.0,
+                        confidence=0.0,
                         requires_human_review=False,
                         togaf_phase=None,
                         archimate_elements=[],
                         processing_time_ms=(time.perf_counter() - start_time) * 1000,
                         session_id=session_id,
                         timestamp=datetime.utcnow().isoformat()
-                    )
-                
-                if is_followup:
-                    route_phase.add_detail("routing_mode", "context_enhanced")
-                
-                # Get routing reasoning
-                routing_reason = self.router.get_last_routing_reason() if hasattr(self.router, 'get_last_routing_reason') else "Route determined"
-                route_phase.add_detail("reasoning", routing_reason)
-                route_phase.add_substep(f"Routed to: {route}", routing_reason)
-                
-                audit_trail["steps"].append({
-                    "step": "ROUTE",
-                    "result": route,
-                    "routing_mode": "context_enhanced" if is_followup else "standard",
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-                logger.info(f"Query routed to: {route}")
-            
-            route_phase.complete()
+                    ), trace
 
-            # ========== PHASE 5: RETRIEVE 📚 ==========
-            retrieve_phase = trace.add_phase("RETRIEVE")
-
-            with tracer.trace_function(trace_id, "ea_assistant", "retrieve_knowledge", route=route):
+                # ========== PHASE 6: BUILD CITATION POOL 🎯 ==========
+                citation_phase = trace.add_phase("BUILD_CITATION_POOL")
                 
-                # Start with original query (enhanced_query is for LLM context, not retrieval)
-                retrieval_query = query
-                
-                # 🎯 ENHANCED: For follow-up queries, add terms from session history
-                if is_followup and session_history and len(session_history) >= 1:
-                    print(f"🎯 RETRIEVAL ENHANCEMENT FOR FOLLOW-UP:")
-                    print(f"🎯   Original query: {query}")
+                with tracer.trace_function(trace_id, "citation_validator", "build_pool",
+                                        candidates_count=len(retrieval_context.get("candidates", []))):
+                    citation_pool = self._build_citation_pool_from_retrieval(retrieval_context)
                     
-                    # Extract terms from previous queries
-                    prev_terms = []
-                    for turn in session_history[-2:]:  # Last 2 turns
-                        turn_terms = self._extract_query_terms(turn.query)
-                        prev_terms.extend(turn_terms)
-                        print(f"🎯   Previous query: {turn.query}")
-                        print(f"🎯   Extracted terms: {turn_terms[:5]}")
+                    citation_phase.add_detail("citation_pool_size", len(citation_pool))
                     
-                    # Remove duplicates and common words
-                    prev_terms = list(set(prev_terms))
-                    # Filter out generic terms
-                    prev_terms = [t for t in prev_terms if len(t) > 4 and 'what' not in t and 'is' not in t]
+                    sources = list(set(c.get("source", "unknown") for c in citation_pool))
+                    citation_phase.add_detail("citation_sources", sources)
+                    citation_phase.add_substep("Extracted citations from retrieval", len(citation_pool))
                     
-                    print(f"🎯   Filtered previous terms: {prev_terms[:10]}")
+                    sample_citations = [c["citation"] for c in citation_pool[:5]]
+                    citation_phase.add_detail("sample_citations", sample_citations)
+                    citation_phase.add_substep("Sample citations", sample_citations)
                     
-                    # Combine with current query - add key terms
-                    key_prev_terms = [t for t in prev_terms if 'power' in t or 'active' in t or 'reactive' in t][:3]
-                    retrieval_query = query + " " + " ".join(key_prev_terms)
-                    print(f"🎯   Final retrieval query: {retrieval_query}")
-                
-                retrieval_context = await self._retrieve_knowledge(
-                    retrieval_query,
-                    route, 
-                    trace_id
-                )
-                
-                candidates = retrieval_context.get("candidates", [])
-                candidates, info_message, duplicate_citations = await self._handle_duplicate_definitions(
-                    query, 
-                    candidates
-                )
-                # ✅ NEW UX: Don't block - just prepend info to response
-                # Continue processing normally, add info message later
-                duplicate_info = info_message  # Save for later
-
-                # ✅ NEW: Store duplicate_citations in retrieval_context so it's available later
-                retrieval_context["duplicate_citations"] = duplicate_citations
-                
-                # Add conversation context to retrieval context
-                if is_followup:
-                    retrieval_context["conversation_context"] = conversation_context
-                    retrieval_context["is_followup"] = True
-                    retrieval_context["session_history"] = [
-                        {"query": t.query, "response": t.response[:200]}
-                        for t in session_history[-2:]
-                    ]
-                
-                total_candidates = len(retrieval_context.get("candidates", []))
-                retrieve_phase.add_detail("total_candidates", total_candidates)
-                retrieve_phase.add_detail("route", route)
-                
-                if is_followup:
-                    retrieve_phase.add_detail("retrieval_mode", "context_enhanced")
-                    retrieve_phase.add_substep("Using conversation context", "Enhanced retrieval")
-                
-                # 🎯 DEBUG: Show what was retrieved
-                if is_followup:
-                    print(f"🎯 RETRIEVAL RESULTS:")
-                    print(f"🎯   Total candidates: {total_candidates}")
-                    for i, c in enumerate(retrieval_context.get("candidates", [])[:5]):
-                        print(f"🎯   [{i}] {c.get('element', 'N/A')} - {c.get('citation', 'N/A')}")
-                
-                if route == "structured_model":
-                    kg_count = len(retrieval_context.get("kg_results", []))
-                    archimate_count = len(retrieval_context.get("archimate_elements", []))
-                    
-                    retrieve_phase.add_detail("kg_results_count", kg_count)
-                    retrieve_phase.add_detail("archimate_results_count", archimate_count)
-                    retrieve_phase.add_substep("Querying Knowledge Graph", "Started")
-                    retrieve_phase.add_substep("KG Results Found", kg_count)
-                    retrieve_phase.add_substep("Querying ArchiMate Models", "Started")
-                    retrieve_phase.add_substep("ArchiMate Elements Found", archimate_count)
-                elif route == "togaf_method":
-                    togaf_count = len(retrieval_context.get("togaf_docs", []))
-                    retrieve_phase.add_detail("togaf_docs_count", togaf_count)
-                    retrieve_phase.add_substep("TOGAF Documents Found", togaf_count)
-                elif route == "unstructured_docs":
-                    doc_count = len(retrieval_context.get("document_chunks", []))
-                    retrieve_phase.add_detail("document_chunks_count", doc_count)
-                    retrieve_phase.add_substep("Document Chunks Found", doc_count)
-                
-                # Semantic enhancement check
-                if retrieval_context.get("semantic_enhanced"):
-                    retrieve_phase.add_detail("semantic_enhanced", True)
-                    retrieve_phase.add_substep("Semantic search enhancement", "Applied")
-                
-                audit_trail["steps"].append({
-                    "step": "RETRIEVE",
-                    "items_retrieved": total_candidates,
-                    "retrieval_mode": "context_enhanced" if is_followup else "standard",
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-
-            retrieve_phase.complete()
-
-            # Out-of-scope guard (early return with trace finalization)
-            if route == "unstructured_docs" and not retrieval_context.get("candidates"):
-                polite = (
-                    f"❌ **Term not found in Alliander ontology:** '{query}'\n\n"
-                    f"I couldn't find '{query}' in our internal knowledge bases:\n"
-                    f"• Alliander SKOS Vocabulary\n"
-                    f"• IEC Standards (61968, 61970, 62325, 62746)\n"
-                    f"• EUR-Lex Regulations\n"
-                    f"• ENTSO-E Market Models\n"
-                    f"• ArchiMate Models\n\n"
-                    f"**Would you like me to:**\n"
-                    f"1. Search external sources (web search)?\n"
-                    f"2. Try a different term?\n"
-                    f"3. Browse available vocabularies?\n\n"
-                    f"*Examples of terms I know: 'reactive power', 'congestion management', 'asset'*"
-                )
-                
-                # Add to audit trail
-                audit_trail["steps"].append({
-                    "step": "FILTER",
-                    "action": "out_of_scope_decline",
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-                self.context_store[session_id] = audit_trail
-                
-                # Finalize trace before returning
-                trace.finalize()
-                
-                return PipelineResponse(
-                    query=query,
-                    response=polite,
-                    route=route,
-                    citations=[],
-                    confidence=0.0,
-                    requires_human_review=False,
-                    togaf_phase=None,
-                    archimate_elements=[],
-                    processing_time_ms=(time.perf_counter() - start_time) * 1000,
-                    session_id=session_id,
-                    timestamp=datetime.utcnow().isoformat()
-                ), trace
-
-            # ========== PHASE 6: BUILD CITATION POOL 🎯 ==========
-            citation_phase = trace.add_phase("BUILD_CITATION_POOL")
-            
-            with tracer.trace_function(trace_id, "citation_validator", "build_pool",
-                                    candidates_count=len(retrieval_context.get("candidates", []))):
-                citation_pool = self._build_citation_pool_from_retrieval(retrieval_context)
-                
-                citation_phase.add_detail("citation_pool_size", len(citation_pool))
-                
-                # Get citation sources
-                sources = list(set(c.get("source", "unknown") for c in citation_pool))
-                citation_phase.add_detail("citation_sources", sources)
-                citation_phase.add_substep("Extracted citations from retrieval", len(citation_pool))
-                
-                # Show sample citations
-                sample_citations = [c["citation"] for c in citation_pool[:5]]
-                citation_phase.add_detail("sample_citations", sample_citations)
-                citation_phase.add_substep("Sample citations", sample_citations)
-                
-                audit_trail["steps"].append({
-                    "step": "BUILD_CITATION_POOL",
-                    "pool_size": len(citation_pool),
-                    "sample_citations": sample_citations,
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-                logger.info(f"Citation pool created: {len(citation_pool)} valid citations")
-            
-            citation_phase.complete()
-
-            # ========== PHASE 7: REFINE ✨ ==========
-            refine_phase = trace.add_phase("REFINE")
-
-            with tracer.trace_function(trace_id, "ea_assistant", "refine_response",
-                                    context_items=len(retrieval_context.get("candidates", [])),
-                                    citation_pool_size=len(citation_pool)):
-                
-                # Determine refinement method
-                await self._initialize_llm()
-                
-                if self.llm_provider or self.llm_council:
-                    refine_phase.add_substep("Using LLM Council", "Dual validation enabled")
-                    refine_phase.add_detail("llm_method", "council")
-                else:
-                    refine_phase.add_substep("Using Template Fallback", "No LLM available")
-                    refine_phase.add_detail("llm_method", "template")
-                
-                # 🔍 DEBUG: Log follow-up detection
-                print(f"🔍 REFINE PHASE DEBUG:")
-                print(f"🔍   is_followup: {is_followup}")
-                print(f"🔍   query: {query}")
-                print(f"🔍   session_history length: {len(session_history)}")
-                
-                # Check if this is a comparison query requiring special handling
-                if is_followup:
-                    is_comparison = self.session_manager._is_comparison_query(query)
-                    print(f"🔍   _is_comparison_query result: {is_comparison}")
-                
-                if is_followup and self.session_manager._is_comparison_query(query):
-                    print("🔍 ✅ COMPARISON DETECTED - calling _refine_response_for_comparison")
-                    refine_phase.add_substep("Using comparison refinement", "Enhanced for follow-up")
-                    refine_phase.add_detail("refinement_mode", "comparison")
-                    
-                    # Use comparison-focused refinement
-                    response, candidates = await self._refine_response_for_comparison(
-                        query,
-                        conversation_context,
-                        retrieval_context,
-                        citation_pool,
-                        trace_id
-                    )
-                    print(f"🔍 Comparison method returned response with {len(response)} chars")
-                    
-                    # 🎯 ADD THIS DEBUG - Show first 500 chars of response
-                    print(f"🎯 RESPONSE PREVIEW:")
-                    print(f"🎯 {response[:500]}")
-                    print(f"🎯 Citation count in response: {response.count('[')}")
-                else:
-                    print(f"🔍 ❌ NOT A COMPARISON - calling standard _refine_response")  # ← CHANGED
-                    print(f"🔍   Reason: is_followup={is_followup}, is_comparison={'unknown' if not is_followup else self.session_manager._is_comparison_query(query)}")  # ← CHANGED
-                    refine_phase.add_detail("refinement_mode", "standard")
-
-                    # Standard refinement
-                    response, candidates = await self._refine_response(
-                        enhanced_query if is_followup else query,
-                        retrieval_context,
-                        citation_pool,
-                        trace_id
-                    )
-                    print(f"🔍 Standard method returned response with {len(response)} chars")  # ← CHANGED
-                
-                refine_phase.add_detail("response_length", len(response))
-                refine_phase.add_detail("candidates_generated", len(candidates))
-                refine_phase.add_substep("Generated response", f"{len(response)} chars")
-                
-                audit_trail["steps"].append({
-                    "step": "REFINE",
-                    "candidates_generated": len(candidates),
-                    "response_length": len(response),
-                    "refinement_mode": "comparison" if (is_followup and self.session_manager._is_comparison_query(query)) else "standard",
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-
-            refine_phase.complete()
-            
-            # ========== PHASE 8: GROUND 🔒 ==========
-            ground_phase = trace.add_phase("GROUND")
-            citation_pool_ids = [c['citation'] for c in citation_pool]
-
-            # CRITICAL: Determine response type based on data availability
-            has_kg_data = len(retrieval_context.get("candidates", [])) > 0
-
-            # 🎯 NEW LOGIC: Distinguish between retrieval and synthesis
-            is_synthesis_query = (
-                is_followup and 
-                self.session_manager._is_comparison_query(query)
-            )
-
-            if is_synthesis_query:
-                # TYPE A: LLM SYNTHESIS - Citations optional/not applicable
-                ground_phase.add_substep("LLM synthesis response", "Citations not required")
-                
-                # Extract citations if present (for reference), but don't enforce
-                citations = self.grounder._extract_existing_citations(response)
-                
-                # If no citations, that's fine - it's synthesized reasoning
-                if not citations:
-                    citations = []  # Empty is OK for synthesis
-                    ground_phase.add_detail("synthesis_mode", "no_citations_required")
-                
-                ground_phase.add_detail("response_type", "llm_synthesis")
-                ground_phase.add_detail("validation", "content_based")
-                ground_phase.complete()
-                
-                audit_trail["steps"].append({
-                    "step": "GROUND",
-                    "response_type": "llm_synthesis",
-                    "citations": citations,
-                    "validation_mode": "relaxed",
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-
-            elif has_kg_data:
-                # TYPE B: DIRECT KG RETRIEVAL - Citations REQUIRED
-                ground_phase.add_substep("Grounding KG-based response", "Citations required")
-                
-                # Extract citations from response
-                found_citations = self.grounder._extract_existing_citations(response)
-                ground_phase.add_detail("citations_found", len(found_citations))
-                
-                # Validate citations
-                grounding_result = self.grounder.assert_citations(
-                    response,
-                    retrieval_context,
-                    citation_pool_ids,
-                    trace_id
-                )
-                
-                citations = grounding_result.get("citations", [])
-                if not citations:
-                    citations = found_citations
-                
-                # ENFORCE: KG responses MUST have citations
-                if len(citations) < 1:
-                    ground_phase.add_detail("error", "Insufficient citations")
-                    ground_phase.complete("failed")
-                    raise UngroundedReplyError(
-                        message="KG-based response lacks required citations",
-                        required_prefixes=["skos:", "eurlex:", "iec:", "entsoe:", "archi:"],
-                        suggestions=[c for c in citation_pool_ids[:5]] if citation_pool_ids else []
-                    )
-                
-                ground_phase.add_detail("response_type", "kg_retrieval")
-                ground_phase.add_detail("grounding_status", "PASSED")
-                ground_phase.complete()
-
-            else:
-                # TYPE C: NO DATA - Pure LLM fallback
-                ground_phase.add_substep("No KG data - LLM fallback", "No citations available")
-                
-                citations = []  # No KG data = no citations
-                
-                # Add disclaimer to response
-                response = f"""{response}
-
-            ---
-
-            **⚠️ Note:** This response was generated by AI reasoning as no information was found in our knowledge bases.
-            """
-                
-                ground_phase.add_detail("response_type", "llm_fallback")
-                ground_phase.complete()
-
-            # ========== PHASE 9: CRITIC 🎓 ==========
-            critic_phase = trace.add_phase("CRITIC")
-
-            with tracer.trace_function(trace_id, "critic", "assess",
-                                    candidate_count=len(candidates)):
-                assessment = self.critic.assess(candidates, retrieval_context)
-
-                critic_phase.add_detail("confidence", assessment.confidence)
-                critic_phase.add_detail("requires_review", assessment.requires_human_review)
-                critic_phase.add_detail("top_suggestions_count", len(assessment.top_suggestions))
-
-                # Show confidence calculation breakdown
-                confidence_breakdown = {
-                    "candidate_count": len(candidates),
-                    "top_suggestions": [
-                        {
-                            "element": s["element"],
-                            "confidence": s["confidence"]
-                        }
-                        for s in assessment.top_suggestions
-                    ],
-                    "average_confidence": assessment.confidence,
-                    "calculation": f"Average of top {len(assessment.top_suggestions)} suggestions"
-                }
-                critic_phase.add_detail("confidence_breakdown", confidence_breakdown)
-                critic_phase.add_substep(
-                    "Confidence calculation",
-                    f"Average of {len(assessment.top_suggestions)} top suggestions: {assessment.confidence:.2f}"
-                )
-
-                if assessment.confidence >= CONFIDENCE.HIGH_CONFIDENCE_THRESHOLD:
-                    critic_phase.add_substep("✓ High confidence", f"{assessment.confidence:.2f}")
-                elif assessment.confidence >= CONFIDENCE.MEDIUM_CONFIDENCE_THRESHOLD:
-                    critic_phase.add_substep("⚠ Medium confidence", f"{assessment.confidence:.2f}")
-                else:
-                    critic_phase.add_substep("⚠ Low confidence - flagging for review", f"{assessment.confidence:.2f}")
-
-                audit_trail["steps"].append({
-                    "step": "CRITIC",
-                    "confidence": assessment.confidence,
-                    "requires_review": assessment.requires_human_review,
-                    "timestamp": datetime.utcnow().isoformat()
-                })
-
-            critic_phase.complete()
-
-            # ========== PHASE 10: VALIDATE_TOGAF ✅ ==========
-            togaf_phase = None
-            archimate_elements = []
-
-            if route == "structured_model":
-                validate_phase = trace.add_phase("VALIDATE_TOGAF")
-
-                with tracer.trace_function(trace_id, "archimate_parser", "validate_togaf",
-                                        route=route):
-                    togaf_phase, archimate_elements = await self._validate_togaf_alignment(
-                        candidates, retrieval_context
-                    )
-
-                    validate_phase.add_detail("togaf_phase", togaf_phase or "N/A")
-                    validate_phase.add_detail("validated_elements_count", len(archimate_elements))
-
-                    if togaf_phase:
-                        validate_phase.add_substep(f"TOGAF Phase: {togaf_phase}",
-                                                f"{len(archimate_elements)} elements")
-                    else:
-                        validate_phase.add_substep("No TOGAF phase determined", "N/A")
-
                     audit_trail["steps"].append({
-                        "step": "VALIDATE",
-                        "togaf_phase": togaf_phase,
-                        "elements_validated": len(archimate_elements),
+                        "step": "BUILD_CITATION_POOL",
+                        "pool_size": len(citation_pool),
+                        "sample_citations": sample_citations,
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                    logger.info(f"Citation pool created: {len(citation_pool)} valid citations")
+                
+                citation_phase.complete()
+
+                # ========== PHASE 7: REFINE ✨ ==========
+                refine_phase = trace.add_phase("REFINE")
+
+                with tracer.trace_function(trace_id, "ea_assistant", "refine_response",
+                                        context_items=len(retrieval_context.get("candidates", [])),
+                                        citation_pool_size=len(citation_pool)):
+                    
+                    await self._initialize_llm()
+                    
+                    if self.llm_provider or self.llm_council:
+                        refine_phase.add_substep("Using LLM Council", "Dual validation enabled")
+                        refine_phase.add_detail("llm_method", "council")
+                    else:
+                        refine_phase.add_substep("Using Template Fallback", "No LLM available")
+                        refine_phase.add_detail("llm_method", "template")
+                    
+                    print(f"🔍 REFINE PHASE DEBUG:")
+                    print(f"🔍   is_followup: {is_followup}")
+                    print(f"🔍   query: {query}")
+                    print(f"🔍   session_history length: {len(session_history)}")
+                    
+                    if is_followup:
+                        is_comparison = self.session_manager._is_comparison_query(query)
+                        print(f"🔍   _is_comparison_query result: {is_comparison}")
+                    
+                    if is_followup and self.session_manager._is_comparison_query(query):
+                        print("🔍 ✅ COMPARISON DETECTED - calling _refine_response_for_comparison")
+                        refine_phase.add_substep("Using comparison refinement", "Enhanced for follow-up")
+                        refine_phase.add_detail("refinement_mode", "comparison")
+                        
+                        response, candidates = await self._refine_response_for_comparison(
+                            query,
+                            conversation_context,
+                            retrieval_context,
+                            citation_pool,
+                            trace_id
+                        )
+                        print(f"🔍 Comparison method returned response with {len(response)} chars")
+                        
+                        print(f"🎯 RESPONSE PREVIEW:")
+                        print(f"🎯 {response[:500]}")
+                        print(f"🎯 Citation count in response: {response.count('[')}")
+                    else:
+                        print(f"🔍 ❌ NOT A COMPARISON - calling standard _refine_response")
+                        print(f"🔍   Reason: is_followup={is_followup}, is_comparison={'unknown' if not is_followup else self.session_manager._is_comparison_query(query)}")
+                        refine_phase.add_detail("refinement_mode", "standard")
+
+                        response, candidates = await self._refine_response(
+                            enhanced_query if is_followup else query,
+                            retrieval_context,
+                            citation_pool,
+                            trace_id
+                        )
+                        print(f"🔍 Standard method returned response with {len(response)} chars")
+                    
+                    refine_phase.add_detail("response_length", len(response))
+                    refine_phase.add_detail("candidates_generated", len(candidates))
+                    refine_phase.add_substep("Generated response", f"{len(response)} chars")
+                    
+                    audit_trail["steps"].append({
+                        "step": "REFINE",
+                        "candidates_generated": len(candidates),
+                        "response_length": len(response),
+                        "refinement_mode": "comparison" if (is_followup and self.session_manager._is_comparison_query(query)) else "standard",
                         "timestamp": datetime.utcnow().isoformat()
                     })
 
-                validate_phase.complete()
+                refine_phase.complete()
+                
+                # ========== PHASE 8: GROUND 🔒 ==========
+                ground_phase = trace.add_phase("GROUND")
+                citation_pool_ids = [c['citation'] for c in citation_pool]
 
-            # ========== PHASE 11: RESPONSE_ASSEMBLY 📦 ==========
-            assembly_phase = trace.add_phase("RESPONSE_ASSEMBLY")
+                has_kg_data = len(retrieval_context.get("candidates", [])) > 0
 
-            # Calculate processing time
-            processing_time_ms = (time.perf_counter() - start_time) * 1000
+                is_synthesis_query = (
+                    is_followup and 
+                    self.session_manager._is_comparison_query(query)
+                )
 
-            assembly_phase.add_detail("processing_time_ms", processing_time_ms)
-            assembly_phase.add_detail("response_components", {
-                "route": route,
-                "citations_count": len(citations),
-                "confidence": assessment.confidence,
-                "togaf_phase": togaf_phase,
-                "requires_review": assessment.requires_human_review,
-                "is_followup": is_followup
-            })
-            assembly_phase.add_substep("Assembled final response", f"{processing_time_ms:.0f}ms total")
-            
-            # ✅ ADD: Prepend duplicate info if present
-            if duplicate_info:
-                response = f"{duplicate_info}\n---\n\n{response}"
-                assembly_phase.add_substep("Added duplicate term info", "Multiple definitions found")
+                if is_synthesis_query:
+                    ground_phase.add_substep("LLM synthesis response", "Citations not required")
+                    
+                    citations = self.grounder._extract_existing_citations(response)
+                    
+                    if not citations:
+                        citations = []
+                        ground_phase.add_detail("synthesis_mode", "no_citations_required")
+                    
+                    ground_phase.add_detail("response_type", "llm_synthesis")
+                    ground_phase.add_detail("validation", "content_based")
+                    ground_phase.complete()
+                    
+                    audit_trail["steps"].append({
+                        "step": "GROUND",
+                        "response_type": "llm_synthesis",
+                        "citations": citations,
+                        "validation_mode": "relaxed",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
 
-            # Build final response
-            pipeline_response = PipelineResponse(
-                query=query,
-                response=response,
-                route=route,
-                citations=citations,
-                confidence=assessment.confidence,
-                requires_human_review=assessment.requires_human_review,
-                togaf_phase=togaf_phase,
-                archimate_elements=[{"id": e.get("id"), "name": e.get("element")} 
-                                for e in archimate_elements] if archimate_elements else [],
-                processing_time_ms=processing_time_ms,
-                session_id=session_id,
-                timestamp=datetime.utcnow().isoformat()
-            )
-            
-            assembly_phase.complete()
-            
-            # ========== ADD TO SESSION HISTORY 💾 ==========
-            if use_conversation_context:
-                self.session_manager.add_turn(
-                    session_id=session_id,
+                elif has_kg_data:
+                    ground_phase.add_substep("Grounding KG-based response", "Citations required")
+                    
+                    found_citations = self.grounder._extract_existing_citations(response)
+                    ground_phase.add_detail("citations_found", len(found_citations))
+                    
+                    grounding_result = self.grounder.assert_citations(
+                        response,
+                        retrieval_context,
+                        citation_pool_ids,
+                        trace_id
+                    )
+                    
+                    citations = grounding_result.get("citations", [])
+                    if not citations:
+                        citations = found_citations
+                    
+                    if len(citations) < 1:
+                        ground_phase.add_detail("error", "Insufficient citations")
+                        ground_phase.complete("failed")
+                        raise UngroundedReplyError(
+                            message="KG-based response lacks required citations",
+                            required_prefixes=["skos:", "eurlex:", "iec:", "entsoe:", "archi:"],
+                            suggestions=[c for c in citation_pool_ids[:5]] if citation_pool_ids else []
+                        )
+                    
+                    ground_phase.add_detail("response_type", "kg_retrieval")
+                    ground_phase.add_detail("grounding_status", "PASSED")
+                    ground_phase.complete()
+
+                else:
+                    ground_phase.add_substep("No KG data - LLM fallback", "No citations available")
+                    
+                    citations = []
+                    
+                    response = f"""{response}
+
+                ---
+
+                **⚠️ Note:** This response was generated by AI reasoning as no information was found in our knowledge bases.
+                """
+                    
+                    ground_phase.add_detail("response_type", "llm_fallback")
+                    ground_phase.complete()
+
+                # ========== PHASE 9: CRITIC 🎓 ==========
+                critic_phase = trace.add_phase("CRITIC")
+
+                with tracer.trace_function(trace_id, "critic", "assess",
+                                        candidate_count=len(candidates)):
+                    assessment = self.critic.assess(candidates, retrieval_context)
+
+                    critic_phase.add_detail("confidence", assessment.confidence)
+                    critic_phase.add_detail("requires_review", assessment.requires_human_review)
+                    critic_phase.add_detail("top_suggestions_count", len(assessment.top_suggestions))
+
+                    confidence_breakdown = {
+                        "candidate_count": len(candidates),
+                        "top_suggestions": [
+                            {
+                                "element": s["element"],
+                                "confidence": s["confidence"]
+                            }
+                            for s in assessment.top_suggestions
+                        ],
+                        "average_confidence": assessment.confidence,
+                        "calculation": f"Average of top {len(assessment.top_suggestions)} suggestions"
+                    }
+                    critic_phase.add_detail("confidence_breakdown", confidence_breakdown)
+                    critic_phase.add_substep(
+                        "Confidence calculation",
+                        f"Average of {len(assessment.top_suggestions)} top suggestions: {assessment.confidence:.2f}"
+                    )
+
+                    if assessment.confidence >= CONFIDENCE.HIGH_CONFIDENCE_THRESHOLD:
+                        critic_phase.add_substep("✓ High confidence", f"{assessment.confidence:.2f}")
+                    elif assessment.confidence >= CONFIDENCE.MEDIUM_CONFIDENCE_THRESHOLD:
+                        critic_phase.add_substep("⚠ Medium confidence", f"{assessment.confidence:.2f}")
+                    else:
+                        critic_phase.add_substep("⚠ Low confidence - flagging for review", f"{assessment.confidence:.2f}")
+
+                    audit_trail["steps"].append({
+                        "step": "CRITIC",
+                        "confidence": assessment.confidence,
+                        "requires_review": assessment.requires_human_review,
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+
+                critic_phase.complete()
+
+                # ========== PHASE 10: VALIDATE_TOGAF ✅ ==========
+                togaf_phase = None
+                archimate_elements = []
+
+                if route == "structured_model":
+                    validate_phase = trace.add_phase("VALIDATE_TOGAF")
+
+                    with tracer.trace_function(trace_id, "archimate_parser", "validate_togaf",
+                                            route=route):
+                        togaf_phase, archimate_elements = await self._validate_togaf_alignment(
+                            candidates, retrieval_context
+                        )
+
+                        validate_phase.add_detail("togaf_phase", togaf_phase or "N/A")
+                        validate_phase.add_detail("validated_elements_count", len(archimate_elements))
+
+                        if togaf_phase:
+                            validate_phase.add_substep(f"TOGAF Phase: {togaf_phase}",
+                                                    f"{len(archimate_elements)} elements")
+                        else:
+                            validate_phase.add_substep("No TOGAF phase determined", "N/A")
+
+                        audit_trail["steps"].append({
+                            "step": "VALIDATE",
+                            "togaf_phase": togaf_phase,
+                            "elements_validated": len(archimate_elements),
+                            "timestamp": datetime.utcnow().isoformat()
+                        })
+
+                    validate_phase.complete()
+
+                # ========== PHASE 11: RESPONSE_ASSEMBLY 📦 ==========
+                assembly_phase = trace.add_phase("RESPONSE_ASSEMBLY")
+
+                processing_time_ms = (time.perf_counter() - start_time) * 1000
+
+                assembly_phase.add_detail("processing_time_ms", processing_time_ms)
+                assembly_phase.add_detail("response_components", {
+                    "route": route,
+                    "citations_count": len(citations),
+                    "confidence": assessment.confidence,
+                    "togaf_phase": togaf_phase,
+                    "requires_review": assessment.requires_human_review,
+                    "is_followup": is_followup
+                })
+                assembly_phase.add_substep("Assembled final response", f"{processing_time_ms:.0f}ms total")
+                
+                if duplicate_info:
+                    response = f"{duplicate_info}\n---\n\n{response}"
+                    assembly_phase.add_substep("Added duplicate term info", "Multiple definitions found")
+
+                pipeline_response = PipelineResponse(
                     query=query,
                     response=response,
+                    route=route,
                     citations=citations,
                     confidence=assessment.confidence,
-                    route=route,
-                    processing_time_ms=processing_time_ms
+                    requires_human_review=assessment.requires_human_review,
+                    togaf_phase=togaf_phase,
+                    archimate_elements=[{"id": e.get("id"), "name": e.get("element")} 
+                                    for e in archimate_elements] if archimate_elements else [],
+                    processing_time_ms=processing_time_ms,
+                    session_id=session_id,
+                    timestamp=datetime.utcnow().isoformat()
                 )
-                logger.info(f"✅ Added turn to session {session_id} (total: {len(session_history) + 1} turns)")
-            
-            # Store audit trail
-            self.context_store[session_id] = audit_trail
-            
-            # Print comprehensive trace report (existing tracer)
-            tracer.print_trace_report(trace_id)
-            
-            # Finalize trace
-            trace.finalize()
-            
-            logger.info(f"Pipeline completed in {processing_time_ms:.1f}ms "
-                    f"(confidence: {assessment.confidence:.2f}, "
-                    f"review: {assessment.requires_human_review}, "
-                    f"citations: {len(citations)}, "
-                    f"followup: {is_followup})")
+                
+                assembly_phase.complete()
 
-            return pipeline_response, trace
+                # ========== STORE IN SEMANTIC CACHE (NEW) 💾 ==========
+                if (self.semantic_cache and 
+                    self.embedding_agent and 
+                    assessment.confidence >= 0.7 and
+                    not assessment.requires_human_review):
+                    
+                    try:
+                        if 'query_embedding' not in locals():
+                            query_embedding = self.embedding_agent.model.encode(
+                                [query], 
+                                convert_to_numpy=True,
+                                show_progress_bar=False
+                            )[0]
+                            query_embedding = query_embedding / np.linalg.norm(query_embedding)
+                        
+                        self.semantic_cache.put(
+                            query=query,
+                            query_embedding=query_embedding,
+                            result=pipeline_response,
+                            analysis_type=self.semantic_cache.classifier(query),
+                            confidence=assessment.confidence
+                        )
+                        logger.info(f"💾 Cached response (confidence: {assessment.confidence:.2f})")
+                        
+                    except Exception as e:
+                        logger.warning(f"Failed to cache response: {e}")
 
-        except UngroundedReplyError as e:
-            logger.error(f"Grounding violation: {e}")
-            trace.finalize()
-            raise
-        except FakeCitationError as e:
-            logger.error(f"Fake citation error: {e}")
-            trace.finalize()
-            raise
-        except Exception as e:
-            logger.error(f"Pipeline error: {e}", exc_info=True)
-            audit_trail["steps"].append({
-                "step": "ERROR",
-                "error": str(e),
-                "timestamp": datetime.utcnow().isoformat()
-            })
-            self.context_store[session_id] = audit_trail
-            trace.finalize()
-            raise
+                # ========== ADD TO SESSION HISTORY 💾 ==========
+                if use_conversation_context:
+                    self.session_manager.add_turn(
+                        session_id=session_id,
+                        query=query,
+                        response=response,
+                        citations=citations,
+                        confidence=assessment.confidence,
+                        route=route,
+                        processing_time_ms=processing_time_ms
+                    )
+                    logger.info(f"✅ Added turn to session {session_id} (total: {len(session_history) + 1} turns)")
+                
+                self.context_store[session_id] = audit_trail
+                
+                tracer.print_trace_report(trace_id)
+                trace.finalize()
+                
+                logger.info(f"Pipeline completed in {processing_time_ms:.1f}ms "
+                        f"(confidence: {assessment.confidence:.2f}, "
+                        f"review: {assessment.requires_human_review}, "
+                        f"citations: {len(citations)}, "
+                        f"followup: {is_followup})")
+
+                return pipeline_response, trace
+
+            except UngroundedReplyError as e:
+                logger.error(f"Grounding violation: {e}")
+                trace.finalize()
+                raise
+            except FakeCitationError as e:
+                logger.error(f"Fake citation error: {e}")
+                trace.finalize()
+                raise
+            except Exception as e:
+                logger.error(f"Pipeline error: {e}", exc_info=True)
+                audit_trail["steps"].append({
+                    "step": "ERROR",
+                    "error": str(e),
+                    "timestamp": datetime.utcnow().isoformat()
+                })
+                self.context_store[session_id] = audit_trail
+                trace.finalize()
+                raise
 
     def _build_citation_pool(self, retrieval_context: Dict, trace_id: str = None) -> List[str]:
         """

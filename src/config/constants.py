@@ -10,6 +10,7 @@ Review Frequency: Quarterly or after major data updates
 Production Validated: NO - Prototype values only
 """
 
+import re
 from dataclasses import dataclass, field
 from typing import Dict, List, Set
 
@@ -256,6 +257,20 @@ QUERY_TERM_STOP_WORDS: Set[str] = {
     'to', 'how', 'why', 'when', 'where', 'are', 'do', 'does'
 }
 
+ANALYSIS_PATTERNS = {
+    'decision_drivers': {
+        'keywords': ['driver', 'why', 'reason', 'rationale', 'motivation', 'cause'],
+        'patterns': [r'why.*decision', r'what.*drove', r'reason.*for'],
+        'weight': 1.0
+    },
+    'patterns': {
+        'keywords': ['pattern', 'trend', 'common', 'recurring', 'similarity'],
+        'patterns': [r'common.*across', r'pattern.*in'],
+        'weight': 0.9
+    },
+    # Easy to add new types without touching code
+}
+
 # Citation pattern prefixes
 # ============================================================================
 # CITATION PREFIXES - Complete List
@@ -383,6 +398,34 @@ def is_valid_citation_prefix(citation: str) -> bool:
     citation_lower = citation.lower()
     return any(citation_lower.startswith(prefix.lower()) 
                for prefix in REQUIRED_CITATION_PREFIXES)
+    
+def _classify_analysis_type(self, query: str) -> str:
+    """
+    Rule-based classification using external configuration.
+    Easily extensible via config changes.
+    """
+    query_lower = query.lower()
+    scores = {}
+    
+    for analysis_type, config in ANALYSIS_PATTERNS.items():
+        score = 0.0
+        
+        # Check keywords
+        for keyword in config.get('keywords', []):
+            if keyword in query_lower:
+                score += config.get('weight', 1.0)
+        
+        # Check regex patterns
+        for pattern in config.get('patterns', []):
+            if re.search(pattern, query_lower):
+                score += config.get('weight', 1.0) * 1.5
+        
+        scores[analysis_type] = score
+    
+    # Return highest scoring type, or 'general' if no matches
+    if scores:
+        return max(scores.items(), key=lambda x: x[1])[0] if max(scores.values()) > 0 else 'general'
+    return 'general'
 
 def get_citation_category(citation: str) -> str:
     """
